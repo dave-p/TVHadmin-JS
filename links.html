@@ -1,0 +1,109 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="application-name" content="TVHadmin">
+<title>TVHadmin - Series Links</title>
+<link rel="stylesheet" href="style.css">
+<script src="include.js"></script>
+<script>
+  window.addEventListener('load',function() {
+    var mytop=document.getElementById("mobmenu");
+    mytop.addEventListener('click', function() {
+        var mynav=document.getElementById("navigation");
+        if (mynav.classList.contains('focus'))
+            mynav.classList.remove('focus');
+        else mynav.classList.add('focus');
+    });
+  },false);
+</script>
+</head> 
+<body>
+  <div id="container">
+    <div id="navigation">
+      <div class="logo">
+        <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+      </div>
+      <div class="nav_bar">
+      <div class="navi"><a href="now.html">What's On Now</a></div>
+      <div class="navi"><a href="timeline.html">Timeline</a></div>
+      <div class="navi"><a href="channels.html">Channels</a></div>
+      <div class="navi"><a href="favourites.html">Favourite Channels</a></div>
+      <div class="navi"><a href="timers.html">Timers</a></div>
+      <div class="navi"><a href="recordings.html">Recordings</a></div>
+      <div class="navi"><a href="links.html">Series Links</a></div>
+      <div class="navi"><a href="status.html">Status</a></div>
+      <div class="navi"><a href="config.html">Configuration</a></div>
+        <form action="search.html" method="GET" name="telly" class="search">
+        <input type="text" name="find"><br>
+          <input type="submit" name="submit" value="Search">
+        </form>
+      </div>
+    </div>
+    <div id='layout'>
+     <div id='banner'>
+      <table>
+        <tr>
+	  <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Series Links</h1></td>
+	</tr>
+      </table>
+     </div>
+     <div id='wrapper'>
+      <div id='content'>
+       <table class='list' id='list'>
+	<tr class='heading'>
+	  <td class='col_value'><h2>Timers</h2></td>
+	  <td class='col_value'><h2>Recs</h2></td>
+	  <td class='col_channel'><h2>Channel</h2></td>
+	  <td class='col_name'><h2>Name</h2></td>
+	  <td class='wideonly col_channel'><h2>Link</h2></td>
+	  <td class='col_delete'></td>
+	</tr>
+     </table>
+    </div>
+   </div>
+  </div>
+ </div>
+<script>
+  async function main() {
+    var channels = await get_channels();
+    var cname = [];
+    channels.forEach(function(c) {
+      cname[c.uuid] = c.name;
+    });
+    var recordings = await get_recordings();
+    var rcnt = [];
+    var tcnt = [];
+    recordings.forEach(function(r) {
+      let auto = r.autorec;
+      if (r.sched_status == "scheduled") {
+	if (tcnt[auto]) tcnt[auto]++;
+	else tcnt[auto] = 1;
+      }
+      else {
+	if (rcnt[auto]) rcnt[auto]++;
+	else rcnt[auto] = 1;
+      }
+    });
+    var links = await get_links();
+    var table = document.getElementById("list");
+    links.forEach(function(link) {
+      var recs = 0;
+      var timers = 0;
+      if (rcnt[link.uuid]) recs = rcnt[link.uuid];
+      if (tcnt[link.uuid]) timers = tcnt[link.uuid];
+      var row = table.insertRow(-1);
+      row.className = "row_alt";
+      row.innerHTML = `<td class='col_value'>${timers}</td>` +
+	`<td class='col_value'>${recs}</td>` +
+	`<td class='col_channel'>${cname[link.channel]}</td>` +
+	`<td class='col_name'>${link.name}</td>` +
+	`<td class='wideonly col_channel'>${link.serieslink}</td>` +
+	`<td class='col_delete'><a href='links.html' onclick='delete_link("${link.uuid}")'><img src='images/delete.png'></a></td>`;
+    });
+  }
+  main();
+</script>
+  </body>
+</html>

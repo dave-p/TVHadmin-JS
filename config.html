@@ -1,0 +1,310 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="application-name" content="TVHadmin">
+<title>TVHadmin - a front-end for TVHeadend></title>
+<link rel="stylesheet" href="style.css">
+<script src="include.js"></script>
+<script>
+  window.addEventListener('load',function() {
+    var mytop=document.getElementById("mobmenu");
+    mytop.addEventListener('click', function() {
+        var mynav=document.getElementById("navigation");
+        if (mynav.classList.contains('focus'))
+            mynav.classList.remove('focus');
+        else mynav.classList.add('focus');
+    });
+  },false);
+
+  function one2two() {
+    m1len = m1.length ;
+    for ( i=0; i<m1len ; i++){
+	if (m1.options[i].selected == true ) {
+	    m2len = m2.length;
+	    m2.options[m2len]= new Option(m1.options[i].text);
+	}
+    }
+
+    for ( i = (m1len -1); i>=0; i--){
+	if (m1.options[i].selected == true ) {
+	    m1.options[i] = null;
+	}
+    }
+  }
+
+  function two2one() {
+    m2len = m2.length ;
+    for ( i=0; i<m2len ; i++){
+	if (m2.options[i].selected == true ) {
+	    m1len = m1.length;
+	    m1.options[m1len]= new Option(m2.options[i].text);
+	}
+    }
+    for ( i=(m2len-1); i>=0; i--) {
+	if (m2.options[i].selected == true ) {
+	    m2.options[i] = null;
+	}
+    }
+  }
+
+  function selectAll() {
+    for (i=0; i<m2.length; i++) {  
+	m2.options[i].selected = true; 
+    }
+  }
+
+/*!
+ * Serialize all form data into an array
+ * (c) 2018 Chris Ferdinandi, MIT License, https://gomakethings.com
+ */
+  function saveForm(form) {
+    var serialized = {};
+    for (var i = 0; i < form.elements.length; i++) {
+      var field = form.elements[i];
+      if (!field.name || field.disabled || field.type === 'file' || field.type === 'reset' || field.type === 'submit' || field.type === 'button') continue;
+      if (field.type === 'select-multiple') {
+	var choices = [];
+	for (var n = 0; n < field.options.length; n++) {
+	  if (!field.options[n].selected) continue;
+	  choices.push(field.options[n].value);
+	}
+	if (choices.length > 0) {
+	  serialized[field.name] = choices;
+	}
+      }
+      else if ((field.type !== 'checkbox' && field.type !== 'radio') || field.checked) {
+	serialized[field.name] = field.value;
+      }
+    }
+    return serialized;
+  }
+
+  function reloadForm(form, cookies) {
+    for (var i = 0; i < form.elements.length; i++) {
+      var field = form.elements[i];
+      if (!field.name || field.type === 'select-multiple' || field.type === 'submit' || field.type === 'button') continue;
+      if (field.type === 'checkbox' && (field.name in cookies)) {
+	field.checked = true;
+      }
+      else if (field.type === 'radio' && (field.name in cookies) && (field.value == cookies[field.name])) {
+	field.checked = true;
+      }
+      else if (field.type === 'select-one' && (field.name in cookies)) {
+	field.value = cookies[field.name];
+      }
+    } 
+
+    var myChannels = form.selected_channels;
+    cookies.selected_channels.forEach(function(channel) {
+      var option = document.createElement("option");
+      option.text = option.label = channel;
+      myChannels.add(option);
+    });
+  }
+
+  function tag_boxes(tags, cookies, id, prefix) {
+    let taglist = document.getElementById(id);
+    let s = "";
+    for (k in tags) {
+      let ut = encodeURIComponent(tags[k]);
+      if (cookies["Tag_"+ut]) {
+	let g = prefix + ut;
+	s = s + tags[k] + ": <input type='checkbox' name='" + g + "'>";
+      }
+    }
+    taglist.innerHTML = s;
+  }
+</script>
+</head> 
+<body>
+<div id="container">
+  <div id="navigation">
+    <div class="logo">
+      <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+    </div>
+    <div class="nav_bar">
+    <div class="navi"><a href="now.html">What's On Now</a></div>
+    <div class="navi"><a href="timeline.html">Timeline</a></div>
+    <div class="navi"><a href="channels.html">Channels</a></div>
+    <div class="navi"><a href="favourites.html">Favourite Channels</a></div>
+    <div class="navi"><a href="timers.html">Timers</a></div>
+    <div class="navi"><a href="recordings.html">Recordings</a></div>
+    <div class="navi"><a href="links.html">Series Links</a></div>
+    <div class="navi"><a href="status.html">Status</a></div>
+    <div class="navi"><a href="config.html">Configuration</a></div>
+      <form action="search.html" method="GET" name="telly" class="search">
+        <input type="text" name="find"><br>
+        <input type="submit" name="submit" value="Search">
+      </form>
+    </div>
+  </div>
+<div id="layout">
+  <div id="banner">
+	<table>
+	    <tr>
+		<td class="col_title">
+			<div id='mobmenu'>&#9776;</div> <h1>Configuration</h1>
+		</td>
+	    </tr>
+	</table>
+  </div>
+  <div id='wrapper'>
+    <div id='config'>
+      <form action="config.html" method="post" name="FormName" id="myForm">
+	<table class="group">
+	  <tr class="heading">
+	    <td colspan="2"><h2>TVHeadend Server</h2></td>
+	  </tr>
+	  <tr class='row_alt' id='prof' title="TVheadend profile to use for recordings. This line is blank if there is only one profile">
+	  </tr>
+	</table>
+	<table class='group'>
+	  <tr class='heading'>
+	    <td colspan='2'><h2>Preferences</h2></td>
+	  </tr>
+	  <tr class='row_alt' title='Time after which entries appear on tomorrow&apos;s EPG. Useful if you watch TV after midnight'>
+	    <td class='col_label'><h5>EPG Day starts at:</h5></td>
+	    <td class='col_value'>
+	      <select name='EPGSTART'><option value='0'>0:00</option><option value='1'>1:00</option><option value='2'>2:00</option><option value='3'>3:00</option><option value='4'>4:00</option><option value='5'>5:00</option><option value='6'>6:00</option></select>
+	    </td>
+	  </tr>
+	  <tr class='row_alt' title='Screen shown when entering TVHadmin'>
+	    <td class='col_label'><h5>Home Page:</h5></td>
+	    <td class='col_value'>
+		<select name='HOME'><option value='now'>What's On Now?</option><option value='timeline'>Timeline</option><option value='channels'>Channels</option><option value='favourites'>Favourite Channels</option><option value='timers'>Timers</option><option value='recordings'>Recordings</option><option value='links'>Series Links</option><option value='status'>Status</option><option value='config'>Configuration</option></select>
+	    </td>
+	  </tr>
+	  <tr class='row_alt' title='Sort channels by name or Logical Channel Number'>
+	    <td class='col_label'><h5>Channels Sort Order:</h5></td>
+	    <td class='col_value'><label for='C0'>Name:</label><input type='radio' name='CSORT' id='C0' value='0'><label for='C1'>LCN:</label><input type='radio' name='CSORT' id='C1' value='1'>
+	    </td>
+          </tr>
+	  <tr class='row_alt' title='Refresh the Whats On Now and Timeline screens every minute'>
+	    <td class='col_label'><h5>Refresh Whats On Now and Timeline screens:</h5></td>
+	    <td class='col_value'><input type='checkbox' name='REFR'></td>
+	  </tr>
+          <tr class='row_alt' title='Show icon instead of channel name. Needs picons installed and imagecache enabled on TVHeadend'>
+            <td class='col_label'><h5>Show channel icons in What's On Now & Recordings:</h5></td>
+            <td class='col_value'><input type='checkbox' name='ICONS'></td>
+          </tr>
+	  <tr class='row_alt' title='Show timer conflicts and alternative showings. Only works for single tuners on networks using CRIDs (series link)'>
+	    <td class='col_label'><h5>Detect timer clashes (single tuner only):</h5></td>
+	    <td class='col_value'><input type='checkbox' name='CLASHDET'></td>
+	  </tr>
+	  <tr class='row_alt' title='Time period for the Timeline screen'>
+	    <td class='col_label'><h5>Timeline length:</h5></td>
+	    <td class='col_value'>
+		<select name='TIMESPAN'><option value='2'>2 hours</option><option value='4'>4 hours</option><option value='6'>6 hours</option></select>
+	    </td>
+	  </tr>
+	  <tr class='row_alt' title='Which TVH tags are to be used for filtering. Click &apos;Save&apos; after changing this selection to update the other preferences'>
+	    <td class='col_label'><h5>Media Tags to use for selection:</h5></td>
+	    <td class='col_value' id='alltags'></td>
+	  </tr>
+	</table>
+	<table class='group'>
+	  <tr class='heading'>
+	    <td colspan='2'><h2>Defaults</h2></td>
+	  </tr>
+	  <tr class='row_alt' title='Default filter setting for the What&apos;s On Now screen'>
+	    <td class='col_label'><h5>Show in What's On Now:</h5></td>
+	    <td class='col_value' id='nowtags'></td>
+	  </tr>
+	  <tr class='row_alt' title='Default filter setting for the Timeline screen'>
+	    <td class='col_label'><h5>Show in Timeline:</h5></td>
+	    <td class='col_value' id='timetags'></td>
+	  </tr>
+	  <tr class='row_alt' title='Default filter setting for the Recordings screen'>
+	    <td class='col_label'><h5>Show in Recordings:</h5></td>
+	    <td class='col_value' id='rectags'></td>
+	  </tr>
+	  <tr class='row_alt' title='Sort recordings by date or by title (ignoring &apos;New:&apos;)'>
+	    <td class='col_label'><h5>Recordings Sort Order:</h5></td>
+	    <td class='col_value'><label for='B0'>Date Fwd:</label><input type='radio' name='SORT' id='B0' value='0'><label for='B1'>Date Rev:</label><input type='radio' name='SORT' id='B1' value='1'><label for='B2'>Title:</label><input type='radio' name='SORT' id='B2' value='2'></td>
+	  </tr>
+	</table>
+	<table class='group'>
+	  <tr class='heading'>
+	    <td colspan='3'><h2>Favourite Channels</h2></td>
+	  </tr>
+	  <tr class='row_alt'>
+	    <td class='col_channels'>
+		<select name='all_channels' size='8' multiple='multiple' class='channels'></select>
+	    </td>
+	    <td style='text-align: center;'>
+		<input type='button' onClick='one2two()' value='&gt;&gt;&gt;&gt;&gt;'><br>
+		<input type='button' onClick='two2one()' value='&lt;&lt;&lt;&lt;&lt;'>
+	    </td>
+	    <td class='col_wanted_channels'>
+		<select name='selected_channels' size='8' multiple='multiple' class='channels'></select>
+	    </td>
+	  </tr>
+	</table>
+	<div id="buttons">
+	    <input type="submit" class="submit" name="save" value="Save" onclick="selectAll()">
+	</div>
+    </form>
+    <script>
+        var m1 = document.FormName.all_channels;
+        var m2 = document.FormName.elements.selected_channels;
+
+async function main() {
+  var cookies = get_cookies();
+  let form = document.getElementById("myForm");
+  form.addEventListener("submit", event => {
+    let formdata = JSON.stringify(saveForm(form));
+    document.cookie = "TVHadmin="+encodeURIComponent(formdata)+"; max-age=315360000";
+  });
+  
+  let profiles = await get_profiles();
+  if (profiles.length == 1) {
+    let config_uuid = profiles[0]['uuid'];
+    var s = `<td><input type='hidden' name='PROFILE' value=''>` +
+		`<input type='hidden' name='UUID' value='${config_uuid}'></td><td></td>`;
+  }
+  else {
+    var s = "<td class='col_label'><h5>Recording Profile:</h5></td>" +
+	    "<td class='col_value'><select name='PROFILE'>";
+    let config_uuid = cookies.UUID;
+    for (p in profiles) {
+      let pname = p.name;
+      if (pname == '') pname = '(default)';
+      if (p.uuid === config_uuid) $sel = 'selected';
+      else $sel = '';
+      s = s + `<option value='${pname}' ${sel}>${pname}</option>`;
+    }
+    s = s + "</td>";
+  }
+  let proflist = document.getElementById("prof");
+  proflist.innerHTML = s;
+
+  let tags = await get_channeltags();
+  let taglist = document.getElementById("alltags");
+  s = "";
+  for (k in tags) {
+    let g = encodeURIComponent("Tag_" + k);
+    s = s + k + ": <input type='checkbox' name='" + g + "'>";
+  }
+  taglist.innerHTML = s;
+  tag_boxes(tags, cookies, "nowtags", "Now_");
+  tag_boxes(tags, cookies, "timetags", "Tim_");
+  tag_boxes(tags, cookies, "rectags", "Rec_");
+  var channels = await get_channels(0);
+  var allchannels = document.FormName.all_channels;
+  channels.forEach(function(channel) {
+    var option = document.createElement("option");
+    option.text = option.label = channel.name;
+    allchannels.add(option);
+  });
+  reloadForm(form, cookies);
+}
+main();
+    </script>
+   </div>
+  </div>
+ </div>
+</div>
+</body>
+</html>

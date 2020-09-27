@@ -1,0 +1,188 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="application-name" content="TVHadmin">
+<title>TVHadmin - Recordings</title>
+<link rel="stylesheet" href="style.css">
+<script src="include.js"></script>
+<script>
+  window.addEventListener('load',function() {
+    var mytop=document.getElementById("mobmenu");
+    mytop.addEventListener('click', function() {
+        var mynav=document.getElementById("navigation");
+        if (mynav.classList.contains('focus'))
+            mynav.classList.remove('focus');
+        else mynav.classList.add('focus');
+    });
+  },false);
+
+  function change_order(src) {
+    sessionStorage.setItem('recordings-sort', src.value);
+    location.reload();
+  }
+
+  function click_tag(prefix, tagID) {
+    var chk;
+    if (document.getElementById(tagID).checked) chk = 1;
+    else chk = -1;
+    sessionStorage.setItem((prefix+tagID), chk);
+    location.reload();
+  }
+</script>
+</head> 
+<body>
+<div id="container">
+  <div id="navigation">
+    <div class="logo">
+      <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+    </div>
+    <div class="nav_bar">
+    <div class="navi"><a href="now.html">What's On Now</a></div>
+    <div class="navi"><a href="timeline.html">Timeline</a></div>
+    <div class="navi"><a href="channels.html">Channels</a></div>
+    <div class="navi"><a href="favourites.html">Favourite Channels</a></div>
+    <div class="navi"><a href="timers.html">Timers</a></div>
+    <div class="navi"><a href="recordings.html">Recordings</a></div>
+    <div class="navi"><a href="links.html">Series Links</a></div>
+    <div class="navi"><a href="status.html">Status</a></div>
+    <div class="navi"><a href="config.html">Configuration</a></div>
+      <form action="search.html" method="GET" name="telly" class="search">
+        <input type="text" name="find"><br>
+        <input type="submit" name="submit" value="Search">
+      </form>
+    </div>
+  </div>
+    <div id='layout'>
+     <div id='banner'>
+      <table>
+        <tr>
+	  <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Recordings</h1></td>
+	  <td>
+	    <div class='media'>
+	      <label for='B0'>Date Fwd:</label><input type='radio' name='SORT' id='B0' value='0' onChange='change_order(this)'></div>
+	    <div class='media'>
+	      <label for='B1'>Date Rev:</label><input type='radio' name='SORT' id='B1' value='1' onChange='change_order(this)'></div>
+	    <div class='media'>
+	      <label for='B2'>Title:</label><input type='radio' name='SORT' id='B2' value='2' onChange='change_order(this)'></div>
+	  </td>
+	  <td id='recmediatags'>
+	  </td>
+	</tr>
+      </table>
+    </div>
+    <div id='wrapper'>
+      <div id='content'>
+	<table class='list' id='list'>
+	  <tr class='heading'>
+	    <td class='col_date'><h2>Date</h2></td>
+	    <td class='wideonly col_time'><h2>Time</h2></td>
+	    <td class='col_channel'><h2>Channel</h2></td>
+	    <td class='wideonly col_length'><h2>Length</h2></td>
+	    <td class='col_name'><h2>Name</h2></td>
+	    <td class='col_delete'></td>
+	    <td class='col_stream'></td>
+	  </tr>
+        </table>
+      </div>
+     </div>
+   </div>
+  </div>
+<script>
+  async function main() {
+    const cookies = get_cookies();
+    var sort = 1;
+    if (sessionStorage.getItem('recordings-sort')) {
+      sort = sessionStorage.getItem('recordings-sort');
+    }
+    else if (cookies.SORT) sort = cookies.SORT;
+    const buttons = document.getElementsByName('SORT');
+    buttons[sort].checked = true;
+
+    var tags = await get_channeltags();
+    var s = "<span class='wideonly'>";
+    var media = [];
+    for (var key in cookies) {
+      if (key.startsWith("Tag_")) {
+	var tag = key.substring(4);
+	s = s + "<div class='media'>" +
+		`<label for='${tag}'>${tag}:</label>` +
+		`<input type='checkbox' name='${tag}' id='${tag}' onchange='click_tag("Rec_", "${tag}")'`;
+	if (sessionStorage.getItem("Rec_"+tag)) {
+	  if (sessionStorage.getItem("Rec_"+tag) == 1) {
+	    s = s + " checked";
+	    media[tags[tag]] = 1;
+	  }
+	}
+	else if (cookies[("Rec_"+tag)]) {
+	  s = s + " checked";
+	  media[tags[tag]] = 1;
+	}
+	s = s + "></div>";
+      }
+    }
+    s = s + "</span>";
+    var td = document.getElementById("recmediatags");
+    td.innerHTML = s;
+
+    var channels = await get_channels();
+    var chtags = [];
+    channels.forEach(function(c) {
+      chtags[c.uuid] = c.tags;
+    });
+    var recordings = await get_recordings(sort);
+    var table = document.getElementById("list");
+    recordings.forEach(function(r) {
+      if (r.sched_status == "scheduled") return;
+      if (!(media["All"])) {
+        if (chtags[r.channel]) {
+          if (intersect(chtags[r.channel], media) == 0) return;
+	}
+      }
+      var time = strftime("%H:%M", r.start);
+      var date = strftime("%a %e/%m/%y", r.start);
+      var duration = r.stop - r.start;
+      var hh = Math.floor(duration / 3600);
+      var mm = (duration % 3600) / 60;
+      var length = hh + ':' + ('00'+mm).slice(-2);
+      var title = htmlspecialchars(r.disp_title);
+      var summ = r.disp_extratext;
+      var row = table.insertRow(-1);
+      if (r.sched_status == 'completed') {
+	var ok = 1;
+	if (r.status == 'Completed OK') {
+	  row.className = 'row_alt';
+	}
+	else {
+	  row.className = 'row_error';
+	}
+      }
+      else if (r.sched_status == 'recording') {
+	var ok = 1;
+	row.className = 'row_inprogress';
+      }
+      else {
+	var ok = 0;
+	row.className = 'row_error';
+      }
+      var s = `<td class='col_date'>${date}` +
+	`<span class='thinonly'><br />Time: ${time}<br />Length: ${length}</span></td>` +
+	`<td class='wideonly col_time'>${time}</td>` +
+	"<td class='col_channel'><div class='channel_name'>";
+      if (cookies.ICONS && r.channel_icon) {
+        s = s + `<img src="${r.channel_icon}" height='48' width='80' alt="${r.channelname}" title="${r.channelname}">`;
+      }
+      else s = s + r["channelname"];
+      s = s + `</div></td><td class='wideonly col_length'>${length}</td>` +
+	  `<td class='col_name'><div class='epg_title'>${title}</div><div class='epg_subtitle'>${summ}</div></td>` +
+	  `<td class='col_delete'><a href='recordings.html' onclick='delete_recording("${r.uuid}")'><img src='images/delete.png' title='Delete Recording'></a></td>`;
+      if(ok) s = s + `<td class='col_stream'><a href='/play/dvrfile/${r.uuid}?title=${title}'><img src='images/play.png' title='Play'></a></td>`;
+      else s = s + "<td></td>";
+      row.innerHTML = s;
+    });
+  }
+  main();
+</script>
+ </body>
+</html>

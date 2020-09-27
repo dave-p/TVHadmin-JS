@@ -1,0 +1,62 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="application-name" content="TVHadmin">
+<title>TVHadmin></title>
+<link rel="stylesheet" href="style.css">
+<script src="include.js"></script>
+<script>
+  window.addEventListener('load',function() {
+    var mytop=document.getElementById("mobmenu");
+    mytop.addEventListener('click', function() {
+        var mynav=document.getElementById("navigation");
+        if (mynav.classList.contains('focus'))
+            mynav.classList.remove('focus');
+        else mynav.classList.add('focus');
+    });
+  },false);
+</script>
+</head> 
+<body>
+<div id="container">
+  <div id="navigation">
+    <div class="logo">
+      <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+    </div>
+    <div class="nav_bar">
+    <div class="navi"><a href="now.html">What's On Now</a></div>
+    <div class="navi"><a href="timeline.html">Timeline</a></div>
+    <div class="navi"><a href="channels.html">Channels</a></div>
+    <div class="navi"><a href="favourites.html">Favourite Channels</a></div>
+    <div class="navi"><a href="timers.html">Timers</a></div>
+    <div class="navi"><a href="recordings.html">Recordings</a></div>
+    <div class="navi"><a href="links.html">Series Links</a></div>
+    <div class="navi"><a href="status.html">Status</a></div>
+    <div class="navi"><a href="config.html">Configuration</a></div>
+      <form action="search.html" method="GET" name="telly" class="search">
+        <input type="text" name="find"><br>
+        <input type="submit" name="submit" value="Search">
+      </form>
+    </div>
+  </div>
+    <div id='layout'>
+     <div id='banner'>
+      <table>
+        <tr>
+	  <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>TVHadmin</h1></td>
+	</tr>
+      </table>
+     </div>
+If you can see this message, eiher TVHadmin has not been installed correctly, or your web browser does not have Javascript enabled.
+   </div>
+  </div>
+  <script>
+    var cookies = get_cookies();
+    if (cookies.HOME) loc = cookies.HOME + ".html";
+    else loc = "config.html";
+    window.location.href = loc;
+  </script>
+ </body>
+</html>
