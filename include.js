@@ -40,18 +40,6 @@ async function get_links() {
   return links;
 }
 
-async function delete_link(uuid) {
-  const url = "/api/idnode/delete?uuid=" + uuid;
-  const response = await fetch(url);
-  const json = await response.json();
-}
-
-async function delete_recording(uuid) {
-  const url = "/api/dvr/entry/remove?uuid=" + uuid;
-  const response = await fetch(url);
-  const json = await response.json();
-}
-
 async function get_recordings(sort) {
   const url = "/api/dvr/entry/grid?limit=99999"
   const response = await fetch(url);
