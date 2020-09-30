@@ -150,7 +150,6 @@
 	    </tr>
 	</table>
   </div>
-  <div id='wrapper'>
     <div id='config'>
       <form action="config.html" method="post" name="FormName" id="myForm">
 	<table class="group">
@@ -245,8 +244,11 @@
 	<div id="buttons">
 	    <input type="submit" class="submit" name="save" value="Save" onclick="selectAll()">
 	</div>
-    </form>
-    <script>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
         var m1 = document.FormName.all_channels;
         var m2 = document.FormName.elements.selected_channels;
 
@@ -301,10 +303,6 @@ async function main() {
   reloadForm(form, cookies);
 }
 main();
-    </script>
-   </div>
-  </div>
- </div>
-</div>
+</script>
 </body>
 </html>
