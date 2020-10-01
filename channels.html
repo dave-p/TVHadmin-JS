@@ -17,39 +17,187 @@
         else mynav.classList.add('focus');
     });
   },false);
+
+  function formSubmit()	{
+	document.whatandwhen.submit();
+  }
+
+  function create_by_event(event, event_id) {
+    event.preventDefault();
+    const profile_uuid = cookies.UUID;
+    fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(() => {
+        window.location.href = event.target.baseURI;
+    });
+}
+  
+  function create_by_series(event, event_id) {
+    event.preventDefault();
+    const profile_uuid = cookies.UUID;
+    fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(() => {
+        window.location.href = event.target.baseURI;
+    });
+  }
+
 </script>
 </head> 
 <body>
-<div id="container">
-  <div id="navigation">
-    <div class="logo">
-      <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+  <div id="container">
+    <div id="navigation">
+      <div class="logo">
+        <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+      </div>
+      <div class="nav_bar">
+      <div class="navi"><a href="now.html">What's On Now</a></div>
+      <div class="navi"><a href="timeline.html">Timeline</a></div>
+      <div class="navi"><a href="channels.html">Channels</a></div>
+      <div class="navi"><a href="favourites.html">Favourite Channels</a></div>
+      <div class="navi"><a href="timers.html">Timers</a></div>
+      <div class="navi"><a href="recordings.html">Recordings</a></div>
+      <div class="navi"><a href="links.html">Series Links</a></div>
+      <div class="navi"><a href="status.html">Status</a></div>
+      <div class="navi"><a href="config.html">Configuration</a></div>
+        <form action="search.html" method="GET" name="channels" class="search">
+          <input type="text" name="find"><br>
+          <input type="submit" name="submit" value="Search">
+        </form>
+      </div>
     </div>
-    <div class="nav_bar">
-    <div class="navi"><a href="now.html">What's On Now</a></div>
-    <div class="navi"><a href="timeline.html">Timeline</a></div>
-    <div class="navi"><a href="channels.html">Channels</a></div>
-    <div class="navi"><a href="favourites.html">Favourite Channels</a></div>
-    <div class="navi"><a href="timers.html">Timers</a></div>
-    <div class="navi"><a href="recordings.html">Recordings</a></div>
-    <div class="navi"><a href="links.html">Series Links</a></div>
-    <div class="navi"><a href="status.html">Status</a></div>
-    <div class="navi"><a href="config.html">Configuration</a></div>
-      <form action="search.html" method="GET" name="telly" class="search">
-        <input type="text" name="find"><br>
-        <input type="submit" name="submit" value="Search">
-      </form>
-    </div>
-  </div>
     <div id='layout'>
-     <div id='banner'>
-      <table>
-        <tr>
-	  <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Channels</h1></td>
-	</tr>
-      </table>
-     </div>
-   </div>
+      <div id='banner'>
+        <form name='whatandwhen' method='GET' action='channels.html' id='whatandwhen' hidden>
+          <table>
+            <tr>
+              <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Channels</h1></td>
+	      <td>Channel: <select name='which' size='1' id='select_channel' onchange='formSubmit()'></select></td>
+	      <td>
+                <label>All Dates <input type='checkbox' name='all' id='all' onchange='formSubmit()'></label>&nbsp;
+                <a href='channels.html' id='left' hidden><img src='images/left.png'></a>
+                <select name='when' size='1' id='select_date' onchange='formSubmit()'></select>&nbsp;
+                <a href='channels.html' id='right' hidden><img src='images/right.png'></a>
+	      </td>
+	    </tr>
+          </table>
+        </form>
+      </div>
+      <div id='content'>
+      </div>
+    </div>
   </div>
- </body>
+<script>
+  async function main() {
+    const params = new URLSearchParams(window.location.search);
+    var links = await get_links();
+    var slinks = []
+    links.forEach(function(l) {
+      slinks[l["serieslink"]] = 1;
+    });
+    
+    var lcn = 0;
+    if (cookies.CSORT == "1") lcn = 1;
+    var channels = await get_channels(lcn);
+    var channel_dropdown = document.getElementById("select_channel");
+    var i = 0;
+    channels.forEach(function(c) {
+      let opt = document.createElement("option");
+      opt.setAttribute("value", i);
+      if (lcn) opt.text = `{${c.number} ${c.name}`
+      else opt.text = `${c.name}`
+      channel_dropdown.appendChild(opt);
+      i++;
+    });
+    var which = params.get("which");
+    if (which) channel_dropdown.selectedIndex = which;
+    
+    var dt = new Date();
+    var today = dt - (dt%86400000) + (cookies.EPGSTART * 3600 * 1000)
+    if (params.get("when")) var when = Number(params.get("when"));
+    else var when = today;
+
+    var date_dropdown = document.getElementById("select_date");
+    if (params.get("all")) {
+      document.getElementById("all").checked = true;
+      date_dropdown.style.visibility = "hidden";
+    }
+    else date_dropdown.style.display = "visible";
+
+    if (!params.get("all")) {
+      let left = document.getElementById("left");
+      let right = document.getElementById("right");
+      let prev = when - 86400000;
+      if (prev >= today) {
+        left.href += `?which=${which}&when=${prev}`;
+        left.hidden = false;
+      }
+      var day = today;
+      for(i=0; i<8; i++) {
+        let d = strftime("%a %d/%n", day/1000);
+        let opt = document.createElement("option");
+        opt.setAttribute("value", day);
+        opt.text = d;
+        date_dropdown.appendChild(opt);
+        day += 86400000;
+      }
+      date_dropdown.selectedIndex = Math.floor((when-today)/86400000);
+      var next = when + 86400000;
+      if (next < day) {
+        right.href += `?which=${which}&when=${next}`;
+        right.hidden = false;
+      }
+    }
+    else var next = 0;
+    document.getElementById("whatandwhen").hidden = false;
+    if (which) {
+      var table = document.createElement("TABLE");
+      table.className = 'list';
+      var row = table.insertRow(-1);
+      row.className = 'heading';
+      var title = row.insertCell();
+      title.setAttribute('colspan', '4');
+      if (lcn) title.innerHTML = `<span class='channel_name'>${channels[which].number} ${channels[which].name}</span>`;
+      else title.innerHTML = `<span class='channel_name'>${channels[which].name}</span>`;
+      var events = await get_epg(channels[which].name, when, next);
+      var last_date = ' ';
+      events.forEach(function(e) {
+        if (next == 0) {
+          let d = strftime("%A %d/%n", e.start);
+          if (d != last_date) {
+            row = table.insertRow(-1);
+            row.className = 'newday';
+            row.innerHTML = `<td colspan='5'><span class='date_long'>${d}</span></td>`;
+            last_date = d;
+          }
+        }
+        row = table.insertRow(-1);
+        row.className = 'row_alt';
+        let start = strftime("%H:%M", e.start);
+        let stop = strftime("%H:%M", e.stop);
+        let desc = '';
+        if (e.summary) desc = e.summary;
+	else if (e.description) desc = e.description;
+        let s = `<td class='col_duration'>${start} - ${stop}</td>` +
+	    `<td class='col_title'>` +
+	    `<div class='epg_title'>${e.title}</div>` +
+	    `<div class='epg_subtitle'>${desc}</div></td>`;
+	if (!e.dvrState || e.dvrState != 'scheduled' && e.dvrState != 'recording') {
+	  s += `<td><a href='channels.html' onclick='create_by_event(event, "${e.eventId}")'><img src='images/rec_button1.png' alt='record' title='record'></a></td>`;
+	}
+	else {
+	  s += "<td></td>";
+	}
+	if (e.serieslinkUri && !slinks[e.serieslinkUri]) {
+	  s += `<td><a href='channels.html' onclick='create_by_series(event, "${e.eventId}")'><img src='images/rec_buttonS.png' alt='record series' title='record series'></a></td>`;
+	}
+	else {
+	  s += "<td></td>";
+	}
+	row.innerHTML = s;
+      });
+      var content = document.getElementById("content");
+      content.appendChild(table);
+    }
+  }
+  var cookies = get_cookies();
+  main();
+</script>
+</body>
 </html>

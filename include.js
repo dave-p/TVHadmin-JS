@@ -1,3 +1,18 @@
+async function get_epg(channel, start, to) {
+  var f = start/1000; var t = to/1000;
+  const prog = encodeURIComponent(channel);
+  if (t == 0) {
+    var url = `/api/epg/events/grid?channel=${prog}&limit=9999`;
+  }
+  else {
+    const filter = `[{"field":"stop","type":"numeric","value":"${f}","comparison":"gt"},{"field":"start","type":"numeric","value":"${t}","comparison":"lt"}]`;
+    var url = `/api/epg/events/grid?channel=${prog}&filter=${filter}&limit=9999`;
+  }
+  const response = await fetch(url);
+  const epg = await response.json();
+  return epg.entries;
+}
+
 async function get_epg_now(channel) {
   const prog = encodeURIComponent(channel);
   const url = "/api/epg/events/grid?channel=" + prog + "&mode=now";
@@ -133,7 +148,7 @@ function get_cookies() {
     return JSON.parse(decodeURIComponent(c));
   }
   catch {
-    var empty = {"Tag_All": "All", "Rec_All": "All", "Now_All": "All", "Tim_All": "All", "SORT": "1", "CSORT": "0", "TIMESPAN": "2"};
+    var empty = {"Tag_All": "All", "Rec_All": "All", "Now_All": "All", "Tim_All": "All", "SORT": "1", "CSORT": "0", "TIMESPAN": "2", "EPGSTART": "0"};
     return empty;
   }
 }
@@ -154,17 +169,11 @@ function strftime(sFormat, udate) {
   var nDay = date.getDay(),
     nDate = date.getDate(),
     nMonth = date.getMonth(),
-    nYear = date.getFullYear(),
     nHour = date.getHours(),
     aDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
     aMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-    aDayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
-    isLeapYear = function() {
-      return (nYear%4===0 && nYear%100!==0) || nYear%400===0;
-    },
     zeroPad = function(nNum, nPad) {
-      return ('0000000000' + nNum).slice(-nPad);
-//      return ((Math.pow(10, nPad) + nNum) + '').slice(1);
+      return ('00000000' + nNum).slice(-nPad);
     };
   return sFormat.replace(/%[a-z]/gi, function(sMatch) {
     return (({
@@ -173,7 +182,6 @@ function strftime(sFormat, udate) {
       '%b': aMonths[nMonth].slice(0,3),
       '%B': aMonths[nMonth],
       '%c': date.toUTCString(),
-      '%C': Math.floor(nYear/100),
       '%d': zeroPad(nDate, 2),
       '%e': nDate,
       '%F': date.toISOString().slice(0,10),
@@ -192,8 +200,6 @@ function strftime(sFormat, udate) {
       '%w': nDay,
       '%x': date.toLocaleDateString(),
       '%X': date.toLocaleTimeString(),
-      '%y': (nYear + '').slice(2),
-      '%Y': nYear,
       '%z': date.toTimeString().replace(/.+GMT([+-]\d+).+/, '$1'),
       '%Z': date.toTimeString().replace(/.+\((.+?)\)$/, '$1')
     }[sMatch] || '') + '') || sMatch;
