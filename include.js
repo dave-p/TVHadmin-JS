@@ -21,6 +21,16 @@ async function get_epg_now(channel) {
   return epg.entries;
 }
 
+async function search_epg(channel, needle) {
+  const prog = encodeURIComponent(channel);
+  const reg = encodeURIComponent(escapeRegExp(needle));
+  const url = `/api/epg/events/grid?limit=9999&title=${reg}`;
+  if (channel != "") url += `&channel=${prog}`;
+  const response = await fetch(url);
+  const epg = await response.json();
+  return epg.entries;
+}
+
 async function get_timers() {
   const url = "/api/dvr/entry/grid_upcoming?sort=start";
   const response = await fetch(url);
@@ -160,6 +170,11 @@ function intersect(tags, media) {
   return 0;
 }
 
+// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+function escapeRegExp(string) {
+  return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 /* Port of strftime() by T. H. Doan (https://thdoan.github.io/strftime/)
  *
  * Un-needed features removed. Accepts Unix timestamp.
@@ -169,6 +184,7 @@ function strftime(sFormat, udate) {
   var nDay = date.getDay(),
     nDate = date.getDate(),
     nMonth = date.getMonth(),
+    nYear = date.getFullYear(),
     nHour = date.getHours(),
     aDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
     aMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -200,6 +216,8 @@ function strftime(sFormat, udate) {
       '%w': nDay,
       '%x': date.toLocaleDateString(),
       '%X': date.toLocaleTimeString(),
+      '%y': (nYear + '').slice(2),
+      '%Y': nYear,
       '%z': date.toTimeString().replace(/.+GMT([+-]\d+).+/, '$1'),
       '%Z': date.toTimeString().replace(/.+\((.+?)\)$/, '$1')
     }[sMatch] || '') + '') || sMatch;

@@ -17,6 +17,22 @@
         else mynav.classList.add('focus');
     });
   },false);
+
+  function create_by_event(event, event_id) {
+    event.preventDefault();
+    const profile_uuid = cookies.UUID;
+    fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(() => {
+        window.location.href = event.target.baseURI;
+    });
+  }
+
+  function create_by_series(event, event_id) {
+    event.preventDefault();
+    const profile_uuid = cookies.UUID;
+    fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(() => {
+        window.location.href = event.target.baseURI;
+    });
+  }
 </script>
 </head> 
 <body>
@@ -49,11 +65,64 @@
 	</tr>
       </table>
      </div>
+     <div id='wrapper'>
+       <div id='content'>
+       </div>
+     </div>
    </div>
   </div>
 <script>
-let params = new URLSearchParams(window.location.search);
-console.log(window.location.search, params.get('find'));
+  async function main() {
+    const params = new URLSearchParams(window.location.search);
+    var needle = params.get('find');
+    if (needle == "") return;
+    var links = await get_links();
+    var slinks = []
+    links.forEach(function(l) {
+      slinks[l["serieslink"]] = 1;
+    });
+    var table = document.createElement("TABLE");
+    table.className = 'list';
+    var last_date = ' ';
+    var results = await search_epg("", needle);
+    for (e of results) {
+      let d = strftime("%A %d/%n", e.start);
+      if (d != last_date) {
+        row = table.insertRow(-1);
+        row.className = 'newday';
+        row.innerHTML = `<td colspan='5'><span class='date_long'>${d}</span></td>`;
+        last_date = d;
+      }
+      row = table.insertRow(-1);
+      row.className = 'row_alt';
+      let start = strftime("%H:%M", e.start);
+      let desc = '';
+      if (e.summary) desc = e.summary;
+      else if (e.description) desc = e.description;
+      let s = `<td class='col_duration'><span class='time_duration'><span class='time_start'>${start}</span></span></td>` +
+	    `<td class='col_channel'><div class='channel_name'>${e.channelName}</div></td>` +
+	    `<td class='col_title'>` +
+	    `<div class='epg_title'>${e.title}</div>` +
+	    `<div class='epg_subtitle'>${desc}</div></td>`;
+      if (!e.dvrState || e.dvrState != 'scheduled' && e.dvrState != 'recording') {
+	s += `<td><a href='channels.html' onclick='create_by_event(event, "${e.eventId}")'><img src='images/rec_button1.png' alt='record' title='record'></a></td>`;
+      }
+      else {
+	s += "<td></td>";
+      }
+      if (e.serieslinkUri && !slinks[e.serieslinkUri]) {
+	s += `<td><a href='channels.html' onclick='create_by_series(event, "${e.eventId}")'><img src='images/rec_buttonS.png' alt='record series' title='record series'></a></td>`;
+      }
+      else {
+	s += "<td></td>";
+      }
+      row.innerHTML = s;
+    }
+
+    var content = document.getElementById("content");
+    content.appendChild(table);
+  }
+main();
 </script>
  </body>
 </html>
