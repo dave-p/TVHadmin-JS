@@ -108,10 +108,10 @@
     let taglist = document.getElementById(id);
     let s = "";
     for (k in tags) {
-      let ut = encodeURIComponent(tags[k]);
+      let ut = encodeURIComponent(k);
       if (cookies["Tag_"+ut]) {
 	let g = prefix + ut;
-	s = s + tags[k] + ": <input type='checkbox' name='" + g + "'>";
+	s = s + k + ": <input type='checkbox' name='" + g + "'>";
       }
     }
     taglist.innerHTML = s;
