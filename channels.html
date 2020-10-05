@@ -91,23 +91,27 @@
     links.forEach(function(l) {
       slinks[l["serieslink"]] = 1;
     });
-    
+
     var lcn = 0;
     if (cookies.CSORT == "1") lcn = 1;
     var channels = await get_channels(lcn);
     var channel_dropdown = document.getElementById("select_channel");
+    let opt = document.createElement("option");
+    opt.setAttribute("value", -1);
+    opt.text = "Select Channel"
+    channel_dropdown.appendChild(opt);
     var i = 0;
     channels.forEach(function(c) {
       let opt = document.createElement("option");
       opt.setAttribute("value", i);
-      if (lcn) opt.text = `{${c.number} ${c.name}`
+      if (lcn) opt.text = `${c.number} ${c.name}`
       else opt.text = `${c.name}`
       channel_dropdown.appendChild(opt);
       i++;
     });
     var which = params.get("which");
-    if (which) channel_dropdown.selectedIndex = which;
-    
+    if (which) channel_dropdown.selectedIndex = Number(which) + 1;
+
     var dt = new Date();
     var today = dt - (dt%86400000) + (cookies.EPGSTART * 3600 * 1000)
     if (params.get("when")) var when = Number(params.get("when"));
