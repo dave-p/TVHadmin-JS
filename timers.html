@@ -17,6 +17,56 @@
         else mynav.classList.add('focus');
     });
   },false);
+
+  async function get_autorecs() {
+    const response = await fetch("/api/dvr/autorec/grid?limit=9999");
+    const recs = await response.json();
+    let ret = [];
+    recs.entries.forEach(function(r) {
+      ret[r.uuid] = r.serieslink;
+    });
+    return ret;
+  }
+
+  function delete_timer(event, uuid) {
+    event.preventDefault();
+    fetch(`/api/dvr/entry/stop?uuid==${uuid}`).then(() => {
+        window.location.href = event.target.baseURI;
+    });
+    return;
+  }
+
+  function toggle(event, uuid, enabled) {
+    if (enabled == "false") mode = true;
+    else mode = false;
+    let data = encodeURIComponent(`[{"enabled": ${mode}, "uuid": "${uuid}"}]`);
+    fetch(`/api/idnode/save?node=${data}`).then(() => {
+        window.location.href = event.target.baseURI;
+    });
+    return;
+  }
+
+  function check_timer(timers, t) {
+    if (timers.length < 2) return 0;
+    if (!t.enabled) return 0;
+    let tstart = t.start_real;
+    let tstop = t.stop_real;
+    let tuuid = t.uuid;
+    let tchannel = t.channel;
+    for (m of timers) {
+      if (!m.enabled) continue;
+      if (m.channel === tchannel) continue;
+      if (m.uuid === tuuid) continue;
+      if ((tstart >= m.start_real && tstart < m.stop_real)
+          ||(m.start_real >= tstart && m.start_real < tstop)) {
+//	if (!isset($settings['CLASHDET'])) return 1;
+//	if (get_mux_for_timer($m) === get_mux_for_timer($t)) return 1;
+//	return 2;
+	return 1;
+      }
+    }
+    return 0;
+  }
 </script>
 </head> 
 <body>
@@ -49,7 +99,74 @@
 	</tr>
       </table>
      </div>
+     <div id='wrapper'>
+       <div id='content'>
+         <table class='list' id='list'>
+	  <tr class='heading'>
+	   <td class='col_info'></td>
+	   <td class='col_channel'><h2>Channel</h2></td>
+	   <td class='col_date'><h2>Date</h2></td>
+	   <td class='wideonly col_start'><h2>Start</h2></td>
+	   <td class='wideonly col_stop'><h2>Stop</h2></td>
+	   <td class='col_name'><h2>Name</h2></td>
+	   <td class='col_channel'><h2>Mode</h2></td>
+	   <td class='col_delete'><h2>En</h2></td>
+	   <td class='col_delete'></td>
+	  </tr>
+	 </table>
+       </div>
+     </div>
    </div>
   </div>
+<script>
+  async function main() {
+    var images = ['images/tick_green.png','images/tick_yellow.png','images/tick_red.png','images/rec.png'];
+    var timers = await get_timers();
+    var autorecs = await get_autorecs();
+    var now = new Date() / 1000;
+    var table = document.getElementById("list");
+    timers.forEach(function(t) {
+      let start = strftime("%H:%M", t.start);
+      let stop = strftime("%H:%M", t.stop);
+      let d = strftime("%a %d/%n", t.start);
+      if(t.start_real < now) {
+        var status = 3;
+      }
+      else {
+        var status = check_timer(timers, t);
+      }
+      if (t.autorec != "") {
+	var type = "Autorec", type2 = "Autorec";
+	if (autorecs[t.autorec] != "") {
+	  type = "Series Link", type2 = "Series";
+	}
+      }
+      else if (t.timerec != "") {
+	var type = "Timed Recording", type2 = "Timer";
+      }
+      else {
+	var type = "", type2 = "";
+      }
+      if (t.enabled == true) {
+	var en = "checked";
+      }
+      else {
+        var en = "";
+      }
+      let row = table.insertRow(-1);
+      row.className = 'row_alt';
+      row.title = t.disp_extratext;
+      let s = `<td class='col_info'><img src='${images[status]}'></td><td class='col_channel'>${t.channelname}</td>` +
+	`<td class='col_date'>${d}<span class='thinonly'><br />${start}-${stop}</span></td>` +
+	`<td class='wideonly col_start'>${start}</td><td class='wideonly col_stop'>${stop}</td>` +
+	`<td class='col_name'>${t.disp_title}</td>` +
+	`<td class='col_channel'><span class='wideonly'>${type}</span><span class='thinonly'>${type2}</span></td>` +
+        `<td class='col_delete'><input type='checkbox' class='smaller' oninput='toggle(event,"${t.uuid}","${t.enabled}")' ${en}></td>` +
+        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(event,${t.uuid})'><img src='images/delete.png' title='Delete Timer'></a></td>`;
+      row.innerHTML = s;
+    });
+  }
+  main();
+</script>
  </body>
 </html>
