@@ -1,3 +1,19 @@
+function create_by_event(event, event_id) {
+  event.preventDefault();
+  const profile_uuid = cookies.UUID;
+  fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(() => {
+      window.location.href = event.target.baseURI;
+  });
+}
+
+function create_by_series(event, event_id) {
+  event.preventDefault();
+  const profile_uuid = cookies.UUID;
+  fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(() => {
+        window.location.href = event.target.baseURI;
+  });
+}
+
 async function get_epg(channel, start, to) {
   var f = start/1000; var t = to/1000;
   const prog = encodeURIComponent(channel);
