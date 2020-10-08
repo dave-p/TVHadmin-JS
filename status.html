@@ -16,7 +16,43 @@
             mynav.classList.remove('focus');
         else mynav.classList.add('focus');
     });
+    var tableArr = document.getElementsByClassName('list');
+    var cellWidths = new Array();
+    // get widest
+    for(i = 0; i < tableArr.length; i++) {
+        for(j = 0; j < tableArr[i].rows[1].cells.length; j++) {
+           var cell = tableArr[i].rows[1].cells[j];
+           if(!cellWidths[j] || cellWidths[j] < cell.clientWidth)
+                cellWidths[j] = cell.clientWidth;
+        }
+    }
+    // set all columns to the widest width found
+    for(i = 0; i < tableArr.length; i++) {
+        for(j = 0; j < tableArr[i].rows[1].cells.length; j++) {
+            tableArr[i].rows[1].cells[j].style.width = cellWidths[j]+'px';
+        }
+    }
   },false);
+
+  async function get_input_status() {
+    const response = await fetch("/api/status/inputs");
+    const ret = await response.json();
+    return ret.entries;
+  }
+
+  async function get_server_info() {
+    const response = await fetch("/api/serverinfo");
+    const ret = await response.json();
+    return ret;
+  }
+
+  function clear_input_stats(event, uuid) {
+    event.preventDefault();
+    fetch(`$urlp/api/status/inputclrstats?uuid=${uuid}`).then(() => {
+      window.location.href = event.target.baseURI;
+    });
+  }
+
 </script>
 </head> 
 <body>
@@ -35,21 +71,98 @@
     <div class="navi"><a href="links.html">Series Links</a></div>
     <div class="navi"><a href="status.html">Status</a></div>
     <div class="navi"><a href="config.html">Configuration</a></div>
-      <form action="search.html" method="GET" name="telly" class="search">
-        <input type="text" name="find"><br>
-        <input type="submit" name="submit" value="Search">
-      </form>
-    </div>
+    <form action="search.html" method="GET" name="telly" class="search">
+      <input type="text" name="find"><br>
+      <input type="submit" name="submit" value="Search">
+    </form>
   </div>
-    <div id='layout'>
-     <div id='banner'>
+  </div>
+  <div id='layout'>
+    <div id='banner'>
       <table>
         <tr>
 	  <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Status</h1></td>
 	</tr>
       </table>
      </div>
-   </div>
+    <div id='wrapper'>
+      <div id='content'>
+	<table class='list' id='systable'>
+	  <tr class='heading'>
+	    <td class='col_name' colspan=2><h2>System Information</h2></td>
+	  </tr>
+	</table>
+      </div>
+    </div>
   </div>
+</div>
+<script>
+  const items = {
+	uuid: 	'uuid',
+	subs: 	'Subscribers',
+	weight: 'Weight',
+	bps: 	'Bandwidth',
+	ber: 	'Bit Error Rate',
+	unc: 	'Uncorrected Blocks',
+	te: 	'Transport Errors',
+	cc: 	'Continuity Errors',
+	signal: 'Signal Strength',
+	snr: 	'Signal / Noise Ratio',
+	stream: 'Stream',
+	ec_block: 'Block Error Count',
+	tc_bit: 'Total Bit Error Count',
+	tc_block: 'Total Block Error Count',
+	ec_bit: 'Bit Error Count',
+  };
+  async function main() {
+    var content = document.getElementById("content");
+    var info = await get_server_info();
+    var systable = document.getElementById("systable");
+    var row = systable.insertRow(-1);
+    row.className = 'row_alt';
+    row.innerHTML = `<td class='col_channel'>Software Version</td><td class='col_name'>${info.sw_version}</td>`
+
+    var stats = await get_input_status();
+    for (var s of stats) {
+      switch(s.signal_scale) {
+	case 1:
+	  s.signal = Math.round(s.signal * 100 / 65535) + ' %';
+	  break;
+	case 2:
+	  s.signal = Math.round(s.signal / 1000, 1) + ' dBm';
+	  break;
+	default:
+	  s.signal = 0;
+      }
+      switch(s.snr_scale) {
+	case 1:
+	  s.snr = Math.round(s.snr * 100 / 65535) + ' %';
+	  break;
+	case 2:
+	  s.snr = Math.round(s.snr / 1000, 1) + ' dB';
+	  break;
+	default:
+	  s.snr = 0;
+      }    
+      var table = document.createElement("TABLE");
+      table.className = 'list';
+      var row = table.insertRow(-1);
+      row.className = 'heading';
+      var title = row.insertCell();
+      title.className = 'col_name';
+      title.setAttribute('colspan', '2');
+      title.innerHTML = `<h2>${s.input}</h2>`;
+      for (var k in s) {
+        if(items[k]) {
+        row = table.insertRow(-1);
+        row.className = 'row_alt';
+        row.innerHTML = `<td class='col_channel'>${items[k]}</td><td class=col_name>${s[k]}</td>`
+        }
+      }
+      content.append(table);
+    }
+  }
+  main();
+  </script>
  </body>
 </html>
