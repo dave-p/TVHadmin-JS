@@ -51,21 +51,61 @@
     if (!t.enabled) return 0;
     let tstart = t.start_real;
     let tstop = t.stop_real;
-    let tuuid = t.uuid;
-    let tchannel = t.channel;
     for (m of timers) {
       if (!m.enabled) continue;
-      if (m.channel === tchannel) continue;
-      if (m.uuid === tuuid) continue;
+      if (m.channel === t.channel) continue;
+      if (m.uuid === t.uuid) continue;
       if ((tstart >= m.start_real && tstart < m.stop_real)
           ||(m.start_real >= tstart && m.start_real < tstop)) {
-//	if (!isset($settings['CLASHDET'])) return 1;
-//	if (get_mux_for_timer($m) === get_mux_for_timer($t)) return 1;
-//	return 2;
-	return 1;
+	if (!cookies.CLASHDET) return 1;
+	if (get_mux_for_timer(m) === get_mux_for_timer(t)) return 1;
+	return 2;
       }
     }
     return 0;
+  }
+
+  function check_event(timers, e) {
+    estart = e.start;
+    estop = e.stop;
+    for (t of timers) {
+      if (!t.enabled) continue;
+      if((estart >= t.start_real && estart < t.stop_real)
+	  ||(t.start_real >= estart && t.start_real < estop)) {
+        if (get_mux_for_event(e) === get_mux_for_timer(t)) return 1;
+        return 2;
+      }
+    }
+    return 0;
+  }
+
+  function get_mux_for_event(evt) {
+    var id = evt.channelUuid;
+    var r = get_mux_for_channel(id);
+    return r;
+  }
+
+  function get_mux_for_timer(timer) {
+    var id = timer.channel;
+    var r = get_mux_for_channel(id);
+    return r;
+  }
+
+  function get_mux_for_channel(ch) {
+    var i = channels.findIndex(c => c["uuid"] === ch);
+    if (channels[i].mux) return channels[i].mux;
+    var svc = channels[i].services[0];
+    let j = muxes.findIndex(m => m["key"] === svc);
+    let name = muxes[j].val;
+    let mux = name.substr(0, name.lastIndexOf('/'));
+    channels[i].mux = mux;
+    return mux;
+  }
+
+  async function get_muxes() {
+    const response = await fetch("/api/service/list?enum=1");
+    const muxes = await response.json();
+    return muxes.entries;
   }
 </script>
 </head> 
@@ -114,6 +154,8 @@
 	   <td class='col_delete'></td>
 	  </tr>
 	 </table>
+	 <div id='clash'>
+	 </div>
        </div>
      </div>
    </div>
@@ -121,8 +163,13 @@
 <script>
   async function main() {
     var images = ['images/tick_green.png','images/tick_yellow.png','images/tick_red.png','images/rec.png'];
+    var clashes = [];
     var timers = await get_timers();
     var autorecs = await get_autorecs();
+    if (cookies.CLASHDET) {
+      channels = await get_channels();
+      muxes = await get_muxes();
+    }
     var now = new Date() / 1000;
     var table = document.getElementById("list");
     timers.forEach(function(t) {
@@ -134,6 +181,7 @@
       }
       else {
         var status = check_timer(timers, t);
+        if (status == 2) clashes.push(t);
       }
       if (t.autorec != "") {
 	var type = "Autorec", type2 = "Autorec";
@@ -165,7 +213,44 @@
         `<td class='col_delete'><a href='timers.html' onclick='delete_timer(event,${t.uuid})'><img src='images/delete.png' title='Delete Timer'></a></td>`;
       row.innerHTML = s;
     });
+    var s = '';
+    for await (const c of clashes) {
+      if (!c.uri) continue;
+      var title = c.disp_title;
+      var str = title.match(/^(.*?)\.\.\./);
+      if (str) title = str[1];
+      if (str = title.match(/^New: (.*)/)) {
+        var ts = str[1];
+      }
+      else {
+        var ts = title;
+      }
+      var alts = await search_epg("", ts);
+      if (alts.length > 1) {
+        s += `<p>Alternatives for \"${ts}\"</p><ul>`;
+        alts.forEach(function(a) {
+          if (a.dvrUuid && (a.dvrUuid == c.uuid)) return;
+          var sl = "";
+          if (a.deafsigned) sl = '[SL]';
+	  if (a.episodeUri && (c.uri === a.episodeUri)) {
+	    var when = strftime("%a %e/%m %H:%M", a.start);
+	    if (!check_event(timers, a)) {
+	      s += `<li>${when} ${a.channelName} ${a.title} ${sl}</li>`;
+	    }
+	    else {
+	      s += `<li>${when} ${a.channelName} ${a.title} ${sl} (CLASH)</li>`;
+	    }
+	  }
+        });
+        s += "</ul>";
+      }
+    }
+    var notice = document.getElementById("clash");
+    notice.innerHTML = s;
   }
+
+  var cookies = get_cookies();
+  var channels = [], muxes = [];
   main();
 </script>
  </body>
