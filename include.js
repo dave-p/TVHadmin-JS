@@ -16,13 +16,16 @@ function create_by_series(event, event_id) {
 
 async function get_epg(channel, start, to) {
   var f = start/1000; var t = to/1000;
-  const prog = encodeURIComponent(channel);
   if (t == 0) {
-    var url = `/api/epg/events/grid?channel=${prog}&limit=9999`;
+    var url = `/api/epg/events/grid?limit=99999`;
   }
   else {
     const filter = `[{"field":"stop","type":"numeric","value":"${f}","comparison":"gt"},{"field":"start","type":"numeric","value":"${t}","comparison":"lt"}]`;
-    var url = `/api/epg/events/grid?channel=${prog}&filter=${filter}&limit=9999`;
+    var url = `/api/epg/events/grid?filter=${filter}&limit=99999`;
+  }
+  if (channel) {
+    const prog = encodeURIComponent(channel);
+    url += `&channel=${channel}`;
   }
   const response = await fetch(url);
   const epg = await response.json();
@@ -267,5 +270,6 @@ htmlspecialchars.specialchars = [
   [ '&', '&amp;' ],
   [ '<', '&lt;' ],
   [ '>', '&gt;' ],
-  [ '"', '&quot;' ]
+  [ '"', '&quot;' ],
+  [ "'", '&apos;' ]
 ];
