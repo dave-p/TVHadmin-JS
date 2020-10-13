@@ -176,7 +176,7 @@
 	`<td class='wideonly col_time'>${time}</td>` +
 	"<td class='col_channel'><div class='channel_name'>";
       if (cookies.ICONS && r.channel_icon) {
-        s = s + `<img src="${r.channel_icon}" height='48' width='80' alt="${r.channelname}" title="${r.channelname}">`;
+        s = s + `<img src="/${r.channel_icon}" height='48' width='80' alt="${r.channelname}" title="${r.channelname}">`;
       }
       else s = s + r["channelname"];
       s = s + `</div></td><td class='wideonly col_length'>${length}</td>` +
