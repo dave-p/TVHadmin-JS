@@ -15,12 +15,11 @@ function create_by_series(event, event_id) {
 }
 
 async function get_epg(channel, start, to) {
-  var f = start/1000; var t = to/1000;
-  if (t == 0) {
+  if (to == 0) {
     var url = `/api/epg/events/grid?limit=99999`;
   }
   else {
-    const filter = `[{"field":"stop","type":"numeric","value":"${f}","comparison":"gt"},{"field":"start","type":"numeric","value":"${t}","comparison":"lt"}]`;
+    const filter = `[{"field":"stop","type":"numeric","value":"${start}","comparison":"gt"},{"field":"start","type":"numeric","value":"${to}","comparison":"lt"}]`;
     var url = `/api/epg/events/grid?filter=${filter}&limit=99999`;
   }
   if (channel) {

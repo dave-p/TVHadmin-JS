@@ -96,8 +96,8 @@
     var which = params.get("which");
     if (which) channel_dropdown.selectedIndex = Number(which) + 1;
 
-    var dt = new Date();
-    var today = dt - (dt%86400000) + (cookies.EPGSTART * 3600 * 1000)
+    var dt = new Date()/1000;
+    var today = dt - (dt%86400) + (cookies.EPGSTART * 3600)
     if (params.get("when")) var when = Number(params.get("when"));
     else var when = today;
 
@@ -106,27 +106,27 @@
       document.getElementById("all").checked = true;
       date_dropdown.style.visibility = "hidden";
     }
-    else date_dropdown.style.display = "visible";
+    else date_dropdown.style.visibility = "visible";
 
     if (!params.get("all")) {
       let left = document.getElementById("left");
       let right = document.getElementById("right");
-      let prev = when - 86400000;
+      let prev = when - 86400;
       if (prev >= today) {
         left.href += `?which=${which}&when=${prev}`;
         left.hidden = false;
       }
       var day = today;
       for(i=0; i<8; i++) {
-        let d = strftime("%a %d/%n", day/1000);
+        let d = strftime("%a %d/%n", day);
         let opt = document.createElement("option");
         opt.setAttribute("value", day);
         opt.text = d;
         date_dropdown.appendChild(opt);
-        day += 86400000;
+        day += 86400;
       }
-      date_dropdown.selectedIndex = Math.floor((when-today)/86400000);
-      var next = when + 86400000;
+      date_dropdown.selectedIndex = Math.floor((when-today)/86400);
+      var next = when + 86400;
       if (next < day) {
         right.href += `?which=${which}&when=${next}`;
         right.hidden = false;

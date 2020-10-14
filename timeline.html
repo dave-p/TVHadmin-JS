@@ -145,7 +145,7 @@
 
     var channels = await get_channels(lcn);
     var tags = await get_channeltags();
-    var events = await get_epg('', tstart*1000, tend*1000);
+    var events = await get_epg('', tstart, tend);
     var table = document.getElementById("list");
     var i = 0;
     for (const c of channels) {
