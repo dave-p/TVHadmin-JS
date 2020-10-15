@@ -16,11 +16,11 @@ function create_by_series(event, event_id) {
 
 async function get_epg(channel, start, to) {
   if (to == 0) {
-    var url = `/api/epg/events/grid?limit=99999`;
+    var url = `/api/epg/events/grid?limit=9999`;
   }
   else {
     const filter = `[{"field":"stop","type":"numeric","value":"${start}","comparison":"gt"},{"field":"start","type":"numeric","value":"${to}","comparison":"lt"}]`;
-    var url = `/api/epg/events/grid?filter=${filter}&limit=99999`;
+    var url = `/api/epg/events/grid?filter=${filter}&limit=9999`;
   }
   if (channel) {
     const prog = encodeURIComponent(channel);
@@ -43,32 +43,31 @@ async function get_epg_now(channel) {
 }
 
 async function search_epg(channel, needle) {
-  const prog = encodeURIComponent(channel);
   const reg = encodeURIComponent(escapeRegExp(needle));
   const url = `/api/epg/events/grid?limit=9999&title=${reg}`;
-  if (channel != "") url += `&channel=${prog}`;
+  if (channel != "") {
+    const prog = encodeURIComponent(channel);
+    url += `&channel=${prog}`;
+  }
   const response = await fetch(url);
   const epg = await response.json();
   return epg.entries;
 }
 
 async function get_timers() {
-  const url = "/api/dvr/entry/grid_upcoming?sort=start";
-  const response = await fetch(url);
+  const response = await fetch("/api/dvr/entry/grid_upcoming?sort=start");
   const timers = await response.json();
   return timers.entries;
 }
 
 async function get_profiles() {
-  const url = "/api/dvr/config/grid";
-  const response = await fetch(url);
+  const response = await fetch("/api/dvr/config/grid");
   const profiles = await response.json();
   return profiles.entries;
 }
 
 async function get_channeltags() {
-  const url = "/api/channeltag/list"
-  const response = await fetch(url);
+  const response = await fetch("/api/channeltag/list");
   const tags = await response.json();
   let ret = {"All":"All"};
   tags.entries.forEach(function(tag) {
@@ -78,35 +77,42 @@ async function get_channeltags() {
 }
 
 async function get_links() {
-  const url = "/api/dvr/autorec/grid"
-  const response = await fetch(url);
+  const response = await fetch("/api/dvr/autorec/grid");
   const json = await response.json();
   const links = json.entries;
-  links.sort(sort_links);
+  links.sort(function(a, b) {
+    return sort_title(a.title, b.title);
+  });
   return links;
 }
 
 async function get_recordings(sort) {
-  const url = "/api/dvr/entry/grid?limit=99999"
-  const response = await fetch(url);
+  const response = await fetch("/api/dvr/entry/grid?limit=9999");
   const json = await response.json();
   const recordings = json.entries;
   switch(sort) {
     case "0":
-      recordings.sort(sort_recordings);
+      recordings.sort(function(a, b) {
+	return (a.start - b.start);
+      });
       break;
     case "1":
-      recordings.sort(sort_recordings_desc);
+      recordings.sort(function(a, b) {
+	return (b.start - a.start);
+      });
       break;
     case "2":
-      recordings.sort(sort_recordings_title);
+      recordings.sort(function(a, b) {
+	var ret = sort_title(a.disp_title, b.disp_title);
+	if (ret == 0) return (a.start - b.start);
+	return ret;
+      });
   }
   return recordings;
 }
 
 async function get_channels(sort) {
-  const url = "/api/channel/grid?limit=9999";
-  const response = await fetch(url);
+  const response = await fetch("/api/channel/grid?limit=9999");
   const json = await response.json();
   const channels = json.entries;
   if (sort == 0) {
@@ -122,10 +128,6 @@ async function get_channels(sort) {
   return channels;
 }
 
-function sort_links(a, b) {
-  return sort_title(a.title, b.title);
-}
-  
 function sort_title(x, y) {
   if (x.startsWith('New:')) {
     if (x[4] == ' ') x = x.substring(5);
@@ -139,30 +141,12 @@ function sort_title(x, y) {
   return strncmp(x, y);
 }
 
-function sort_recordings(a, b) {
-  return (a.start - b.start);
-}
-
-function sort_recordings_desc(a, b) {
-  return (b.start - a.start);
-}
-
-function sort_recordings_title(a,b) {
-  var ret = sort_title(a.disp_title, b.disp_title);
-  if (ret == 0) return (a.start - b.start);
-  return ret;
-}
-
 function strcasecmp(a, b) {
-  var s1 = (a.name + '').toLowerCase()
-  var s2 = (b.name + '').toLowerCase()
-
-  if (s1 > s2) {
-    return 1
-  } else if (s1 === s2) {
-    return 0
-  }
-  return -1
+  let s1 = (a.name + '').toLowerCase()
+  let s2 = (b.name + '').toLowerCase()
+  if (s1 > s2) return 1;
+  else if (s1 === s2) return 0;
+  return -1;
 }
 
 function strncmp(str1, str2, n) {
