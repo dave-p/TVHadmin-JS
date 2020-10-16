@@ -16,6 +16,9 @@
             mynav.classList.remove('focus');
         else mynav.classList.add('focus');
     });
+  },false);
+
+  function set_table_layouts() {
     var tableArr = document.getElementsByClassName('list');
     var cellWidths = new Array();
     // get widest
@@ -32,7 +35,7 @@
             tableArr[i].rows[1].cells[j].style.width = cellWidths[j]+'px';
         }
     }
-  },false);
+  }
 
   async function get_input_status() {
     const response = await fetch("/api/status/inputs");
@@ -46,10 +49,9 @@
     return ret;
   }
 
-  function clear_input_stats(event, uuid) {
-    event.preventDefault();
-    fetch(`$urlp/api/status/inputclrstats?uuid=${uuid}`).then(() => {
-      window.location.href = event.target.baseURI;
+  function clear_input_stats(uuid) {
+    fetch(`/api/status/inputclrstats?uuid=${uuid}`).then(() => {
+      location.reload();
     });
   }
 
@@ -150,8 +152,10 @@
       row.className = 'heading';
       var title = row.insertCell();
       title.className = 'col_name';
-      title.setAttribute('colspan', '2');
       title.innerHTML = `<h2>${s.input}</h2>`;
+      title = row.insertCell();
+      title.className = 'col_name';
+      title.innerHTML = `<button type='button' onclick='clear_input_stats("${s.uuid}")'>Clear Counters</button>`;
       for (var k in s) {
         if(items[k]) {
         row = table.insertRow(-1);
@@ -161,6 +165,7 @@
       }
       content.append(table);
     }
+    set_table_layouts();
   }
   main();
   </script>
