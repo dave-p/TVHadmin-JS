@@ -28,10 +28,16 @@
     return ret;
   }
 
-  function delete_timer(event, uuid) {
+  function delete_timer(event, uuid, running) {
     event.preventDefault();
-    fetch(`/api/dvr/entry/stop?uuid==${uuid}`).then(() => {
-        window.location.href = event.target.baseURI;
+    if (running) {
+      var url = `/api/dvr/entry/stop?uuid=${uuid}`;
+    }
+    else {
+      var url = `/api/dvr/entry/cancel?uuid=${uuid}`
+    }
+    fetch(url).then(() => {
+        location.reload();
     });
     return;
   }
@@ -41,7 +47,7 @@
     else mode = false;
     let data = encodeURIComponent(`[{"enabled": ${mode}, "uuid": "${uuid}"}]`);
     fetch(`/api/idnode/save?node=${data}`).then(() => {
-        window.location.href = event.target.baseURI;
+        location.reload();
     });
     return;
   }
@@ -178,10 +184,12 @@
       let d = strftime("%a %d/%n", t.start);
       if(t.start_real < now) {
         var status = 3;
+        var running = 1;
       }
       else {
         var status = check_timer(timers, t);
         if (status == 2) clashes.push(t);
+        var running = 0;
       }
       if (t.autorec != "") {
 	var type = "Autorec", type2 = "Autorec";
@@ -210,7 +218,7 @@
 	`<td class='col_name'>${t.disp_title}</td>` +
 	`<td class='col_channel'><span class='wideonly'>${type}</span><span class='thinonly'>${type2}</span></td>` +
         `<td class='col_delete'><input type='checkbox' class='smaller' oninput='toggle(event,"${t.uuid}","${t.enabled}")' ${en}></td>` +
-        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(event,${t.uuid})'><img src='images/delete.png' title='Delete Timer'></a></td>`;
+        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(event,"${t.uuid}",${running})'><img src='images/delete.png' title='Delete Timer'></a></td>`;
       row.innerHTML = s;
     });
     var s = '';
