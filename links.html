@@ -21,7 +21,7 @@
   function delete_link(event, uuid) {
     event.preventDefault();
     fetch("/api/idnode/delete?uuid=" + uuid).then(() => {
-        window.location.href = event.target.baseURI;
+        location.reload();
     });
   }
 </script>

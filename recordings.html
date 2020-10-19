@@ -34,7 +34,7 @@
   function delete_recording(event, uuid) {
     event.preventDefault();
     fetch("/api/dvr/entry/remove?uuid=" + uuid).then(() => {
-        window.location.href = event.target.baseURI;
+        location.reload();
     });
   }
 </script>
