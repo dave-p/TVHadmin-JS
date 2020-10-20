@@ -7,6 +7,7 @@ For an alternative version which requires a PHP-enabled web server see https://g
 
 ### Requirements
 - A recent version of TVHeadend (the latest development version preferred).
+- TVHeadend must be set up to use 'Basic' or 'Basic+Digest' authentication.
 - An up-to-date web browser on your client device. TVHadmin has been tested with Firefox and Chromium under Linux and Chromium on Android; IE will not work.
 
 ### Installation
@@ -20,5 +21,5 @@ For an alternative version which requires a PHP-enabled web server see https://g
 ### Security
 TVHadmin uses the same security controls as the standard TVHeadend user interface. For use over the open internet you may wish to use a proxy server for additional security.
 
-TVHadmin stores user preferences in a 'cookie' on the client; login credentials ae not stored.
+TVHadmin stores user preferences in a 'cookie' on the client; login credentials are only stored if your browser is configured to store them.
 
