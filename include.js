@@ -1,16 +1,29 @@
-function create_by_event(event, event_id) {
+function create_by_event(event, event_id, element) {
   event.preventDefault();
   const profile_uuid = cookies.UUID;
-  fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(() => {
-      location.reload();
+  fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
+    if (response.ok) {
+      var outer = element.parentNode;
+      outer.removeChild(outer.childNodes[0]);
+      var img = document.createElement("img");
+      img.src = "images/rec.png";
+      outer.appendChild(img);
+    }
   });
 }
 
-function create_by_series(event, event_id) {
+function create_by_series(event, event_id, element) {
   event.preventDefault();
   const profile_uuid = cookies.UUID;
-  fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(() => {
-        location.reload();
+  fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
+    if (response.ok) {
+      var outer = element.parentNode;
+      outer.removeChild(outer.childNodes[0]);
+      outer.previousSibling.removeChild(outer.previousSibling.childNodes[0]);
+      var img = document.createElement("img");
+      img.src = "images/rec.png";
+      outer.appendChild(img);
+    }
   });
 }
 

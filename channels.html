@@ -63,7 +63,9 @@
           </table>
         </form>
       </div>
-      <div id='content'>
+      <div id='wrapper'>
+        <div id='content'>
+        </div>
       </div>
     </div>
   </div>
@@ -166,17 +168,22 @@
 	    `<td class='col_title'>` +
 	    `<div class='epg_title'>${e.title}</div>` +
 	    `<div class='epg_subtitle'>${desc}</div></td>`;
-	if (!e.dvrState || e.dvrState != 'scheduled' && e.dvrState != 'recording') {
-	  s += `<td><a href='channels.html' onclick='create_by_event(event, "${e.eventId}")'><img src='images/rec_button1.png' alt='record' title='record'></a></td>`;
+	if (slinks[e.serieslinkUri]) {
+	    s += "<td></td><td><img src='images/rec.png' title='Series recording scheduled'></td>";
 	}
 	else {
-	  s += "<td></td>";
-	}
-	if (e.serieslinkUri && !slinks[e.serieslinkUri]) {
-	  s += `<td><a href='channels.html' onclick='create_by_series(event, "${e.eventId}")'><img src='images/rec_buttonS.png' alt='record series' title='record series'></a></td>`;
-	}
-	else {
-	  s += "<td></td>";
+	  if (e.dvrState == 'scheduled' || e.dvrState == 'recording') {
+	    s += "<td><img src='images/rec.png' title='Recording scheduled'></td>";
+	  }
+	  else {
+	    s += `<td><a href='channels.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' title='record'></a></td>`;
+	  }
+	  if (e.serieslinkUri) {
+	    s += `<td><a href='channels.html' onclick='create_by_series(event, "${e.eventId}", this)'><img src='images/rec_buttonS.png' title='record series'></a></td>`;
+	  }
+	  else {
+	    s += "<td></td>";
+	  }
 	}
 	row.innerHTML = s;
       });
