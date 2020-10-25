@@ -3,6 +3,8 @@ A web front-end for TVHeadend, inspired by VDRadmin.
 
 This project provides a simple web-based front-end for TVHeadend. It is inspired by VDRadmin-am, written by Andreas Mair (http://andreas.vdr-developer.org/vdradmin-am/index.html). It was written for UK Freeview and has been tested with UK Freesat but should also work with any TV provider supported by TVHeadend.
 
+Sample screenshots can be found [here](/screenshots/now.png) [here](/screenshots/timeline.png) [here](/screenshots/recordings.png) and [here](/screenshots/favourite.png).
+
 For an alternative version which requires a PHP-enabled web server see https://github.com/dave-p/TVHadmin
 
 ### Requirements
