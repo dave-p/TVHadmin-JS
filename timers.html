@@ -235,7 +235,7 @@
       }
       var alts = await search_epg("", ts);
       if (alts.length > 1) {
-        s += `<p>Alternatives for \"${ts}\"</p><ul>`;
+        var s2 = ""
         alts.forEach(function(a) {
           if (a.dvrUuid && (a.dvrUuid == c.uuid)) return;
           var sl = "";
@@ -243,14 +243,16 @@
 	  if (a.episodeUri && (c.uri === a.episodeUri)) {
 	    var when = strftime("%a %e/%m %H:%M", a.start);
 	    if (!check_event(timers, a)) {
-	      s += `<li>${when} ${a.channelName} ${a.title} ${sl}</li>`;
+	      s2 += `<li>${when} ${a.channelName} ${a.title} ${sl}</li>`;
 	    }
 	    else {
-	      s += `<li>${when} ${a.channelName} ${a.title} ${sl} (CLASH)</li>`;
+	      s2 += `<li>${when} ${a.channelName} ${a.title} ${sl} (CLASH)</li>`;
 	    }
 	  }
         });
-        s += "</ul>";
+        if (s2.length) {
+          s += `<p>Alternatives for \"${ts}\"</p><ul>` + s2 + "</ul>";
+        }
       }
     }
     var notice = document.getElementById("clash");
