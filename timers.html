@@ -57,32 +57,34 @@
     if (!t.enabled) return 0;
     let tstart = t.start_real;
     let tstop = t.stop_real;
+    let ret = 0;
     for (m of timers) {
       if (!m.enabled) continue;
       if (m.channel === t.channel) continue;
       if (m.uuid === t.uuid) continue;
       if ((tstart >= m.start_real && tstart < m.stop_real)
           ||(m.start_real >= tstart && m.start_real < tstop)) {
-	if (!cookies.CLASHDET) return 1;
-	if (get_mux_for_timer(m) === get_mux_for_timer(t)) return 1;
-	return 2;
+	if (!cookies.CLASHDET
+	  || (get_mux_for_timer(m) === get_mux_for_timer(t))) ret = Math.max(ret,1);
+	else ret = Math.max(ret,2);
       }
     }
-    return 0;
+    return ret;
   }
 
   function check_event(timers, e) {
-    estart = e.start;
-    estop = e.stop;
+    let estart = e.start;
+    let estop = e.stop;
+    let ret = 0;
     for (t of timers) {
       if (!t.enabled) continue;
       if((estart >= t.start_real && estart < t.stop_real)
 	  ||(t.start_real >= estart && t.start_real < estop)) {
-        if (get_mux_for_event(e) === get_mux_for_timer(t)) return 1;
-        return 2;
+        if (get_mux_for_event(e) === get_mux_for_timer(t)) ret = Math.max(ret,1);
+        else ret = Math.max(ret,2);
       }
     }
-    return 0;
+    return ret;
   }
 
   function get_mux_for_event(evt) {
