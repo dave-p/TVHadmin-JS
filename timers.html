@@ -100,11 +100,10 @@
   }
 
   function get_mux_for_channel(ch) {
-    var i = channels.findIndex(c => c["uuid"] === ch);
+    let i = channels.findIndex(c => c["uuid"] === ch);
     if (channels[i].mux) return channels[i].mux;
-    var svc = channels[i].services[0];
-    let j = muxes.findIndex(m => m["key"] === svc);
-    let name = muxes[j].val;
+    let svc = channels[i].services[0];
+    let name = muxes[svc];
     let mux = name.substr(0, name.lastIndexOf('/'));
     channels[i].mux = mux;
     return mux;
@@ -113,7 +112,11 @@
   async function get_muxes() {
     const response = await fetch("/api/service/list?enum=1");
     const muxes = await response.json();
-    return muxes.entries;
+    let ret = [];
+    muxes.entries.forEach(function(r) {
+      ret[r.key] = r.val;
+    });
+    return ret;
   }
 </script>
 </head> 
