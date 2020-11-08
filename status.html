@@ -55,6 +55,12 @@
     });
   }
 
+  async function get_status_xml() {
+    const response = await fetch("/status.xml");
+    const ret = await response.text();
+    return ret;
+  }
+
 </script>
 </head> 
 <body>
@@ -123,6 +129,35 @@
     var row = systable.insertRow(-1);
     row.className = 'row_alt';
     row.innerHTML = `<td class='col_channel'>Software Version</td><td class='col_name'>${info.sw_version}</td>`
+
+    var xml = await get_status_xml();
+    var parser = new DOMParser();
+    var xmlDoc = parser.parseFromString(xml,"text/xml");
+    var load = xmlDoc.getElementsByTagName("systemload")[0].childNodes[0].nodeValue;
+    load = load.replace(/(\d{2})\d*/g, '$1');
+    load = load.replace(/,/g, ', ');
+    row = systable.insertRow(-1);
+    row.className = 'row_alt';
+    row.innerHTML = `<td class='col_channel'>System Load</td><td class='col_name'>${load}</td>`
+    var x = xmlDoc.getElementsByTagName("next")[0];
+    var text = '';
+    if (x) {
+      let t = x.childNodes[0].nodeValue;
+      text = "Next: " + strftime('%F %H:%M', Date.now()/1000 + 60*t);
+    }
+    else {
+      x = xmlDoc.getElementsByTagName("title")[0];
+      if (x) {
+        text = `Recording: "${x.childNodes[0].nodeValue}"`
+      }
+    }
+    row = systable.insertRow(-1);
+    row.className = 'row_alt';
+    row.innerHTML = `<td class='col_channel'>Recording</td><td class='col_name'>${text}</td>`
+    var subs = xmlDoc.getElementsByTagName("subscriptions")[0].childNodes[0].nodeValue;
+    row = systable.insertRow(-1);
+    row.className = 'row_alt';
+    row.innerHTML = `<td class='col_channel'>Subscriptions</td><td class='col_name'>${subs}</td>`
 
     var stats = await get_input_status();
     for (var s of stats) {
