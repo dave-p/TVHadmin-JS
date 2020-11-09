@@ -84,7 +84,7 @@
     var media = [];
     for (var key in cookies) {
       if (key.startsWith("Tag_")) {
-	var tag = key.substring(4);
+	var tag = decodeURIComponent(key.substring(4));
 	s += "<div class='media'>" +
 		`<label for='${tag}'>${tag}:</label>` +
 		`<input type='checkbox' name='${tag}' id='${tag}' onchange='click_tag("Tim_", "${tag}")'`;
