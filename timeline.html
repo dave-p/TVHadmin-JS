@@ -117,7 +117,7 @@
     var tstart = utime - toffset;
     var tend = tstart + textent;
     var tnext = tend;
-    var wday = strftime('%A %e %b', utime);
+    var wday = strftime('%a %e %b', utime);
     let tleft = utime - textent/2, tright = utime + textent/2;
     s = `<a href='timeline.html?start=${tleft}' ><img src='images/left.png' alt='Go Back' title='left'></a>&nbsp;` +
 	`<a href='timeline.html?start=${tright}' ><img src='images/right.png' alt='Go Forward' title='right'></a>`;
