@@ -156,12 +156,11 @@
 	else {
 	  s += "<td><img src='images/rec.png' alt='Recording' title='Recording'></td>";
 	}
-	s += `<td class='col_stream'><a href='/play/stream/channel/${c.uuid}?title=${e.title}'><img src='images/play.png' title='Play'></a></td>`;
       }
       else {
-        var s = `<td></td><td class='col_channel'><div class='channel_name'>${name}</div></td><td>No EPG available</td><td></td>` +
-		`<td class='col_stream'><a href='/play/stream/channel/${c.uuid}?title=${c.name}'><img src='images/play.png' title='Play'></a></td>`;
+        var s = `<td></td><td class='col_channel'><div class='channel_name'>${name}</div></td><td>No EPG available</td><td></td>`;
       }
+      s += `<td class='col_stream'><a href='/play/stream/channel/${c.uuid}?title=${c.name}'><img src='images/play.png' title='Play'></a></td>`;
       row.innerHTML = s;
     }
     if (cookies.REFR) setInterval(updateTimeline, 60000);
