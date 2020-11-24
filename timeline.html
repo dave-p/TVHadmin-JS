@@ -167,8 +167,12 @@
 	    }
 	    var colour = '#b4e29c';
 	    tnext = Math.min(tnext, p.stop);
+	    p.onNow = 1;
 	  }
 	  else var colour = '#dee6ee';
+	  if (p.dvrState == 'scheduled' || p.dvrState == 'recording') {
+	    colour = '#e8a8a8';
+	  }
 	  var duration = Math.min(tend, p.stop) - Math.max(tstart, p.start);
 	  if (duration == 0) continue;
 	  var pc = (wd * duration) / textent;
@@ -176,7 +180,9 @@
 	  else if (p.description) var desc = p.description;
 	  else var desc = "";
 	  var subtitle = htmlspecialchars(desc);
+	  if (p.onNow) s += `<a href='/play/stream/channel/${c.uuid}?title=${c.name}'>`;
 	  s += `<div class='item' style='background-color: ${colour}; width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
+	  if (p.onNow) s += "</a>";
 	}
 	s += "</td>";
 	row.innerHTML = s;
