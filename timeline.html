@@ -25,6 +25,18 @@
     sessionStorage.setItem((prefix+tagID), chk);
     location.reload();
   }
+
+  function make_timer(event_id, title) {
+    if (confirm(`Create Timer for "${title}"?`)) {
+      const profile_uuid = cookies.UUID;
+      fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
+        if (response.ok) {
+	  location.reload();
+        }
+      });
+    }
+  }
+
 </script>
 </head> 
 <body>
@@ -180,9 +192,12 @@
 	  else if (p.description) var desc = p.description;
 	  else var desc = "";
 	  var subtitle = htmlspecialchars(desc);
-	  if (p.onNow) s += `<a href='/play/stream/channel/${c.uuid}?title=${c.name}'>`;
-	  s += `<div class='item' style='background-color: ${colour}; width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
-	  if (p.onNow) s += "</a>";
+	  if (p.onNow) s += `<a href='/play/stream/channel/${c.uuid}?title=${c.name}'><div class='item' style='background-color: ${colour}; width: ${pc}%;' title='${subtitle}'>${p.title}</div></a>`;
+	  else if (p.dvrState) s += `<div class='item' style='background-color: ${colour}; width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
+	  else {
+	    var esctitle = htmlspecialchars(p.title);
+	    s += `<div class='item' style='background-color: ${colour}; width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='make_timer("${p.eventId}", "${esctitle}")'>${p.title}</div>`;
+	  }
 	}
 	s += "</td>";
 	row.innerHTML = s;
@@ -224,6 +239,7 @@
       }
     }
   }
+  var cookies = get_cookies();
   main();
 </script>
  </body>
