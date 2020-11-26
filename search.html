@@ -46,7 +46,7 @@
      <div id='banner'>
       <table>
         <tr>
-	  <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Search Results</h1></td>
+	  <td class='col_title'><div id='mobmenu'>&#9776;</div><div id='title'></div></td>
 	</tr>
       </table>
      </div>
@@ -66,6 +66,8 @@
     links.forEach(function(l) {
       slinks[l["serieslink"]] = 1;
     });
+    var title = document.getElementById("title");
+    title.innerHTML = `<h1>Search Results for "${needle}"</h1>`;
     var table = document.createElement("TABLE");
     table.className = 'list';
     var last_date = ' ';
