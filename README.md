@@ -13,11 +13,10 @@ For an alternative version which requires a PHP-enabled web server see https://g
 - An up-to-date web browser on your client device. TVHadmin has been tested with Firefox and Chromium under Linux and Chromium on Android; IE will not work.
 
 ### Installation
-- Log in to your TVHeadend server and navigate to /usr/share/tvheadend/src/webui/static (your distribution may have used a different directory for this).
-- Create a directory 'tvhadmin'.
-- Copy the TVHadmin repository into the new tvhadmin directory.
+- Log in to your TVHeadend server and `cd /usr/share/tvheadend/src/webui/static` (your distribution may have used a different directory for this).
+- `git clone https://github.com/dave-p/TVHadmin-JS.git`. Alternatively, copy the file `https://github.com/dave-p/TVHadmin-JS/archive/master.zip` into this location, unzip it, then rename the directory `TVHadmin-JS-master` to `TVHadmin-JS`.
 - If necessary create a TVHeadend user. The user must have the 'Web Interface' box ticked, and for full fuctionality should have all the 'Streaming' and 'Video Recorder' boxes ticked. The Status screen requires that the user have 'Admin' privilege. If you are using Kodi with the 'TVHeadend HTSP' plugin, you should make use of the same user for both TVHadmin and Kodi.
-- Browse to http://your.web.server:9981/static/tvhadmin/TVHadmin.html. Enter the username and password of the TVHeadend user. Make any changes to the settings then click the 'save' button.
+- Browse to http://your.tvh.server:9981/static/TVHadmin-JS/TVHadmin.html. Enter the username and password of the TVHeadend user. Make any changes to the settings then click the 'save' button.
 - TVHadmin should now be working.
 
 ### Security
