@@ -184,6 +184,8 @@ a:hover {
 .newday {
 	height: 17px;
 	background-color: #6d96a9;
+	position: sticky;
+	top: 0;
 }
 .newday td {
 	padding-left: 3px;
