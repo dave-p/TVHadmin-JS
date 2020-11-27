@@ -78,8 +78,10 @@
 	      <col id='channelname'>
 	      <col id='schedules'>
 	    </colgroup>
-	    <tr class='newday' id='newday'>
-	    </tr>
+	    <thead>
+	      <tr class='newday' id='newday'>
+	      </tr>
+	    </thead>
 	  </table>
 	  <span id='timenow' style='visibility: hidden'>
 	    <img src='images/spacer.gif' width='1' height='1' alt=''>
@@ -144,7 +146,7 @@
       var ch_width = 120;
     }
     document.getElementById('channelname').style = `width: ${ch_width}px`;
-    s = `<td>${wday}</td><td>`;
+    s = `<th>${wday}</th><th>`;
     var t = tstart;
     var colours = ['#ffffff', '#dee6ee', '#ffffff', '#dee6ee'];
     for(i=0; i<4; i++) {
@@ -152,7 +154,7 @@
       s += `<div style='float: left; background-color: ${colours[i]}; width: 24.5%;'>${time}</div>`;
       t += textent / 4;
     }
-    s += '</td>';
+    s += '</th>';
     document.getElementById('newday').innerHTML = s;
 
     var channels = await get_channels(lcn);
