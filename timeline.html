@@ -82,6 +82,8 @@
 	      <tr class='newday' id='newday'>
 	      </tr>
 	    </thead>
+	    <tbody>
+	    </tbody>
 	  </table>
 	  <span id='timenow' style='visibility: hidden'>
 	    <img src='images/spacer.gif' width='1' height='1' alt=''>
@@ -160,7 +162,7 @@
     var channels = await get_channels(lcn);
     var tags = await get_channeltags();
     var events = await get_epg('', tstart, tend);
-    var table = document.getElementById("list");
+    var table = document.getElementById("list").getElementsByTagName('tbody')[0];
     var i = 0;
     for (const c of channels) {
       if (!(media.All)) {
