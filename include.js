@@ -142,6 +142,7 @@ async function get_channels(sort) {
 }
 
 function sort_title(x, y) {
+  if (!x || !y) return 0;
   if (x.startsWith('New:')) {
     if (x[4] == ' ') x = x.substring(5);
     else x = x.substring(4);
@@ -151,7 +152,7 @@ function sort_title(x, y) {
     else y = y.substring(4); 
   }
   let n = Math.min(x.length, y.length);
-  return strncmp(x, y);
+  return strncmp(x, y, n);
 }
 
 function strcasecmp(a, b) {
