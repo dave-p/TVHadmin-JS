@@ -172,10 +172,10 @@
       else var name = c.name;
       let row = table.insertRow(-1);
       var e = events.filter(m => m.channelUuid === c.uuid);
-      if (e) {
-        var wd = 98 - e.length/8;
-	s = `<td class='col_channel'><div class='channel_name' style='background-color: ${colours[i%2]}'>${name}</div></td><td class='col_schedule'>`;
-	for (const p of e) {
+      var wd = 98 - e.length/8;
+      s = `<td class='col_channel'><div class='channel_name' style='background-color: ${colours[i%2]}'>${name}</div></td><td class='col_schedule'>`;
+      if (e.length) {
+        for (const p of e) {
 	  if (p.start <= now && p.stop > now) {
 	    if (p.start > tstart) {	//Need a spacer
 	      spc = ((p.start - tstart) * wd) / textent;
@@ -204,8 +204,11 @@
 	  }
 	}
 	s += "</td>";
-	row.innerHTML = s;
       }
+      else {
+        s += `<a href='/play/stream/channel/${c.uuid}?title=${c.name}'><div class='item' style='background-color: white; width: 98%;'>No EPG Available</div></a></td>`;
+      }
+      row.innerHTML = s;
       i++;
     }
 
