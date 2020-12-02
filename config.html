@@ -156,7 +156,7 @@
 	  <tr class="heading">
 	    <td colspan="2"><h2>TVHeadend Server</h2></td>
 	  </tr>
-	  <tr class='row_alt' id='prof' title="TVheadend profile to use for recordings. This line is blank if there is only one profile">
+	  <tr class='row_alt' id='prof' title="TVheadend profile to use for recordings.">
 	  </tr>
 	</table>
 	<table class='group'>
@@ -261,24 +261,18 @@ async function main() {
   });
   
   let profiles = await get_profiles();
-  if (profiles.length == 1) {
-    let config_uuid = profiles[0]['uuid'];
-    var s = `<td><input type='hidden' name='PROFILE' value=''>` +
-		`<input type='hidden' name='UUID' value='${config_uuid}'></td><td></td>`;
+  var s = "<td class='col_label'><h5>Recording Profile:</h5></td>" +
+	    "<td class='col_value'><select name='UUID'>";
+  let config_uuid = cookies.UUID;
+  for (const p of profiles) {
+    if (!p.enabled) continue;
+    let pname = p.name;
+    if (pname == '') pname = '(default)';
+    let sel = '';
+    if (p.uuid === config_uuid) sel = 'selected';
+    s = s + `<option value='${p.uuid}' ${sel}>${pname}</option>`;
   }
-  else {
-    var s = "<td class='col_label'><h5>Recording Profile:</h5></td>" +
-	    "<td class='col_value'><select name='PROFILE'>";
-    let config_uuid = cookies.UUID;
-    for (p in profiles) {
-      let pname = p.name;
-      if (pname == '') pname = '(default)';
-      if (p.uuid === config_uuid) $sel = 'selected';
-      else $sel = '';
-      s = s + `<option value='${pname}' ${sel}>${pname}</option>`;
-    }
-    s = s + "</td>";
-  }
+  s = s + "</td>";
   let proflist = document.getElementById("prof");
   proflist.innerHTML = s;
 
