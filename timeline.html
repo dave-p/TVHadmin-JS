@@ -36,8 +36,7 @@
       const profile_uuid = cookies.UUID;
       fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
         if (response.ok) {
-	  update_timebar();
-	  update_epg(0);
+	  update(0);
         }
       });
     }
@@ -46,8 +45,7 @@
   function drawCursor(refresh) {
     var time = Date.now()/1000;
     if(time > tnext) {
-      update_timebar();
-      update_epg(0);
+      update(0);
     }
     var cursor = document.getElementById('timenow');
     if((time >= tstart) && (time < tend)) {
@@ -67,33 +65,30 @@
     }
   }
 
-  function update_timebar() {
-    now = Math.floor(Date.now() / 1000);
-    utime = now;
+  async function update(first) {
+    var now = Math.floor(Date.now() / 1000);
+    var utime = now;
     if (params.has('start')) {
       utime = Math.max(now, params.get('start'));
     }
-    toffset = utime % 1800;
-    tstart = utime - toffset;
+    tstart = utime - utime % 1800;
     tend = tstart + textent;
     tnext = tend;
-    wday = strftime('%a %e %b', utime);
-    tleft = utime - textent/2, tright = utime + textent/2;
+    var wday = strftime('%a %e %b', utime);
+    var tleft = utime - textent/2, tright = utime + textent/2;
     var s = `<a href='timeline.html?start=${tleft}' ><img src='images/left.png' alt='Go Back' title='left'></a>&nbsp;` +
 	    `<a href='timeline.html?start=${tright}' ><img src='images/right.png' alt='Go Forward' title='right'></a>`;
     document.getElementById("arrows").innerHTML = s;
     s = `<th>${wday}</th><th>`;
     var t = tstart;
-    for(i=0; i<4; i++) {
+    for (i=0; i<4; i++) {
       let time = strftime('%H:%M', t);
       s += `<div style='float: left; background-color: ${colours[i]}; width: 24.5%;'>${time}</div>`;
       t += textent / 4;
     }
     s += '</th>';
     document.getElementById('newday').innerHTML = s;
-  }
 
-  async function update_epg(first) {
     var events = await get_epg('', tstart, tend);
     var i = 0;
     for (const c of channels) {
@@ -201,7 +196,7 @@
    </div>
   </div>
 <script>
-  var now, textent, utime, toffset, tstart, tend, tnext, wday, tleft, tright, ch_width, params;
+  var textent, tstart, tend, tnext, ch_width, params;
   var channels, tags, table, media, lcn;
   var colours = ['#ffffff', '#dee6ee', '#ffffff', '#dee6ee'];
   var globalResizeTimer = null;
@@ -248,12 +243,11 @@
       ch_width = 120;
     }
     document.getElementById('channelname').style = `width: ${ch_width}px`;
-    update_timebar();
 
     channels = await get_channels(lcn);
     tags = await get_channeltags();
     table = document.getElementById("list").getElementsByTagName('tbody')[0];
-    update_epg(1);
+    update(1);
 
     if (cookies.REFR) var refresh = 1;
     else var refresh = 0;
