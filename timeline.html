@@ -89,7 +89,10 @@
     s += '</th>';
     document.getElementById('newday').innerHTML = s;
 
-    var events = await get_epg('', tstart, tend);
+    if (last_tend != tend) {
+      events = await get_epg('', tstart, tend);
+      last_tend = tend;
+    }
     var i = 0;
     for (const c of channels) {
       if (!(media.All)) {
@@ -104,6 +107,8 @@
       var s = `<td class='col_channel'><div class='channel_name' style='background-color: ${colours[i%2]}'>${name}</div></td><td class='col_schedule'>`;
       if (e.length) {
         for (const p of e) {
+          if (p.start >= tend) break;
+          if (p.stop <= now) continue;
 	  if (p.start <= now && p.stop > now) {
 	    if (p.start > tstart) {	//Need a spacer
 	      spc = ((p.start - tstart) * wd) / textent;
@@ -196,8 +201,8 @@
    </div>
   </div>
 <script>
-  var textent, tstart, tend, tnext, ch_width, params;
-  var channels, tags, table, media, lcn;
+  var textent, tstart, tend, tnext, ch_width, params, last_tend=0;
+  var channels, tags, events, table, media, lcn;
   var colours = ['#ffffff', '#dee6ee', '#ffffff', '#dee6ee'];
   var globalResizeTimer = null;
   var cookies = get_cookies();
