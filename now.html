@@ -29,10 +29,72 @@
       var elapsed = now - start;
       var pc = 0;
       if (stop > start) pc = 100*elapsed/duration;
-      if (pc > 100) location.reload(true);
+      if (pc > 100) {
+        update(0);
+        return;
+      }
       done.style.width = pc + '%';
       bar.title = (Math.round(elapsed/60)) + ' min / ' + (duration/60) + ' min';
     }
+    if (cookies.REFR) {
+      var sync = (now % 60) * 1000;
+      setTimeout(updateTimeline, 63000-sync);  // Avoid race
+    }
+  }
+
+  async function update(first) {
+    const utime = Date.now()/1000;
+    var date = strftime('%A, %e %b %Y', utime);
+    var time = strftime('%H:%M', utime);
+    td = document.getElementById("date");
+    td.innerHTML = date;
+
+    var events = await get_epg_now('');
+    var table = document.getElementById("list").getElementsByTagName('tbody')[0];
+    var i = 0;
+    for (const c of channels) {
+      if (!(media.All)) {
+	if (intersect(c.tags, media) == 0) continue;
+      }
+      if (lcn) var name = `${c.number} ${c.name}`;
+      else var name = c.name;
+      if (first) {
+        var row = table.insertRow(-1);
+        row.className = 'row_alt';
+      }
+      else var row = table.children[i];
+      var e = events.find(m => m.channelUuid === c.uuid);
+      if (e) {
+	var start = strftime('%H:%M', e.start);
+	var end = strftime('%H:%M', e.stop);
+	var summ = '';
+	if (e.summary) summ = e.summary;
+	else if (e.description) summ = e.description;
+	var s = `<td class='col_duration'>${start} - ${end}` +
+		    `<table class='percent'><tr>` +
+		    `<td class='elapsed' data-start='${e.start}' data-stop=${e.stop}><img src='images/spacer.gif' width=1 height=1 alt=''></td>` +
+		    `<td class='remaining'><img src='images/spacer.gif' width=1 height=1 alt=''></td></tr></table></td>` +
+		    `<td class='col_channel'><div class='channel_name'>`;
+	if (cookies.ICONS && c.icon_public_url) {
+          s += `<img src="/${c.icon_public_url}" height='48' width='80' alt="${name}" title="${name}">`;
+        }
+	else s += `${name}</div>`;
+	s += `</div></td><td class='col_title'><div class='epg_title'>${e.title}</div><div class='epg_subtitle'>${summ}</div></td>`;
+	if (!e.dvrState || e.dvrState != 'scheduled' && e.dvrState != 'recording') {
+	  s += `<td><a href='now.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' alt='record' title='record'></a></td>`;
+	}
+	else {
+	  s += "<td><img src='images/rec.png' alt='Recording' title='Recording'></td>";
+	}
+      }
+      else {
+        var s = `<td></td><td class='col_channel'><div class='channel_name'>${name}</div></td><td>No EPG available</td><td></td>`;
+      }
+      s += `<td class='col_stream'><a href='/play/stream/channel/${c.uuid}?title=${c.name}'><img src='images/play.png' title='Play'></a></td>`;
+      row.innerHTML = s;
+      i++;
+    }
+    updateTimeline()
   }
 
   function click_tag(prefix, tagID) {
@@ -78,19 +140,25 @@
       <div id='wrapper'>
         <div id='whatson'>
 	  <table class='list' id='list'>
-	    <tr class='newday'>
-	      <td colspan='5'><span class='date_long' id='date'></span></td>
-	    </tr>
+	    <thead>
+	      <tr class='newday'>
+	        <td colspan='5'><span class='date_long' id='date'></span></td>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    </tbody>
 	  </table>
        </div>
      </div>
   </div>
 </div>
 <script>
+  var channels, lcn, media;
+
   async function main() {
     var tags = await get_channeltags();
     var s = "<span class='wideonly'>";
-    var media = [];
+    media = [];
     for (var key in cookies) {
       if (key.startsWith("Tag_")) {
 	var tag = decodeURIComponent(key.substring(4));
@@ -114,58 +182,12 @@
     var td = document.getElementById("mediatags");
     td.innerHTML = s;
 
-    const utime = Date.now()/1000;
-    var date = strftime('%A, %e %b %Y', utime);
-    var time = strftime('%H:%M', utime);
-    td = document.getElementById("date");
-    td.innerHTML = date;
-
-    var lcn = 0;
+    lcn = 0;
     if (cookies.CSORT == "1") lcn = 1;
-    var events = await get_epg_now('');
-    var channels = await get_channels(lcn);
-    var table = document.getElementById("list");
-    for (const c of channels) {
-      if (!(media.All)) {
-	if (intersect(c.tags, media) == 0) continue;
-      }
-      if (lcn) var name = `${c.number} ${c.name}`;
-      else var name = c.name;
-      let row = table.insertRow(-1);
-      row.className = 'row_alt';
-      var e = events.find(m => m.channelUuid === c.uuid);
-      if (e) {
-	var start = strftime('%H:%M', e.start);
-	var end = strftime('%H:%M', e.stop);
-	var summ = '';
-	if (e.summary) summ = e.summary;
-	else if (e.description) summ = e.description;
-	var s = `<td class='col_duration'>${start} - ${end}` +
-		    `<table class='percent'><tr>` +
-		    `<td class='elapsed' data-start='${e.start}' data-stop=${e.stop}><img src='images/spacer.gif' width=1 height=1 alt=''></td>` +
-		    `<td class='remaining'><img src='images/spacer.gif' width=1 height=1 alt=''></td></tr></table></td>` +
-		    `<td class='col_channel'><div class='channel_name'>`;
-	if (cookies.ICONS && c.icon_public_url) {
-          s += `<img src="/${c.icon_public_url}" height='48' width='80' alt="${name}" title="${name}">`;
-        }
-	else s += `${name}</div>`;
-	s += `</div></td><td class='col_title'><div class='epg_title'>${e.title}</div><div class='epg_subtitle'>${summ}</div></td>`;
-	if (!e.dvrState || e.dvrState != 'scheduled' && e.dvrState != 'recording') {
-	  s += `<td><a href='now.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' alt='record' title='record'></a></td>`;
-	}
-	else {
-	  s += "<td><img src='images/rec.png' alt='Recording' title='Recording'></td>";
-	}
-      }
-      else {
-        var s = `<td></td><td class='col_channel'><div class='channel_name'>${name}</div></td><td>No EPG available</td><td></td>`;
-      }
-      s += `<td class='col_stream'><a href='/play/stream/channel/${c.uuid}?title=${c.name}'><img src='images/play.png' title='Play'></a></td>`;
-      row.innerHTML = s;
-    }
-    if (cookies.REFR) setInterval(updateTimeline, 60000);
-    updateTimeline()
+    channels = await get_channels(lcn);
+    update(1);
   }
+
   const cookies = get_cookies();
   main();
 </script>
