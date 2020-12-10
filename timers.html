@@ -36,18 +36,23 @@
     else {
       var url = `/api/dvr/entry/cancel?uuid=${uuid}`
     }
-    fetch(url).then(() => {
-        location.reload();
+    fetch(url).then(response => {
+      if (response.ok) {
+        if (cookies.CLASHDET) location.reload();
+        else document.getElementById("list").deleteRow(event.target.parentNode.parentNode.parentNode.rowIndex);
+      }
     });
     return;
   }
 
   function toggle(event, uuid, enabled) {
-    if (enabled == "false") mode = true;
-    else mode = false;
+    if (enabled == "false") var mode = true;
+    else var mode = false;
     let data = encodeURIComponent(`[{"enabled": ${mode}, "uuid": "${uuid}"}]`);
-    fetch(`/api/idnode/save?node=${data}`).then(() => {
-        location.reload();
+    fetch(`/api/idnode/save?node=${data}`).then(response => {
+      if (response.ok) {
+        if (cookies.CLASHDET) location.reload();
+      }
     });
     return;
   }

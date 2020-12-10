@@ -20,8 +20,10 @@
 
   function delete_link(event, uuid) {
     event.preventDefault();
-    fetch("/api/idnode/delete?uuid=" + uuid).then(() => {
-        location.reload();
+    fetch("/api/idnode/delete?uuid=" + uuid).then(response => {
+      if (response.ok) {
+        document.getElementById("list").deleteRow(event.target.parentNode.parentNode.parentNode.rowIndex);
+      }
     });
   }
 </script>
