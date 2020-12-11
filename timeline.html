@@ -61,7 +61,7 @@
     }
     if(refresh == 1) {
       var sync = (time % 60) * 1000;
-      var x = setTimeout(drawCursor, 63000-sync, 1);  // Avoid race
+      setTimeout(drawCursor, 63000-sync, 1);  // Avoid race
     }
   }
 
@@ -75,9 +75,13 @@
     tend = tstart + textent;
     tnext = tend;
     var wday = strftime('%a %e %b', utime);
-    var tleft = utime - textent/2, tright = utime + textent/2;
-    var s = `<a href='timeline.html?start=${tleft}' ><img src='images/left.png' alt='Go Back' title='left'></a>&nbsp;` +
-	    `<a href='timeline.html?start=${tright}' ><img src='images/right.png' alt='Go Forward' title='right'></a>`;
+    if (now < tstart) {
+      var tleft = utime - textent/2;
+      var s = `<a href='timeline.html?start=${tleft}' ><img src='images/left.png' alt='Go Back' title='left'></a>&nbsp;`;
+    }
+    else var s = "<img src='images/spacer.gif' style='width:20px;height:32px;'>&nbsp;";
+    var tright = utime + textent/2;
+    s += `<a href='timeline.html?start=${tright}' ><img src='images/right.png' alt='Go Forward' title='right'></a>`;
     document.getElementById("arrows").innerHTML = s;
     s = `<th>${wday}</th><th>`;
     var t = tstart;
@@ -104,7 +108,7 @@
       else var name = c.name;
       var e = events.filter(m => m.channelUuid === c.uuid);
       var wd = 98 - e.length/8;
-      var s = `<td class='col_channel'><div class='channel_name' style='background-color: ${colours[i%2]}'>${name}</div></td><td class='col_schedule'>`;
+      s = `<td class='col_channel'><div class='channel_name' style='background-color: ${colours[i%2]}'>${name}</div></td><td class='col_schedule'>`;
       if (e.length) {
         for (const p of e) {
           if (p.start >= tend) break;
