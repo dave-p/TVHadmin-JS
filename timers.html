@@ -59,7 +59,7 @@
 
   function check_timer(timers, t) {
     if (timers.length < 2) return 0;
-    if (!t.enabled) return 0;
+    if (!t.enabled) return 4;
     let tstart = t.start_real;
     let tstop = t.stop_real;
     let ret = 0;
@@ -178,7 +178,7 @@
   </div>
 <script>
   async function main() {
-    var images = ['images/tick_green.png','images/tick_yellow.png','images/tick_red.png','images/rec.png'];
+    var images = ['images/tick_green.png','images/tick_yellow.png','images/tick_red.png','images/rec.png', 'images/spacer.gif'];
     var clashes = [];
     var timers = await get_timers();
     var autorecs = await get_autorecs();
