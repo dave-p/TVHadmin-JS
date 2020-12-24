@@ -151,6 +151,12 @@ function sort_title(x, y) {
     if (y[4] == ' ') y = y.substring(5); 
     else y = y.substring(4); 
   }
+  if (x.endsWith('...')) {
+    x = x.substring(0, x.length - 3);
+  }
+  if (y.endsWith('...')) {
+    y = y.substring(0, y.length - 3);
+  }
   let n = Math.min(x.length, y.length);
   return strncmp(x, y, n);
 }
