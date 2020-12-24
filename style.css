@@ -21,6 +21,8 @@ form {
 select {
 	background-color: #121212;
 	color: #f0f0f0;
+	margin: 2px;
+	padding: 4px 8px 4px 8px;
 }
 select option {
 	background-color: #121212 !important;
@@ -64,6 +66,7 @@ input[type=radio] {
 input[type=button],
 input[type=submit],
 input[type=text],
+input[type=password],
 button {
 	background-color: #121212;
 	color: #f0f0f0;
@@ -249,7 +252,7 @@ a:hover {
 }
 #timeline .spacer {
 	float: left;
-	background-color: #e0e0e0;
+	background-color: #606060;
 	white-space: nowrap;
 }
 #timeline .item {
@@ -261,6 +264,20 @@ a:hover {
 	border-left:1px solid #6d96a9;
 	border-right:0px none;
 	white-space: nowrap;
+}
+#timeline .onNow {
+	background-color: #34621c;
+}
+#timeline .onSoon {
+	background-color: #5e666e;
+}
+#timeline .record {
+	background-color: #682828;
+}
+#timeline .row_0 {
+}
+#timeline .row_1 {
+	background-color: #484850;
 }
 
 #timenow {
@@ -375,7 +392,7 @@ select.channels {
 	#navigation {
 		margin: 50px 0 0 -155px;
 		position: fixed;
-		background-color: white;
+		background-color: #121212;
 	}
 	.wideonly,
 	#navigation .logo {

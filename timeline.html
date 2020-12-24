@@ -87,7 +87,7 @@
     var t = tstart;
     for (i=0; i<4; i++) {
       let time = strftime('%H:%M', t);
-      s += `<div style='float: left; background-color: ${colours[i]}; width: 24.5%;'>${time}</div>`;
+      s += `<div class='row_alt' style='float: left; width: 24.5%;'>${time}</div>`;
       t += textent / 4;
     }
     s += '</th>';
@@ -108,7 +108,7 @@
       else var name = c.name;
       var e = events.filter(m => m.channelUuid === c.uuid);
       var wd = 98 - e.length/8;
-      s = `<td class='col_channel'><div class='channel_name' style='background-color: ${colours[i%2]}'>${name}</div></td><td class='col_schedule'>`;
+      s = `<td class='col_channel row_${i%2}'><div class='channel_name'>${name}</div></td><td class='col_schedule'>`;
       if (e.length) {
         for (const p of e) {
           if (p.start >= tend) break;
@@ -118,13 +118,13 @@
 	      spc = ((p.start - tstart) * wd) / textent;
 	      s += `<div class='spacer' style='width: ${spc}%;'> <img src='images/spacer.gif' width=1 height=1 alt=''></div>`;
 	    }
-	    var colour = '#b4e29c';
+	    var colour = 'onNow';
 	    tnext = Math.min(tnext, p.stop);
 	    p.onNow = 1;
 	  }
-	  else var colour = '#dee6ee';
+	  else var colour = 'onSoon';
 	  if (p.dvrState == 'scheduled' || p.dvrState == 'recording') {
-	    colour = '#e8a8a8';
+	    colour = 'record';
 	  }
 	  var duration = Math.min(tend, p.stop) - Math.max(tstart, p.start);
 	  if (duration == 0) continue;
@@ -133,17 +133,17 @@
 	  else if (p.description) var desc = p.description;
 	  else var desc = "";
 	  var subtitle = htmlspecialchars(desc);
-	  if (p.onNow) s += `<a href='/play/stream/channel/${c.uuid}?title=${c.name}'><div class='item' style='background-color: ${colour}; width: ${pc}%;' title='${subtitle}'>${p.title}</div></a>`;
-	  else if (p.dvrState) s += `<div class='item' style='background-color: ${colour}; width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
+	  if (p.onNow) s += `<a href='/play/stream/channel/${c.uuid}?title=${c.name}'><div class='item ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div></a>`;
+	  else if (p.dvrState) s += `<div class='item  ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
 	  else {
 	    var esctitle = htmlspecialchars(p.title);
-	    s += `<div class='item' style='background-color: ${colour}; width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='make_timer("${p.eventId}", "${esctitle}")'>${p.title}</div>`;
+	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='make_timer("${p.eventId}", "${esctitle}")'>${p.title}</div>`;
 	  }
 	}
 	s += "</td>";
       }
       else {
-        s += `<a href='/play/stream/channel/${c.uuid}?title=${c.name}'><div class='item' style='background-color: white; width: 98%;'>No EPG Available</div></a></td>`;
+        s += `<a href='/play/stream/channel/${c.uuid}?title=${c.name}'><div class='item onNow' style='width: 98%;'>No EPG Available</div></a></td>`;
       }
       row.innerHTML = s;
       i++;
@@ -207,7 +207,6 @@
 <script>
   var textent, tstart, tend, tnext, ch_width, params, last_tend=0;
   var channels, tags, events, table, media, lcn;
-  var colours = ['#ffffff', '#dee6ee', '#ffffff', '#dee6ee'];
   var globalResizeTimer = null;
   var cookies = get_cookies();
 
