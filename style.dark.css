@@ -5,18 +5,28 @@
 
 * {
 	font-family: Verdana, "Bitstream Vera Sans", Arial, Geneva, Helvetica, sans-serif;
-	color: black;
+	color: #f0f0f0;
 	font-weight: normal;
 	font-size: 12px;
 }
 body {
-	background-color: #ffffff;
+	background-color: #121212;
 	margin: 3px;
 	padding: 0;
 }
 form {
 	margin: 0px;
 	padding: 0;
+}
+select {
+	background-color: #121212;
+	color: #f0f0f0;
+	margin: 2px;
+	padding: 4px 8px 4px 8px;
+}
+select option {
+	background-color: #121212 !important;
+	color: #f0f0f0 !important;
 }
 #layout {
 	margin-left: 169px;
@@ -27,7 +37,7 @@ form {
 #banner {
 	border: 1px solid #6d96a9;
         width: 100%;
-        background-color: #dee6ee;
+        background-color: #5e666e;
 }
 #banner table {
         border-spacing: 0;
@@ -52,6 +62,16 @@ input[type=checkbox],
 input[type=radio] {
 	vertical-align: middle;
 	margin-right: 10px;
+}
+input[type=button],
+input[type=submit],
+input[type=text],
+input[type=password],
+button {
+	background-color: #121212;
+	color: #f0f0f0;
+	margin: 2px;
+	padding: 4px 8px 4px 8px;
 }
 input.smaller {
 	margin: 0px;
@@ -110,16 +130,16 @@ a:hover {
 	height: 17px;
 }
 .list .row_alt:hover {
-	background-color: #8cc1da;
+	background-color: #1c415a;
 }
 .list .row_error:hover {
-	background-color: #e08080;
+	background-color: #601010;
 }
 .heading {
 	vertical-align: middle;
 }
 .heading td {
-	background-color: #6d96a9;
+	background-color: #3d6679;
 	height: 17px;
 }
 .heading h2,
@@ -131,13 +151,13 @@ a:hover {
 }
 
 .row_alt:nth-child(odd) {
-	background-color: #dee6ee;
+	background-color: #484850;
 }
 .row_error {
-	background-color: #ffe0e0;
+	background-color: #7f5050;
 }
 .row_inprogress {
-	background-color: #e0e0e0;
+	background-color: #606060;
 }
 .col_label,
 .col_value,
@@ -232,7 +252,7 @@ a:hover {
 }
 #timeline .spacer {
 	float: left;
-	background-color: #e0e0e0;
+	background-color: #606060;
 	white-space: nowrap;
 }
 #timeline .item {
@@ -246,18 +266,18 @@ a:hover {
 	white-space: nowrap;
 }
 #timeline .onNow {
-	background-color: #b4e29c;
+	background-color: #34621c;
 }
 #timeline .onSoon {
-	background-color: #dee6ee;
+	background-color: #5e666e;
 }
 #timeline .record {
-	background-color: ##e8a8a8;
+	background-color: #682828;
 }
 #timeline .row_0 {
 }
 #timeline .row_1 {
-	background-color: #dee6ee;
+	background-color: #484850;
 }
 
 #timenow {
@@ -307,7 +327,7 @@ a:hover {
 	padding: 3px;
 	margin-top: 1em;
 	margin-bottom: 1em;
-	background-color: #dee6ee;
+	background-color: #5e666e;
 	text-align: right;
 }
 #config {
@@ -347,7 +367,7 @@ select.channels {
 	text-align: center;
 }
 #navigation .navi:hover {
-	background-color: #dee6ee;
+	background-color: #5e666e;
 }
 #navigation .search {
 	padding-top: 6px;
@@ -372,7 +392,7 @@ select.channels {
 	#navigation {
 		margin: 50px 0 0 -155px;
 		position: fixed;
-		background-color: white;
+		background-color: #121212;
 	}
 	.wideonly,
 	#navigation .logo {

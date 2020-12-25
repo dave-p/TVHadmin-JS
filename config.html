@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="application-name" content="TVHadmin">
 <title>TVHadmin - a front-end for TVHeadend></title>
-<link rel="stylesheet" href="style.css">
 <script src="include.js"></script>
 <script>
   window.addEventListener('load',function() {
@@ -163,6 +162,11 @@
 	  <tr class='heading'>
 	    <td colspan='2'><h2>Preferences</h2></td>
 	  </tr>
+	  <tr class='row_alt' title='Select display theme'>
+	    <td class='col_label'><h5>Display theme:</h5></td>
+	    <td class='col_value'><label for='T0'>Light:</label><input type='radio' name='THEME' id='T0' value='0'><label for='T1'>Dark:</label><input type='radio' name='THEME' id='T1' value='1'>
+	    </td>
+          </tr>
 	  <tr class='row_alt' title='Time after which entries appear on tomorrow&apos;s EPG. Useful if you watch TV after midnight'>
 	    <td class='col_label'><h5>EPG Day starts at:</h5></td>
 	    <td class='col_value'>
@@ -253,11 +257,10 @@
         var m2 = document.FormName.elements.selected_channels;
 
 async function main() {
-  var cookies = get_cookies();
   let form = document.getElementById("myForm");
   form.addEventListener("submit", event => {
     let formdata = JSON.stringify(saveForm(form));
-    document.cookie = "TVHadmin="+encodeURIComponent(formdata)+"; max-age=315360000";
+    document.cookie = "TVHadmin="+encodeURIComponent(formdata)+"; max-age=315360000; samesite=strict";
   });
   
   let profiles = await get_profiles();

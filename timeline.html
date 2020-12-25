@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="application-name" content="TVHadmin">
 <title>TVHadmin - Timeline</title>
-<link rel="stylesheet" href="style.css">
 <script src="include.js"></script>
 <script>
   window.addEventListener('load',function() {
@@ -211,7 +210,6 @@
   var cookies = get_cookies();
 
   async function main() {
-    const cookies = get_cookies();
     var tags = await get_channeltags();
     var s = "<span class='wideonly'>";
     media = [];

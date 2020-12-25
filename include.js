@@ -1,3 +1,26 @@
+function get_cookies() {
+  const n = "TVHadmin";
+  try {
+    var b = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)');
+    var c = b ? b.pop() : '';
+    return JSON.parse(decodeURIComponent(c));
+  }
+  catch {
+    var empty = {"Tag_All": "All", "Rec_All": "All", "Now_All": "All", "Tim_All": "All", "SORT": "1", "CSORT": "0", "TIMESPAN": "2", "EPGSTART": "0", "THEME": "0"};
+    return empty;
+  }
+}
+
+var cookies = get_cookies();
+var head = document.getElementsByTagName('HEAD')[0];
+var link = document.createElement('link');
+link.rel = 'stylesheet';
+link.type = 'text/css';
+if (cookies.THEME == 1) link.href = 'style.dark.css';
+else link.href = 'style.css';
+head.appendChild(link);
+
+
 function create_by_event(event, event_id, element) {
   event.preventDefault();
   const profile_uuid = cookies.UUID;
@@ -173,19 +196,6 @@ function strncmp(str1, str2, n) {
   str1 = str1.substring(0, n);
   str2 = str2.substring(0, n);
   return ( ( str1 == str2 ) ? 0 : (( str1 > str2 ) ? 1 : -1 ));
-}
-
-function get_cookies() {
-  const n = "TVHadmin";
-  try {
-    var b = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)');
-    var c = b ? b.pop() : '';
-    return JSON.parse(decodeURIComponent(c));
-  }
-  catch {
-    var empty = {"Tag_All": "All", "Rec_All": "All", "Now_All": "All", "Tim_All": "All", "SORT": "1", "CSORT": "0", "TIMESPAN": "2", "EPGSTART": "0"};
-    return empty;
-  }
 }
 
 function intersect(tags, media) {
