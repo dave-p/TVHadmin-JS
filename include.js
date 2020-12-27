@@ -21,6 +21,11 @@ else link.href = 'style.css';
 head.appendChild(link);
 
 
+function checkForm() {
+  var x = document.forms["search"]["find"].value;
+  if (x == "") return false;
+}
+
 function create_by_event(event, event_id, element) {
   event.preventDefault();
   const profile_uuid = cookies.UUID;
