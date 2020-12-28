@@ -151,7 +151,7 @@ a:hover {
 }
 
 .row_alt:nth-child(odd) {
-	background-color: #484850;
+	background-color: #242c2c;
 }
 .row_error {
 	background-color: #7f5050;
