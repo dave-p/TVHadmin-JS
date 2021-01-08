@@ -122,6 +122,15 @@
     });
     return ret;
   }
+
+  async function get_ms_stop(t){
+    const epg = await get_epg(t.channelname, t.stop, t.stop + 10800);
+    var ret = t.stop;
+    epg.forEach(function(e) {
+      if (e.episodeUri == t.uri) ret = e.stop;
+    });
+    return ret;
+  }
 </script>
 </head> 
 <body>
@@ -187,10 +196,16 @@
     }
     var now = new Date() / 1000;
     var table = document.getElementById("list");
-    timers.forEach(function(t) {
+    for await (const t of timers) {
       let start = strftime("%H:%M", t.start);
-      let stop = strftime("%H:%M", t.stop);
       let d = strftime("%a %d/%n", t.start);
+      if (t.uri.includes("#")) {
+        let s = await get_ms_stop(t);
+	var stop = strftime("%H:%M", s);
+      }
+      else {
+	var stop = strftime("%H:%M", t.stop);
+      }
       if(t.start_real < now) {
         var status = 3;
         var running = 1;
@@ -229,7 +244,7 @@
         `<td class='col_delete'><input type='checkbox' class='smaller' oninput='toggle(event,"${t.uuid}","${t.enabled}")' ${en}></td>` +
         `<td class='col_delete'><a href='timers.html' onclick='delete_timer(event,"${t.uuid}",${running})'><img src='images/delete.png' title='Delete Timer'></a></td>`;
       row.innerHTML = s;
-    });
+    }
     var s = '';
     for await (const c of clashes) {
       if (!c.uri) continue;
