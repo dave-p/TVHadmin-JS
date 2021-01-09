@@ -65,7 +65,7 @@ async function get_epg(channel, start, to) {
   }
   if (channel) {
     const prog = encodeURIComponent(channel);
-    url += `&channel=${channel}`;
+    url += `&channel=${prog}`;
   }
   const response = await fetch(url);
   const epg = await response.json();
@@ -76,7 +76,7 @@ async function get_epg_now(channel) {
   var url = "/api/epg/events/grid?mode=now&limit=9999";
   if (channel) {
     const prog = encodeURIComponent(channel);
-    url += `&channel=${channel}`;
+    url += `&channel=${prog}`;
   }
   const response = await fetch(url);
   const epg = await response.json();
