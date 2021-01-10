@@ -149,9 +149,12 @@
       }
       var time = strftime("%H:%M", r.start);
       var date = strftime("%a %e/%m/%y", r.start);
-      var duration = r.stop - r.start;
+      if (r.uri && r.uri.includes("#")) {
+        var duration = r.stop_real - r.start_real;
+      }
+      else var duration = r.stop - r.start;
       var hh = Math.floor(duration / 3600);
-      var mm = (duration % 3600) / 60;
+      var mm = Math.floor((duration % 3600) / 60);
       var length = hh + ':' + ('00'+mm).slice(-2);
       var title = htmlspecialchars(r.disp_title);
       var summ = r.disp_extratext;
