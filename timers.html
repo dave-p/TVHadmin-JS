@@ -251,7 +251,7 @@
       var title = c.disp_title;
       var str = title.match(/^(.*?)\.\.\./);
       if (str) title = str[1];
-      if (str = title.match(/^New: (.*)/)) {
+      if (str = title.match(/^New: *(.*)/)) {
         var ts = str[1];
       }
       else {
@@ -265,7 +265,7 @@
           var sl = "";
           if (a.deafsigned) sl = '[SL]';
 	  if (a.episodeUri && (c.uri === a.episodeUri)) {
-	    var when = strftime("%a %e/%m %H:%M", a.start);
+	    var when = strftime("%a %e/%n %H:%M", a.start);
 	    if (!check_event(timers, a)) {
 	      s2 += `<li>${when} ${a.channelName} ${a.title} ${sl}</li>`;
 	    }
@@ -275,7 +275,8 @@
 	  }
         });
         if (s2.length) {
-          s += `<p>Alternatives for \"${ts}\"</p><ul>` + s2 + "</ul>";
+          let dt = strftime("%a %e/%n at %H:%M", c.start);
+          s += `<p>Alternatives for \"${ts}\" on ${dt}</p><ul>` + s2 + "</ul>";
         }
       }
     }
