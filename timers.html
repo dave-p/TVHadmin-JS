@@ -199,7 +199,7 @@
     for await (const t of timers) {
       let start = strftime("%H:%M", t.start);
       let d = strftime("%a %d/%n", t.start);
-      if (t.uri.includes("#")) {
+      if (t.uri && t.uri.includes("#")) {
         let s = await get_ms_stop(t);
 	var stop = strftime("%H:%M", s);
       }
