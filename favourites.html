@@ -75,6 +75,8 @@
       slinks[l["serieslink"]] = 1;
     });
 
+    var channels = await get_channels(0);
+
     var lcn = 0;
     if (cookies.CSORT == "1") lcn = 1;
 
@@ -110,6 +112,7 @@
     var content = document.getElementById("content");
     var choices = cookies.selected_channels;
     for (var c of choices) {
+      if (!channels.find(el => el.name == c)) continue;
       var table = document.createElement("TABLE");
       table.className = 'list';
       var row = table.insertRow(-1);
