@@ -68,7 +68,11 @@ async function get_epg(channel, start, to) {
     url += `&channel=${prog}`;
   }
   const response = await fetch(url);
-  const epg = await response.json();
+  let epg = await response.text();
+  // Sometimes the TVHeadend API returns an unparseable string due to strange control
+  // characters within the subtitle/summary fields, so here we strip them in advance.
+  epg = epg.replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
+  epg = JSON.parse(epg);
   return epg.entries;
 }
 
