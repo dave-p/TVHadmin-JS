@@ -225,7 +225,7 @@
 	    media[tags[tag]] = 1;
 	  }
 	}
-	else if (cookies[("Tim_"+tag)]) {
+	else if (cookies[("Tim_"+key.substring(4))]) {
 	  s += " checked";
 	  media[tags[tag]] = 1;
 	}
