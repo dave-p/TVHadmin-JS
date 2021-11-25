@@ -111,59 +111,60 @@
     }
     document.getElementById("whatandwhen").hidden = false;
     var content = document.getElementById("content");
-    var choices = cookies.selected_channels;
-    for (var c of choices) {
-      if (!channelnames.includes(c)) continue;
-      var table = document.createElement("TABLE");
-      table.className = 'list';
-      var row = table.insertRow(-1);
-      row.className = 'heading';
-      var title = row.insertCell();
-      title.setAttribute('colspan', '4');
-      title.innerHTML = `<span class='channel_name'>${c}</span>`;
-      var events = await get_epg(c, when, next);
-      var last_date = ' ';
-      events.forEach(function(e) {
-        if (next == 0) {
-          let d = strftime("%A %d/%n", e.start);
-          if (d != last_date) {
-            row = table.insertRow(-1);
-            row.className = 'newday';
-            row.innerHTML = `<td colspan='5'><span class='date_long'>${d}</span></td>`;
-            last_date = d;
+    if (cookies.selected_channels) {
+      for (var c of cookies.selected_channels) {
+        if (!channelnames.includes(c)) continue;
+        var table = document.createElement("TABLE");
+        table.className = 'list';
+        var row = table.insertRow(-1);
+        row.className = 'heading';
+        var title = row.insertCell();
+        title.setAttribute('colspan', '4');
+        title.innerHTML = `<span class='channel_name'>${c}</span>`;
+        var events = await get_epg(c, when, next);
+        var last_date = ' ';
+        events.forEach(function(e) {
+          if (next == 0) {
+            let d = strftime("%A %d/%n", e.start);
+            if (d != last_date) {
+              row = table.insertRow(-1);
+              row.className = 'newday';
+              row.innerHTML = `<td colspan='5'><span class='date_long'>${d}</span></td>`;
+              last_date = d;
+            }
           }
-        }
-        row = table.insertRow(-1);
-        row.className = 'row_alt';
-        let start = strftime("%H:%M", e.start);
-        let stop = strftime("%H:%M", e.stop);
-        let desc = '';
-        if (e.summary) desc = e.summary;
-	else if (e.description) desc = e.description;
-        let s = `<td class='col_duration'>${start} - ${stop}</td>` +
+          row = table.insertRow(-1);
+          row.className = 'row_alt';
+          let start = strftime("%H:%M", e.start);
+          let stop = strftime("%H:%M", e.stop);
+          let desc = '';
+          if (e.summary) desc = e.summary;
+	  else if (e.description) desc = e.description;
+          let s = `<td class='col_duration'>${start} - ${stop}</td>` +
 	    `<td class='col_title'>` +
 	    `<div class='epg_title'>${e.title}</div>` +
 	    `<div class='epg_subtitle'>${desc}</div></td>`;
-	if (slinks[e.serieslinkUri]) {
+	  if (slinks[e.serieslinkUri]) {
 	    s += "<td></td><td><img src='images/rec.png' title='Series recording scheduled'></td>";
-	}
-	else {
-	  if (e.dvrState == 'scheduled' || e.dvrState == 'recording') {
-	    s += "<td><img src='images/rec.png' title='Recording scheduled'></td>";
 	  }
 	  else {
-	    s += `<td><a href='favourites.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' title='record'></a></td>`;
+	    if (e.dvrState == 'scheduled' || e.dvrState == 'recording') {
+	      s += "<td><img src='images/rec.png' title='Recording scheduled'></td>";
+	    }
+	    else {
+	      s += `<td><a href='favourites.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' title='record'></a></td>`;
+	    }
+	    if (e.serieslinkUri) {
+	      s += `<td><a href='favourites.html' onclick='create_by_series(event, "${e.eventId}", this)'><img src='images/rec_buttonS.png' title='record series'></a></td>`;
+	    }
+	    else {
+	      s += "<td></td>";
+	    }
 	  }
-	  if (e.serieslinkUri) {
-	    s += `<td><a href='favourites.html' onclick='create_by_series(event, "${e.eventId}", this)'><img src='images/rec_buttonS.png' title='record series'></a></td>`;
-	  }
-	  else {
-	    s += "<td></td>";
-	  }
-	}
-	row.innerHTML = s;
-      });
-      content.append(table);
+	  row.innerHTML = s;
+        });
+        content.append(table);
+      }
     }
   }
   main();
