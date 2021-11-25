@@ -166,6 +166,12 @@
         content.append(table);
       }
     }
+    else {
+      var msg = document.createElement("DIV");
+      msg.className = 'epg_title';
+      msg.innerHTML = "No favourite channels have been defined.";
+      content.append(msg);
+    }
   }
   main();
 </script>
