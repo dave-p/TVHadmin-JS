@@ -65,7 +65,7 @@
 	       <td class='col_value'><h2>Recs</h2></td>
 	       <td class='col_channel'><h2>Channel</h2></td>
 	       <td class='col_name'><h2>Name</h2></td>
-	       <td class='wideonly col_channel'><h2>Link</h2></td>
+	       <td class='wideonly col_channel'><h2>Next Timer</h2></td>
 	       <td class='col_delete'></td>
 	     </tr>
            </table>
@@ -83,11 +83,16 @@
     var recordings = await get_recordings();
     var rcnt = [];
     var tcnt = [];
+    var tnext = [];
     recordings.forEach(function(r) {
       let auto = r.autorec;
       if (r.sched_status == "scheduled") {
 	if (tcnt[auto]) tcnt[auto]++;
 	else tcnt[auto] = 1;
+	if (tnext[auto]) {
+	    tnext[auto] = Math.max(tnext[auto], r.start);
+	}
+	else tnext[auto] = r.start;
       }
       else {
 	if (rcnt[auto]) rcnt[auto]++;
@@ -99,15 +104,17 @@
     links.forEach(function(link) {
       var recs = 0;
       var timers = 0;
+      var next = '';
       if (rcnt[link.uuid]) recs = rcnt[link.uuid];
       if (tcnt[link.uuid]) timers = tcnt[link.uuid];
+      if (tnext[link.uuid]) next = strftime("%a %e/%n %H:%M", tnext[link.uuid]);
       var row = table.insertRow(-1);
       row.className = "row_alt";
       row.innerHTML = `<td class='col_value'>${timers}</td>` +
 	`<td class='col_value'>${recs}</td>` +
 	`<td class='col_channel'>${cname[link.channel]}</td>` +
 	`<td class='col_name'>${link.name}</td>` +
-	`<td class='wideonly col_channel'>${link.serieslink}</td>` +
+	`<td class='wideonly col_channel'>${next}</td>` +
 	`<td class='col_delete'><a href='links.html' onclick='delete_link(event, "${link.uuid}")'><img src='images/delete.png'></a></td>`;
     });
   }
