@@ -19,20 +19,15 @@
 
   function set_table_layouts() {
     var tableArr = document.getElementsByClassName('list');
-    var cellWidths = new Array();
+    var cellWidth = 0;
     // get widest
     for(i = 0; i < tableArr.length; i++) {
-        for(j = 0; j < tableArr[i].rows[1].cells.length; j++) {
-           var cell = tableArr[i].rows[1].cells[j];
-           if(!cellWidths[j] || cellWidths[j] < cell.clientWidth)
-                cellWidths[j] = cell.clientWidth;
-        }
+       if(cellWidth < tableArr[i].rows[1].cells[0].clientWidth)
+           cellWidth = tableArr[i].rows[1].cells[0].clientWidth;
     }
     // set all columns to the widest width found
     for(i = 0; i < tableArr.length; i++) {
-        for(j = 0; j < tableArr[i].rows[1].cells.length; j++) {
-            tableArr[i].rows[1].cells[j].style.width = cellWidths[j]+'px';
-        }
+        tableArr[i].rows[1].cells[0].style.width = cellWidth+'px';
     }
   }
 
@@ -69,20 +64,20 @@
       <img src="images/logo.png" alt="TVHeadend Logo" width="150">
     </div>
     <div class="nav_bar">
-    <div class="navi"><a href="now.html">What's On Now</a></div>
-    <div class="navi"><a href="timeline.html">Timeline</a></div>
-    <div class="navi"><a href="channels.html">Channels</a></div>
-    <div class="navi"><a href="favourites.html">Favourite Channels</a></div>
-    <div class="navi"><a href="timers.html">Timers</a></div>
-    <div class="navi"><a href="recordings.html">Recordings</a></div>
-    <div class="navi"><a href="links.html">Series Links</a></div>
-    <div class="navi"><a href="status.html">Status</a></div>
-    <div class="navi"><a href="config.html">Configuration</a></div>
-    <form action="search.html" method="GET" name="search" class="search" onsubmit="return checkForm()">
-      <input type="text" name="find"><br>
-      <input type="submit" name="submit" value="Search">
-    </form>
-  </div>
+      <div class="navi"><a href="now.html">What's On Now</a></div>
+      <div class="navi"><a href="timeline.html">Timeline</a></div>
+      <div class="navi"><a href="channels.html">Channels</a></div>
+      <div class="navi"><a href="favourites.html">Favourite Channels</a></div>
+      <div class="navi"><a href="timers.html">Timers</a></div>
+      <div class="navi"><a href="recordings.html">Recordings</a></div>
+      <div class="navi"><a href="links.html">Series Links</a></div>
+      <div class="navi"><a href="status.html">Status</a></div>
+      <div class="navi"><a href="config.html">Configuration</a></div>
+      <form action="search.html" method="GET" name="search" class="search" onsubmit="return checkForm()">
+        <input type="text" name="find"><br>
+        <input type="submit" name="submit" value="Search">
+      </form>
+    </div>
   </div>
   <div id='layout'>
     <div id='banner'>
@@ -91,7 +86,7 @@
 	  <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Status</h1></td>
 	</tr>
       </table>
-     </div>
+    </div>
     <div id='wrapper'>
       <div id='content'>
 	<table class='list' id='systable'>
@@ -99,13 +94,20 @@
 	    <td class='col_name' colspan=2><h2>System Information</h2></td>
 	  </tr>
 	</table>
+        <table class='list' id='devtable'>
+          <tr class='heading' id='devhead'>
+            <td class='col_name'><h2>Devices</h2></td>
+          </tr>
+          <tr id='dev2'>
+            <td></td>
+          </tr>
+        </table>
       </div>
     </div>
   </div>
 </div>
 <script>
   const items = {
-	uuid: 	'uuid',
 	subs: 	'Subscribers',
 	weight: 'Weight',
 	bps: 	'Bandwidth',
@@ -159,45 +161,50 @@
     row.innerHTML = `<td class='col_channel'>Subscriptions</td><td class='col_name'>${subs}</td>`
 
     var stats = await get_input_status();
+    for (let i=0; i<stats.length; i++) {
+      switch(stats[i].signal_scale) {
+        case 1:
+          stats[i].signal = Math.round(stats[i].signal * 100 / 65535) + ' %';
+          break;
+        case 2:
+          stats[i].signal = Math.round(stats[i].signal / 1000, 1) + ' dBm';
+          break;
+        default:
+          stats[i].signal = 0;
+      }
+      switch(stats[i].snr_scale) {
+        case 1:
+          stats[i].snr = Math.round(stats[i].snr * 100 / 65535) + ' %';
+          break;
+        case 2:
+          stats[i].snr = Math.round(stats[i].snr / 1000, 1) + ' dB';
+          break;
+        default:
+          stats[i].snr = 0;
+      }
+    }
+    var devtable = document.getElementById("devtable");
+    var devhead = document.getElementById("devhead");
+    var dev2 = document.getElementById("dev2");
     for (var s of stats) {
-      switch(s.signal_scale) {
-	case 1:
-	  s.signal = Math.round(s.signal * 100 / 65535) + ' %';
-	  break;
-	case 2:
-	  s.signal = Math.round(s.signal / 1000, 1) + ' dBm';
-	  break;
-	default:
-	  s.signal = 0;
-      }
-      switch(s.snr_scale) {
-	case 1:
-	  s.snr = Math.round(s.snr * 100 / 65535) + ' %';
-	  break;
-	case 2:
-	  s.snr = Math.round(s.snr / 1000, 1) + ' dB';
-	  break;
-	default:
-	  s.snr = 0;
-      }    
-      var table = document.createElement("TABLE");
-      table.className = 'list';
-      var row = table.insertRow(-1);
-      row.className = 'heading';
-      var title = row.insertCell();
-      title.className = 'col_name';
-      title.innerHTML = `<h2>${s.input}</h2>`;
-      title = row.insertCell();
-      title.className = 'col_name';
-      title.innerHTML = `<button type='button' onclick='clear_input_stats("${s.uuid}")'>Clear Counters</button>`;
-      for (var k in s) {
-        if(items[k]) {
-        row = table.insertRow(-1);
+        var title = devhead.insertCell();
+        title.className = 'col_name';
+        title.innerHTML = `<h2>${s.input}</h2>`;
+        var button = dev2.insertCell();
+        button.className = 'col_name';
+        button.innerHTML = `<button type='button' onclick='clear_input_stats("${s.uuid}")'>Clear Counters</button>`
+    }
+    for (var k in items) {
+        var row = devtable.insertRow(-1);
         row.className = 'row_alt';
-        row.innerHTML = `<td class='col_channel'>${items[k]}</td><td class=col_name>${s[k]}</td>`
+        title = row.insertCell();
+        title.classname = 'col_channel';
+        title.innerHTML = `${items[k]}`;
+        for (var s of stats) {
+            const c = row.insertCell();
+            c.classname = 'col_name';
+            if (k in s) c.innerHTML = `${s[k]}`;
         }
-      }
-      content.append(table);
     }
     set_table_layouts();
   }
