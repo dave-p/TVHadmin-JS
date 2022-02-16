@@ -93,6 +93,18 @@
 	  <tr class='heading'>
 	    <td class='col_name' colspan=2><h2>System Information</h2></td>
 	  </tr>
+          <tr class='row_alt'>
+            <td class='col_channel'>Software Version</td><td class='col_name'></td>
+          </tr>
+          <tr class='row_alt'>
+            <td class='col_channel'>System Load</td><td class='col_name'></td>
+          </tr>
+          <tr class='row_alt'>
+            <td class='col_channel'>Recording</td><td class='col_name'></td>
+          </tr>
+          <tr class='row_alt'>
+            <td class='col_channel'>Subscriptions</td><td class='col_name'></td>
+          </tr>
 	</table>
         <table class='list' id='devtable'>
           <tr class='heading' id='devhead'>
@@ -123,23 +135,16 @@
 	tc_block: 'Total Block Error Count',
 	ec_bit: 'Bit Error Count',
   };
-  async function main() {
-    var content = document.getElementById("content");
-    var info = await get_server_info();
-    var systable = document.getElementById("systable");
-    var row = systable.insertRow(-1);
-    row.className = 'row_alt';
-    row.innerHTML = `<td class='col_channel'>Software Version</td><td class='col_name'>${info.sw_version}</td>`
 
+  async function update(stats) {
+    var systable = document.getElementById("systable");
     var xml = await get_status_xml();
     var parser = new DOMParser();
     var xmlDoc = parser.parseFromString(xml,"text/xml");
     var load = xmlDoc.getElementsByTagName("systemload")[0].childNodes[0].nodeValue;
     load = load.replace(/(\d{2})\d*/g, '$1');
     load = load.replace(/,/g, ', ');
-    row = systable.insertRow(-1);
-    row.className = 'row_alt';
-    row.innerHTML = `<td class='col_channel'>System Load</td><td class='col_name'>${load}</td>`
+    systable.rows[2].cells[1].innerHTML = load;
     var x = xmlDoc.getElementsByTagName("next")[0];
     var text = '';
     if (x) {
@@ -149,18 +154,14 @@
     else {
       x = xmlDoc.getElementsByTagName("title")[0];
       if (x) {
-        text = `Recording: "${x.childNodes[0].nodeValue}"`
+        text = `Recording: "${x.childNodes[0].nodeValue}"`;
       }
     }
-    row = systable.insertRow(-1);
-    row.className = 'row_alt';
-    row.innerHTML = `<td class='col_channel'>Recording</td><td class='col_name'>${text}</td>`
+    systable.rows[3].cells[1].innerHTML = text;
     var subs = xmlDoc.getElementsByTagName("subscriptions")[0].childNodes[0].nodeValue;
-    row = systable.insertRow(-1);
-    row.className = 'row_alt';
-    row.innerHTML = `<td class='col_channel'>Subscriptions</td><td class='col_name'>${subs}</td>`
-
-    var stats = await get_input_status();
+    systable.rows[4].cells[1].innerHTML = subs;
+    var devtable = document.getElementById("devtable");
+    if (!stats) stats = await get_input_status();
     for (let i=0; i<stats.length; i++) {
       switch(stats[i].signal_scale) {
         case 1:
@@ -183,6 +184,26 @@
           stats[i].snr = 0;
       }
     }
+    var i = 2;
+    for (var k in items) {
+      var j = 1;
+      for (var s of stats) {
+        let x = devtable.rows[i].cells;
+        if (k in s) x[j].innerHTML = s[k];
+        else x[j].innerHTML = '';
+        j++;
+      }
+      i++;
+    }
+  }
+
+  async function main() {
+    var cookies = get_cookies();
+    var systable = document.getElementById("systable");
+    var info = await get_server_info();
+    systable.rows[1].cells[1].innerHTML = info.sw_version;
+
+    var stats = await get_input_status();
     var devtable = document.getElementById("devtable");
     var devhead = document.getElementById("devhead");
     var dev2 = document.getElementById("dev2");
@@ -203,9 +224,10 @@
         for (var s of stats) {
             const c = row.insertCell();
             c.classname = 'col_name';
-            if (k in s) c.innerHTML = `${s[k]}`;
         }
     }
+    update(stats);
+    if (cookies.REFS) setInterval(update, 5000, 0);
     set_table_layouts();
   }
   main();

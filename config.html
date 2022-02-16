@@ -188,6 +188,10 @@
 	    <td class='col_label'><h5>Refresh Whats On Now and Timeline screens:</h5></td>
 	    <td class='col_value'><input type='checkbox' name='REFR'></td>
 	  </tr>
+          <tr class='row_alt' title='Refresh the status screen every 5 seconds'>
+            <td class='col_label'><h5>Refresh status screen:</h5></td>
+            <td class='col_value'><input type='checkbox' name='REFS'></td>
+          </tr>
           <tr class='row_alt' title='Show icon instead of channel name. Needs picons installed and imagecache enabled on TVHeadend'>
             <td class='col_label'><h5>Show channel icons in What's On Now & Recordings:</h5></td>
             <td class='col_value'><input type='checkbox' name='ICONS'></td>
@@ -260,7 +264,7 @@ async function main() {
   let form = document.getElementById("myForm");
   form.addEventListener("submit", event => {
     let formdata = JSON.stringify(saveForm(form));
-    document.cookie = "TVHadmin="+encodeURIComponent(formdata)+"; max-age=315360000; samesite=strict";
+    document.cookie = "TVHadmin="+encodeURIComponent(formdata)+"; Max-Age=315360000; SameSite=Lax";
   });
   
   let profiles = await get_profiles();
