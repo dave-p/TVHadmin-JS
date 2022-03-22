@@ -90,7 +90,7 @@
 	if (tcnt[auto]) tcnt[auto]++;
 	else tcnt[auto] = 1;
 	if (tnext[auto]) {
-	    tnext[auto] = Math.max(tnext[auto], r.start);
+	    tnext[auto] = Math.min(tnext[auto], r.start);
 	}
 	else tnext[auto] = r.start;
       }
