@@ -85,16 +85,17 @@
     var tcnt = [];
     var tnext = [];
     recordings.forEach(function(r) {
+      if (!r.enabled) return;
       let auto = r.autorec;
       if (r.sched_status == "scheduled") {
 	if (tcnt[auto]) tcnt[auto]++;
 	else tcnt[auto] = 1;
 	if (tnext[auto]) {
-	    tnext[auto] = Math.min(tnext[auto], r.start);
+	  tnext[auto] = Math.min(tnext[auto], r.start);
 	}
 	else tnext[auto] = r.start;
       }
-      else {
+      else if (r.sched_status == "completed") {
 	if (rcnt[auto]) rcnt[auto]++;
 	else rcnt[auto] = 1;
       }
