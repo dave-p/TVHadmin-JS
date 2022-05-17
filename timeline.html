@@ -17,11 +17,6 @@
     });
   },false);
 
-    window.onresize = function() {
-      if(globalResizeTimer != null) window.clearTimeout(globalResizeTimer);
-      globalResizeTimer = window.setTimeout(drawCursor, 200, refresh);
-    };
-
   function click_tag(prefix, tagID) {
     var chk;
     if (document.getElementById(tagID).checked) chk = 1;
@@ -251,12 +246,15 @@
     document.getElementById('channelname').style = `width: ${ch_width}px`;
 
     channels = await get_channels(lcn);
-    tags = await get_channeltags();
     table = document.getElementById("list").getElementsByTagName('tbody')[0];
     update(1);
 
     if (cookies.REFR) var refresh = 1;
     else var refresh = 0;
+    window.onresize = function() {
+      if(globalResizeTimer != null) window.clearTimeout(globalResizeTimer);
+      globalResizeTimer = window.setTimeout(drawCursor, 200, refresh);
+    };
     drawCursor(refresh);
   }
 
