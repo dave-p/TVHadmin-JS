@@ -25,15 +25,42 @@
     location.reload();
   }
 
-  function make_timer(event_id, title) {
-    if (confirm(`Create Timer for "${title}"?`)) {
+  function make_timer(event_id, title, is_series) {
+    let recDialog = document.getElementById('recDialog');
+    let recCancel = document.getElementById('recCancel');
+    let recOnce = document.getElementById('recOnce');
+    let recSeries = document.getElementById('recSeries');
+    recCancel.addEventListener('click', function() {
+      recDialog.close();
+    });
+    recOnce.addEventListener('click', function rec() {
       const profile_uuid = cookies.UUID;
       fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
-        if (response.ok) {
+	if (response.ok) {
 	  update(0);
-        }
+	}
+      });
+      recOnce.removeEventListener('click', rec);
+      recDialog.close();
+    });
+    document.getElementById('recText').textContent = `Record "${title}"?`;
+    if (is_series) {
+      recSeries.disabled = false;
+      recSeries.addEventListener('click', function recs(event) {
+	const profile_uuid = cookies.UUID;
+	fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
+	  if (response.ok) {
+	    update(0);
+	  }
+	});
+	recSeries.removeEventListener('click', recs);
+	recDialog.close();
       });
     }
+    else {
+	recSeries.disabled = true;
+    }
+    recDialog.showModal();
   }
 
   function drawCursor(refresh) {
@@ -131,7 +158,9 @@
 	  else if (p.dvrState) s += `<div class='item  ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
 	  else {
 	    var esctitle = htmlspecialchars(p.title);
-	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='make_timer("${p.eventId}", "${esctitle}")'>${p.title}</div>`;
+	    if (p.serieslinkUri) var is_series = 1;
+	    else var is_series = 0;
+	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='make_timer("${p.eventId}", "${esctitle}", ${is_series})'>${p.title}</div>`;
 	  }
 	}
 	s += "</td>";
@@ -194,6 +223,14 @@
 	  <span id='timenow' style='visibility: hidden'>
 	    <img src='images/spacer.gif' width='1' height='1' alt=''>
 	  </span>
+	  <dialog id='recDialog'>
+	    <p id='recText'></p>
+	    <div style='display: flex; justify-content: center;'>
+	      <button id='recCancel'>Cancel</button>
+	      <button id='recOnce' style='margin-left: 10px;'>Record</button>
+	      <button id='recSeries' style='margin-left: 10px;'>Series</button>
+	    <div>
+	  </dialog>
 	</div>
       </div>
    </div>
