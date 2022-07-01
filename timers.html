@@ -45,8 +45,7 @@
   }
 
   function toggle(event, uuid, enabled) {
-    if (enabled == "false") var mode = true;
-    else var mode = false;
+    let mode = !enabled;
     let data = encodeURIComponent(`[{"enabled": ${mode}, "uuid": "${uuid}"}]`);
     fetch(`/api/idnode/save?node=${data}`).then(response => {
       if (response.ok) {
@@ -208,12 +207,12 @@
       }
       if(t.start_real < now) {
         var status = 3;
-        var running = 1;
+        var running = true;
       }
       else {
         var status = check_timer(timers, t);
         if (status == 2) clashes.push(t);
-        var running = 0;
+        var running = false;
       }
       if (t.autorec != "") {
 	var type = "Autorec", type2 = "Autorec";
@@ -241,7 +240,7 @@
 	`<td class='wideonly col_start'>${start}</td><td class='wideonly col_stop'>${stop}</td>` +
 	`<td class='col_name'>${t.disp_title}</td>` +
 	`<td class='col_channel'><span class='wideonly'>${type}</span><span class='thinonly'>${type2}</span></td>` +
-        `<td class='col_delete'><input type='checkbox' class='smaller' oninput='toggle(event,"${t.uuid}","${t.enabled}")' ${en}></td>` +
+        `<td class='col_delete'><input type='checkbox' class='smaller' oninput='toggle(event,"${t.uuid}",${t.enabled})' ${en}></td>` +
         `<td class='col_delete'><a href='timers.html' onclick='delete_timer(event,"${t.uuid}",${running})'><img src='images/delete.png' title='Delete Timer'></a></td>`;
       row.innerHTML = s;
     }
