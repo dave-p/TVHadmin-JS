@@ -131,17 +131,21 @@
       var wd = 98 - e.length/8;
       s = `<td class='col_channel row_${i%2}'><div class='channel_name'>${name}</div></td><td class='col_schedule'>`;
       if (e.length) {
+	var init = 1;
         for (const p of e) {
           if (p.start >= tend) break;
           if (p.stop <= now) continue;
-	  if (p.start <= now && p.stop > now) {
+	  if (init) {
 	    if (p.start > tstart) {	//Need a spacer
 	      spc = ((p.start - tstart) * wd) / textent;
 	      s += `<div class='spacer' style='width: ${spc}%;'> <img src='images/spacer.gif' width=1 height=1 alt=''></div>`;
 	    }
-	    var colour = 'onNow';
-	    tnext = Math.min(tnext, p.stop);
-	    p.onNow = 1;
+	    if (p.start <= now && p.stop > now) {
+	      var colour = 'onNow';
+	      tnext = Math.min(tnext, p.stop);
+	      p.onNow = 1;
+	    }
+	    init = 0;
 	  }
 	  else var colour = 'onSoon';
 	  if (p.dvrState == 'scheduled' || p.dvrState == 'recording') {
