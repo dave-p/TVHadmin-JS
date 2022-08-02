@@ -96,15 +96,23 @@
     tend = tstart + textent;
     tnext = tend;
     var wday = strftime('%a %e %b', utime);
-    if (now < tstart) {
-      var tleft = utime - textent/2;
-      var s = `<a href='timeline.html?start=${tleft}' ><img src='images/left.png' alt='Go Back' title='left'></a>&nbsp;`;
+    var tnow = now - now % 1800;
+    if ((tstart - tnow) >= 86400) {
+      let tleft = utime - 86400;
+      let left2 = document.getElementById("left2");
+      left2.href = `timeline.html?start=${tleft}`;
+      left2.childNodes[0].style.visibility = 'visible';
     }
-    else var s = "<img src='images/spacer.gif' style='width:20px;height:32px;'>&nbsp;";
+    if (now < tstart) {
+      let tleft = utime - textent/2;
+      let left = document.getElementById("left");
+      left.href = `timeline.html?start=${tleft}`;
+      left.childNodes[0].style.visibility = 'visible';
+    }
     var tright = utime + textent/2;
-    s += `<a href='timeline.html?start=${tright}' ><img src='images/right.png' alt='Go Forward' title='right'></a>`;
-    document.getElementById("arrows").innerHTML = s;
-    s = `<th>${wday}</th><th>`;
+    document.getElementById("right").href += `?start=${tright}`;
+    document.getElementById("right2").href += `?start=${tstart+86400}`;
+    let s = `<th>${wday}</th><th>`;
     var t = tstart;
     for (i=0; i<4; i++) {
       let time = strftime('%H:%M', t);
@@ -206,7 +214,15 @@
           <tr>
 	    <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Timeline</h1></td>
 	    <td id='mediatags'></td>
-	    <td id='arrows'></td>
+	    <td id='arrows'>
+	      <a id='left2'><img src='images/left2.png' title='Back 1 day' style='visibility:hidden'></a>
+	      <img src='images/spacer.gif' style='width:10px;height:32px;'>
+	      <a id='left'><img src='images/left.png' title='Back' style='visibility:hidden'></a>
+	      <img src='images/spacer.gif' style='width:10px;height:32px;'>
+	      <a href='timeline.html' id='right'><img src='images/right.png' title='Forward'></a>
+	      <img src='images/spacer.gif' style='width:10px;height:32px;'>
+	      <a href='timeline.html' id='right2'><img src='images/right2.png' title='Forward 1 day'></a>
+	    </td>
 	  </tr>
         </table>
       </div>
