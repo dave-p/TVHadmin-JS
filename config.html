@@ -196,9 +196,13 @@
             <td class='col_label'><h5>Show channel icons in What's On Now & Recordings:</h5></td>
             <td class='col_value'><input type='checkbox' name='ICONS'></td>
           </tr>
-	  <tr class='row_alt' title='Show timer conflicts and alternative showings. Only works for single tuners on networks using CRIDs (series link)'>
-	    <td class='col_label'><h5>Detect timer clashes (single tuner only):</h5></td>
-	    <td class='col_value'><input type='checkbox' name='CLASHDET'></td>
+	  <tr class='row_alt' title='Show timer conflicts. Multiple tuner option is experimental and needs ADMIN privilege.'>
+	    <td class='col_label'><h5>Detect timer clashes:</h5></td>
+	    <td class='col_value'>
+	      <label for='T0'>Off:</label><input type='radio' name='CLASHDET' id='T0' value='0'>
+	      <label for='T1'>Single tuner:</label><input type='radio' name='CLASHDET' id='T1' value='1'>
+	      <label for='T2'>Multiple tuners:</label><input type='radio' name='CLASHDET' id='T2' value='2'>
+	    </td>
 	  </tr>
 	  <tr class='row_alt' title='Time period for the Timeline screen'>
 	    <td class='col_label'><h5>Timeline length:</h5></td>
