@@ -1,0 +1,12 @@
+{
+       "name": "TVHadmin-JS",
+       "short_name": "TVHadmin",
+       "start_url": "TVHadmin.html",
+       "display": "standalone",
+       "background_color" : "#ffffff" ,
+       "description": "TVHeadend web front-end",
+       "icons": [{
+               "src": "images/logo-square.png",
+               "sizes": "280x280"
+       }]
+}
