@@ -90,7 +90,7 @@
       else {
         var s = `<td></td><td class='col_channel'><div class='channel_name'>${name}</div></td><td>No EPG available</td><td></td>`;
       }
-      s += `<td class='col_stream'><a href='/play/stream/channel/${c.uuid}?title=${c.name}'><img src='images/play.png' title='Play'></a></td>`;
+      s += `<td class='col_stream'><a href='/play/stream/channel/${c.uuid}?title=${c.name}' download='${c.uuid}.m3u'><img src='images/play.png' title='Play'></a></td>`;
       row.innerHTML = s;
       i++;
     }
