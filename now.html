@@ -8,15 +8,6 @@
 <title>TVHadmin - What's On Now?</title>
 <script src="include.js"></script>
 <script>
-  window.addEventListener('load',function() {
-    var mytop=document.getElementById("mobmenu");
-    mytop.addEventListener('click', function() {
-        var mynav=document.getElementById("navigation");
-        if (mynav.classList.contains('focus'))
-            mynav.classList.remove('focus');
-        else mynav.classList.add('focus');
-    });
-  },false);
 
   function updateTimeline() {
     var now = Date.now()/1000;

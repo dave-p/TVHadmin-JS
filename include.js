@@ -20,6 +20,15 @@ if (cookies.THEME == 1) link.href = 'style.dark.css';
 else link.href = 'style.css';
 head.appendChild(link);
 
+window.addEventListener('load',function() {
+  var mytop=document.getElementById("mobmenu");
+  mytop.addEventListener('click', function() {
+    var mynav=document.getElementById("navigation");
+    if (mynav.classList.contains('focus'))
+      mynav.classList.remove('focus');
+    else mynav.classList.add('focus');
+  });
+},false);
 
 function checkForm() {
   var x = document.forms["search"]["find"].value;
