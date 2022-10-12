@@ -30,6 +30,24 @@ window.addEventListener('load',function() {
       mynav.classList.remove('focus');
     else mynav.classList.add('focus');
   });
+  const titles = [ "What's On Now", "Timeline", "Channels", "Favourite Channels", "Timers",
+        "Recordings", "Series Links", "Status", "Configuration" ];
+  const links = [ "now.html", "timeline.html", "channels.html", "favourites.html", "timers.html",
+        "recordings.html", "links.html", "status.html", "config.html" ];
+  let menu = document.getElementsByClassName("nav_bar");
+  for (let i = 0; i < titles.length; i++) {
+    let div = document.createElement("div");
+    div.setAttribute("class", "navi");
+    div.innerHTML = `<a href="${links[i]}">${titles[i]}</a>`;
+    menu[0].appendChild(div);
+  }
+  let div = document.createElement("div");
+  div.setAttribute("class", "navi");
+  div.innerHTML = "<form action='search.html' method='GET' name='search' class='search' onsubmit='return checkForm()'> \
+        <input type='text' name='find'><br> \
+        <input type='submit' name='submit' value='Search'> \
+        </form>";
+  menu[0].appendChild(div);
 },false);
 
 function checkForm() {
