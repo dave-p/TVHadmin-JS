@@ -87,7 +87,7 @@
 	}
 	else tnext[auto] = r.start;
       }
-      else if (r.sched_status == "completed") {
+      else if (r.sched_status == "completed" || r.sched_status == "recording") {
 	if (rcnt[auto]) rcnt[auto]++;
 	else rcnt[auto] = 1;
       }
