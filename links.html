@@ -78,6 +78,7 @@
     var tnext = [];
     recordings.forEach(function(r) {
       if (!r.enabled) return;
+      if (r.autorec === "") return;
       let auto = r.autorec;
       if (r.sched_status == "scheduled") {
 	if (tcnt[auto]) tcnt[auto]++;
