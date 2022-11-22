@@ -69,7 +69,7 @@
 	if (cookies.ICONS && c.icon_public_url) {
           s += `<img src="/${c.icon_public_url}" height='48' width='80' alt="${name}" title="${name}">`;
         }
-	else s += `${name}</div>`;
+	else s += `${name}`;
 	s += `</div></td><td class='col_title'><div class='epg_title'>${e.title}</div><div class='epg_subtitle'>${summ}</div></td>`;
 	if (!e.dvrState || e.dvrState != 'scheduled' && e.dvrState != 'recording') {
 	  s += `<td><a href='now.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' alt='record' title='record'></a></td>`;
@@ -79,7 +79,11 @@
 	}
       }
       else {
-        var s = `<td></td><td class='col_channel'><div class='channel_name'>${name}</div></td><td>No EPG available</td><td></td>`;
+        var s = `<td></td><td class='col_channel'><div class='channel_name'>`;
+        if (cookies.ICONS && c.icon_public_url) {
+          s += `<img src="/${c.icon_public_url}" height='48' width='80' alt="${name}" title="${name}"></div></td><td>No EPG available</td><td></td>`;
+        }
+        else s += `${name}</div></td><td>No EPG available</td><td></td>`;
       }
       s += `<td class='col_stream'><a href='/play/stream/channel/${c.uuid}?title=${c.name}' download='${c.uuid}.m3u'><img src='images/play.png' title='Play'></a></td>`;
       row.innerHTML = s;
