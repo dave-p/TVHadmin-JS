@@ -8,9 +8,9 @@ Sample screenshots can be found [here](/screenshots/).
 For an alternative version which requires a PHP-enabled web server see https://github.com/dave-p/TVHadmin
 
 ### Requirements
-- A recent version of TVHeadend (the latest development version preferred).
+- A recent version of TVHeadend (the latest version 4.3 preferred).
 - TVHeadend must be set up to use 'Basic' or 'Basic+Digest' authentication.
-- An up-to-date web browser on your client device. TVHadmin has been tested with Firefox and Chromium under Linux and Chromium on Android; IE will not work.
+- An up-to-date web browser on your client device. TVHadmin has been tested with Firefox, Brave and Chromium under Linux and Chromium on Android; IE will not work.
 
 ### Installation
 - Log in to your TVHeadend server and `cd /usr/share/tvheadend/src/webui/static` (your distribution may have used a different directory for this).
@@ -35,6 +35,8 @@ A yellow 'tick' mark is shown if overlapping timers are from the same network an
 TVHadmin checks the allocation of sources to timers using the same algorithm as TVHeadend. However in order for the check to work correctly it is important that each source for a channel should have a different priority set - if TVHeadend has two or more sources with the same priority to make a recording it will choose one at random, so the clash detection will not be accurate.
 
 The priority for a recording source is the sum of the service priority and the tuner priority (network priority for IPTV). If not using IPTV the simplest approach is to set each TV tuner to a different priority and leave the service priorities as default. If TVHadmin detects that there are multiple 'best' sources for a recording with the same priority, the 'tick' mark against the recording will show grey.
+
+The Tvheadend user must have 'Admin' privilege for clash detection to work.
 
 ### Security
 TVHadmin uses the same security controls as the standard TVHeadend user interface. For use over the open internet you may wish to use a proxy server for additional security.
