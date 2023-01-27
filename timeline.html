@@ -29,20 +29,19 @@
       const profile_uuid = cookies.UUID;
       fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
 	if (response.ok) {
-	  update(0);
+	  update(2);
 	}
       });
       recOnce.removeEventListener('click', rec);
       recDialog.close();
     });
-    document.getElementById('recText').textContent = `Record "${title}"?`;
     if (is_series) {
       recSeries.disabled = false;
       recSeries.addEventListener('click', function recs(event) {
 	const profile_uuid = cookies.UUID;
 	fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
 	  if (response.ok) {
-	    update(0);
+	    update(2);
 	  }
 	});
 	recSeries.removeEventListener('click', recs);
@@ -52,6 +51,7 @@
     else {
 	recSeries.disabled = true;
     }
+    document.getElementById('recText').textContent = `Record "${title}"?`;
     recDialog.showModal();
   }
 
@@ -114,7 +114,7 @@
     s += '</th>';
     document.getElementById('newday').innerHTML = s;
 
-    if (last_tend != tend) {
+    if ((last_tend != tend) || (first == 2)) {
       events = await get_epg('', tstart, tend);
       last_tend = tend;
     }
@@ -123,7 +123,7 @@
       if (!(media.All)) {
         if (intersect(c.tags, media) == 0) continue;
       }
-      if (first) var row = table.insertRow(-1);
+      if (first == 1) var row = table.insertRow(-1);
       else var row = table.children[i];
       if (lcn) var name = `${c.number} ${c.name}`;
       else var name = c.name;
