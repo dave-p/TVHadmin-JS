@@ -61,16 +61,18 @@
 <script>
   async function main() {
     const params = new URLSearchParams(window.location.search);
-    const [ links, channels ] = await Promise.all([get_links(), get_channels(0)]);
+
+    var lcn = 0;
+    if (cookies.CSORT == "1") lcn = 1;
+
+    const [ links, channels ] = await Promise.all([get_links(), get_channels(lcn)]);
+
     var slinks = []
     links.forEach(function(l) {
       slinks[l["serieslink"]] = 1;
     });
 
     var channelnames = channels.map(e => e.name);
-
-    var lcn = 0;
-    if (cookies.CSORT == "1") lcn = 1;
 
     var dt = new Date()/1000;
     var today = dt - (dt%86400) + (cookies.EPGSTART * 3600)
