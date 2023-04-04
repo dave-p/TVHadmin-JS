@@ -67,12 +67,11 @@
  </div>
 <script>
   async function main() {
-    var channels = await get_channels();
+    const [ recordings, channels ] = await Promise.all([get_recordings(), get_channels(0)]);
     var cname = [];
     channels.forEach(function(c) {
       cname[c.uuid] = c.name;
     });
-    var recordings = await get_recordings();
     var rcnt = [];
     var tcnt = [];
     var tnext = [];

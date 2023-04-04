@@ -151,7 +151,9 @@
   var channels, lcn, media;
 
   async function main() {
-    var tags = await get_channeltags();
+    lcn = 0;
+    if (cookies.CSORT == "1") lcn = 1;
+    [ tags, channels ] = await Promise.all([get_channeltags(), get_channels(lcn)]);
     var s = "<span class='wideonly'>";
     media = [];
     for (var key in cookies) {
@@ -177,9 +179,6 @@
     var td = document.getElementById("mediatags");
     td.innerHTML = s;
 
-    lcn = 0;
-    if (cookies.CSORT == "1") lcn = 1;
-    channels = await get_channels(lcn);
     update(1);
   }
 

@@ -99,7 +99,7 @@
     const buttons = document.getElementsByName('SORT');
     buttons[sort].checked = true;
 
-    var tags = await get_channeltags();
+    const [ tags, channels, recordings ] = await Promise.all([get_channeltags(), get_channels(0), get_recordings(sort)]);
     var s = "<span class='wideonly'>";
     var media = [];
     for (var key in cookies) {
@@ -125,12 +125,10 @@
     var td = document.getElementById("recmediatags");
     td.innerHTML = s;
 
-    var channels = await get_channels();
     var chtags = [];
     channels.forEach(function(c) {
       chtags[c.uuid] = c.tags;
     });
-    var recordings = await get_recordings(sort);
     var table = document.getElementById("list");
     recordings.forEach(function(r) {
       if (r.sched_status == "scheduled") return;

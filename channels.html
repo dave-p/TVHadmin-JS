@@ -63,15 +63,14 @@
 <script>
   async function main() {
     const params = new URLSearchParams(window.location.search);
-    var links = await get_links();
+    var lcn = 0;
+    if (cookies.CSORT == "1") lcn = 1;
+    const [ links, channels ] = await Promise.all([get_links(), get_channels(lcn)]);
     var slinks = []
     links.forEach(function(l) {
       slinks[l["serieslink"]] = 1;
     });
 
-    var lcn = 0;
-    if (cookies.CSORT == "1") lcn = 1;
-    var channels = await get_channels(lcn);
     var channel_dropdown = document.getElementById("select_channel");
     let opt = document.createElement("option");
     opt.setAttribute("value", -1);

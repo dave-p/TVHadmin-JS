@@ -61,13 +61,12 @@
 <script>
   async function main() {
     const params = new URLSearchParams(window.location.search);
-    var links = await get_links();
+    const [ links, channels ] = await Promise.all([get_links(), get_channels(0)]);
     var slinks = []
     links.forEach(function(l) {
       slinks[l["serieslink"]] = 1;
     });
 
-    var channels = await get_channels(0);
     var channelnames = channels.map(e => e.name);
 
     var lcn = 0;
