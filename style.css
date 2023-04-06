@@ -382,13 +382,7 @@ select.channels {
 	#navigation:focus,
 	#navigation.focus { 
 		margin: 50px -155px 0 0;
-		-moz-transition-property: margin;
-		-moz-transition-duration: 0.5s;
-		-moz-transition-timing-function: ease-out;
-		-webkit-transition-property: margin;
-		-webkit-transition-duration: 0.5s;
-		-o-transition-property: margin;
-		-o-transition-duration: 0.5s;
+		transition: margin 0.5s ease-out;
 	}
 	#navigation .navi {
 		padding-top: 8px;
