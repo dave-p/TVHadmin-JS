@@ -19,7 +19,7 @@
     return ret;
   }
 
-  function delete_timer(event, uuid, running) {
+  function delete_timer(r, uuid, running) {
     event.preventDefault();
     if (running) {
       var url = `/api/dvr/entry/stop?uuid=${uuid}`;
@@ -30,7 +30,10 @@
     fetch(url).then(response => {
       if (response.ok) {
         if (cookies.CLASHDET) location.reload();
-        else document.getElementById("list").deleteRow(event.target.parentNode.parentNode.parentNode.rowIndex);
+        else {
+          var i = r.parentNode.parentNode.rowIndex;
+          document.getElementById("list").deleteRow(i);
+        }
       }
     });
     return;
