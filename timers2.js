@@ -10,6 +10,7 @@
     var ch = channels.findIndex(c => c["uuid"] === timer.channel);
     for (const s of channels[ch].services) {
       const [net, mux, svc] = services[s].name.split('/');
+      if (svc.startsWith('---')) continue;
       let n = networks[net];
       if (!n.enabled) continue;
       if ('priority' in n) {	// IPTV (or SAT>IP?)
