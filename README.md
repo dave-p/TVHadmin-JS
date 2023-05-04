@@ -43,3 +43,7 @@ TVHadmin uses the same security controls as the standard TVHeadend user interfac
 
 TVHadmin stores user preferences in a 'cookie' on the client, and uses Session Storage to maintain state. Login credentials are only stored if your browser is configured to store them.
 
+### Issues
+- All timers created by TVHadmin use the same recording profile (the one set in the Config screen).
+- Timer clash detection with multiple tuners doesn't always work correctly if you have several services for one channel.
+
