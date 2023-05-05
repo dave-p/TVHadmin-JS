@@ -45,5 +45,5 @@ TVHadmin stores user preferences in a 'cookie' on the client, and uses Session S
 
 ### Issues
 - All timers created by TVHadmin use the same recording profile (the one set in the Config screen).
-- Timer clash detection with multiple tuners doesn't always work correctly if you have several services for one channel.
+- Timer clash detection with multiple tuners doesn't always work correctly if you have several services for one channel and have set "Preferred service video type" in your Stream Profile.
 
