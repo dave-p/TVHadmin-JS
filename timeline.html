@@ -102,8 +102,8 @@
       left.childNodes[0].style.visibility = 'visible';
     }
     var tright = utime + textent/2;
-    document.getElementById("right").href += `?start=${tright}`;
-    document.getElementById("right2").href += `?start=${tstart+86400}`;
+    document.getElementById("right").href = `timeline.html?start=${tright}`;
+    document.getElementById("right2").href = `timeline.html?start=${tstart+86400}`;
     let s = `<th>${wday}</th><th>`;
     var t = tstart;
     for (i=0; i<4; i++) {
