@@ -1,18 +1,21 @@
 
 /*
     Allocate a source (tuner or IPTV network) to a timer following TVH rules:
+      - If "Preferred service video type" is set, prefer service with the same service type.
       - If a tuner is already set to the same mux as a service providing the channel, use that.
       - Otherwise use the source / service combination with the highest aggregate priority.
-      - FIXME - IPTV muxes with multiple services? SAT>IP?
+      - FIXME - Untested - IPTV muxes with multiple services, SAT>IP
 */
   function find_tuner(timer) {
-    var best = { "tuner": '', "mux": '', "priority": -999, "dup": 0 };
+    var best = { "tuner": '', "mux": '', "priority": -999, "dup": 0, "ret": 0 };
     var ch = channels.findIndex(c => c["uuid"] === timer.channel);
     for (const s of channels[ch].services) {
       const [net, mux, svc] = services[s].name.split('/');
       if (svc.startsWith('---')) continue;
       let n = networks[net];
       if (!n.enabled) continue;
+      let svtype = 0;
+      if (services[s].type < 0x21) svtype = svtypes[services[s].type];
       if ('priority' in n) {	// IPTV (or SAT>IP?)
         const prio = services[s].priority + n.priority;
         if (prio > best.priority) {
@@ -28,22 +31,23 @@
       else {
         for (const u in tuners) {
           if (tuners[u].network != net) continue;
-          if ((timer.start_real <= tuners[u].alloc) && (tuners[u].mux == mux)) {   // Use existing
-            debug += "\nUse existing recording tuner " + u;
-            alloc_tuner(u, timer, mux);
-            return 1;
+          if ((timer.start_real <= tuners[u].alloc) && (tuners[u].mux != mux)) continue;   // Busy
+          let prio = services[s].priority + tuners[u].priority;
+          if (profile.svfilter == svtype) prio += 100;	// Preferred service type
+          let ret = 0;
+          if ((timer.start_real <= tuners[u].alloc) && (tuners[u].mux == mux)) {
+            prio += 50;
+            ret = 1;
           }
-          if (timer.start_real > tuners[u].alloc) {   // available
-            const prio = services[s].priority + tuners[u].priority;
-            if (prio > best.priority) {
-              best.priority = prio;
-              best.tuner = u;
-              best.mux = mux;
-              best.dup = 0;
-            }
-            else if (prio == best.priority) {
-              best.dup++;
-            }
+          if (prio > best.priority) {
+            best.priority = prio;
+            best.tuner = u;
+            best.mux = mux;
+            best.dup = 0;
+            best.ret = ret;
+          }
+          else if (prio == best.priority) {
+            best.dup++;
           }
         }
       }
@@ -52,7 +56,7 @@
       if (best.dup == 0) {
         debug += `\n${best.tuner} service ${best.mux}`;
         alloc_tuner(best.tuner, timer, best.mux);
-        return 0;
+        return best.ret;
       }
       else {
         debug += `\n${best.tuner} has duplicate priority`;
@@ -73,11 +77,12 @@
   }
 
   async function get_services() {
-    const response = await fetch("/api/service/list?list=priority");
+    const response = await fetch("/api/service/list?list=priority,dvb_servicetype");
     const services = await response.json();
     let ret = {};
     services.entries.forEach(function(r) {
-      ret[r.uuid] = { "name": r.text, "priority": r.params[0].value };
+      if (r.text.includes('---')) return;
+      ret[r.uuid] = { "name": r.text, "priority": r.params[0].value, "type": r.params[1].value };
     });
     return ret;
   }
@@ -90,6 +95,18 @@
       ret[r.networkname] = r;
     });
     return ret;
+  }
+
+  async function get_profile() {
+    const rec_prof = await get_raw(cookies.UUID);
+    const stream_prof = await get_raw(rec_prof[0].profile);
+    return stream_prof[0];
+  }
+
+  async function get_raw(uuid) {
+    const response = await fetch(`/api/raw/export?uuid=${uuid}`);
+    const raw = await response.json();
+    return raw;
   }
 
   async function get_tuners() {
@@ -119,7 +136,7 @@
     var autorecs, status, running, run_time = 0;
     [ timers, autorecs ] = await Promise.all([get_timers(), get_autorecs()]);
     if (cookies.CLASHDET != "0") {
-      [ channels, services, networks, tuners ] = await Promise.all([get_channels(), get_services(), get_networks(), get_tuners()]);
+      [ channels, services, networks, tuners, profile ] = await Promise.all([get_channels(), get_services(), get_networks(), get_tuners(), get_profile()]);
     }
     var now = new Date() / 1000;
     var table = document.getElementById("list");
@@ -187,6 +204,10 @@
     }
   }
 
-  var channels = {}, services = {}, timers = {}, tuners = {}, networks = {}, debug = '';
-  main();
+  var channels = {}, services = {}, timers = {}, tuners = {}, networks = {}, profile = {}, debug = '';
+  const svtypes = [ 0, 1, 0, 0, 1, 1, 0, 0,	// 0x00 - 0x07
+		0, 0, 0, 0, 0, 0, 0, 0,		// 0x08 - 0x0F
+		0, 3, 0, 0, 0, 0, 1, 1,		// 0x10 - 0x17
+		1, 3, 3, 3, 3, 3, 3, 3, 4 ];	// 0x18 - 0x20
 
+  main();
