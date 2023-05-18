@@ -17,6 +17,7 @@ var link = document.createElement('link');
 link.rel = 'stylesheet';
 link.type = 'text/css';
 if (cookies.THEME == 1) link.href = 'style.dark.css';
+else if (cookies.THEME == 2) link.href = 'style.blue.css';
 else link.href = 'style.css';
 head.appendChild(link);
 
