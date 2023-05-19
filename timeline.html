@@ -170,7 +170,7 @@
 	s += "</td>";
       }
       else {
-        s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}' download='${c.uuid}.m3u'><div class='item onNow' style='width: 98%;'>No EPG Available</div></a></td>`;
+        s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}?profile=webtv-vp8-vorbis-webm' target="_blank"'><div class='item onNow' style='width: 98%;'>No EPG Available</div></a></td>`;
       }
       row.innerHTML = s;
       i++;
