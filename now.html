@@ -89,6 +89,11 @@
       row.innerHTML = s;
       i++;
     }
+      }
+      s += `<td class='col_stream'><a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}' download='${c.uuid}.m3u'><img src='images/dl.png' title='Play'></a></td>`;
+      row.innerHTML = s;
+      i++;
+    }
     updateTimeline()
   }
 
