@@ -72,7 +72,7 @@
 	else s += `${name}`;
 	s += `</div></td><td class='col_title'><div class='epg_title'>${e.title}</div><div class='epg_subtitle'>${summ}</div></td>`;
 	if (!e.dvrState || e.dvrState != 'scheduled' && e.dvrState != 'recording') {
-	  s += `<td><a href='now.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' alt='record' title='record'></a></td>`;
+	  s += `<td><a href='now.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' alt='record' title='Record'></a></td>`;
 	}
 	else {
 	  s += "<td><img src='images/rec.png' alt='Recording' title='Recording'></td>";
