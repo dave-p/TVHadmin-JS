@@ -84,6 +84,7 @@
           s += `<img src="/${c.icon_public_url}" height='48' width='80' alt="${name}" title="${name}"></div></td><td>No EPG available</td><td></td>`;
         }
         else s += `${name}</div></td><td>No EPG available</td><td></td>`;
+	{
       s += `<td class='col_stream'><a href='/stream/channel/${c.uuid}?profile=webtv-vp8-vorbis-webm' target="_blank"><img src='images/play.png' title='Play'></a></td>`;
       row.innerHTML = s;
       i++;
