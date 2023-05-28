@@ -74,8 +74,9 @@
 
     var channelnames = channels.map(e => e.name);
 
-    var dt = new Date()/1000;
-    var today = dt - (dt%86400) + (cookies.EPGSTART * 3600)
+    let d = new Date();
+    var dt = d/1000;
+    var today = dt - (dt%86400) + d.getTimezoneOffset()*60 + (cookies.EPGSTART * 3600)
     if (params.get("when")) var when = Number(params.get("when"));
     else var when = today;
 
