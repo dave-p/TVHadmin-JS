@@ -91,17 +91,16 @@
     let d = new Date();
     var dt = d/1000;
     var today = dt - (dt%86400) + d.getTimezoneOffset()*60 + (cookies.EPGSTART * 3600)
-    if (params.get("when")) var when = Number(params.get("when"));
+    if (params.has("when")) var when = Number(params.get("when"));
     else var when = today;
 
+    var next = 0;
     var date_dropdown = document.getElementById("select_date");
-    if (params.get("all")) {
+    if (params.has("all")) {
       document.getElementById("all").checked = true;
       date_dropdown.style.visibility = "hidden";
     }
-    else date_dropdown.style.visibility = "visible";
-
-    if (!params.get("all")) {
+    else {
       let left = document.getElementById("left");
       let right = document.getElementById("right");
       let prev = when - 86400;
@@ -119,13 +118,13 @@
         day += 86400;
       }
       date_dropdown.selectedIndex = Math.floor((when-today)/86400);
-      var next = when + 86400;
+      next = when + 86400;
       if (next < day) {
         right.href += `?which=${which}&when=${next}`;
         right.hidden = false;
       }
+      date_dropdown.style.visibility = "visible";
     }
-    else var next = 0;
     document.getElementById("whatandwhen").hidden = false;
     if (which) {
       var table = document.createElement("TABLE");
