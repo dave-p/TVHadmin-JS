@@ -135,7 +135,7 @@
       title.setAttribute('colspan', '4');
       if (lcn) title.innerHTML = `<span class='channel_name'>${channels[which].number} ${channels[which].name}</span>`;
       else title.innerHTML = `<span class='channel_name'>${channels[which].name}</span>`;
-      var events = await get_epg(channels[which].name, when, next);
+      var events = await get_epg(channels[which].name, when+1, next-1);
       var last_date = ' ';
       events.forEach(function(e) {
         if (next == 0) {

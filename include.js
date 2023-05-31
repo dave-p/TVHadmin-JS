@@ -66,12 +66,10 @@ function create_by_series(event, event_id, element) {
 }
 
 async function get_epg(channel, start, to) {
-  if (to == 0) {
-    var url = `/api/epg/events/grid?limit=9999`;
-  }
-  else {
+  var url = "/api/epg/events/grid?limit=9999";
+  if (to > 0) {
     const filter = `[{"field":"stop","type":"numeric","value":"${start}","comparison":"gt"},{"field":"start","type":"numeric","value":"${to}","comparison":"lt"}]`;
-    var url = `/api/epg/events/grid?filter=${filter}&limit=9999`;
+    url += `&filter=${filter}`;
   }
   if (channel) {
     const prog = encodeURIComponent(channel);

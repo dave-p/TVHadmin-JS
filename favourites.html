@@ -115,7 +115,7 @@
         var title = row.insertCell();
         title.setAttribute('colspan', '4');
         title.innerHTML = `<span class='channel_name'>${c}</span>`;
-        var events = await get_epg(c, when, next);
+        var events = await get_epg(c, when+1, next-1);
         var last_date = ' ';
         events.forEach(function(e) {
           if (next == 0) {
