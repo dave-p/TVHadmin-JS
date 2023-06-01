@@ -72,7 +72,7 @@
 	else s += `${name}`;
 	s += `</div></td><td class='col_title'><div class='epg_title'>${e.title}</div><div class='epg_subtitle'>${summ}</div></td>`;
 	if (!e.dvrState || e.dvrState != 'scheduled' && e.dvrState != 'recording') {
-	  s += `<td><a href='now.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' alt='record' title='record'></a></td>`;
+	  s += `<td><a href='now.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' alt='record' title='Record'></a></td>`;
 	}
 	else {
 	  s += "<td><img src='images/rec.png' alt='Recording' title='Recording'></td>";
@@ -85,7 +85,10 @@
         }
         else s += `${name}</div></td><td>No EPG available</td><td></td>`;
       }
-      s += `<td class='col_stream'><a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}' download='${c.uuid}.m3u'><img src='images/play.png' title='Play'></a></td>`;
+      s += `<td class='col_stream'><a href='/stream/channel/${c.uuid}?profile=webtv-vp8-vorbis-webm' target="_blank"><img src='images/play.png' title='Play'></a></td>`;
+      row.innerHTML = s;
+      i++;
+      s += `<td class='col_stream'><a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}' download='${c.uuid}.m3u'><img src='images/dl.png' title='Download'></a></td>`;
       row.innerHTML = s;
       i++;
     }
