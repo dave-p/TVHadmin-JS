@@ -158,7 +158,11 @@
 	  else if (p.description) var desc = p.description;
 	  else var desc = "";
 	  var subtitle = htmlspecialchars(desc);
-	  if (p.onNow) s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}' download='${c.uuid}.m3u'><div class='item ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div></a>`;
+	  if (p.onNow) {
+	    s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`
+            if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
+            s += `' download='${c.uuid}.m3u'><div class='item ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div></a>`;
+          }
 	  else if (p.dvrState) s += `<div class='item  ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
 	  else {
 	    var esctitle = htmlspecialchars(p.title);
@@ -170,7 +174,9 @@
 	s += "</td>";
       }
       else {
-        s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}' download='${c.uuid}.m3u'><div class='item onNow' style='width: 98%;'>No EPG Available</div></a></td>`;
+        s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`;
+        if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
+        s += `' download='${c.uuid}.m3u'><div class='item onNow' style='width: 98%;'>No EPG Available</div></a></td>`;
       }
       row.innerHTML = s;
       i++;

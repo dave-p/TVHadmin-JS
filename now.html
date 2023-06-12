@@ -85,7 +85,9 @@
         }
         else s += `${name}</div></td><td>No EPG available</td><td></td>`;
       }
-      s += `<td class='col_stream'><a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}' download='${c.uuid}.m3u'><img src='images/play.png' title='Play'></a></td>`;
+      s += `<td class='col_stream'><a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`;
+      if (cookies.SUUID) s += `&profile=${cookies.SUUID}`
+      s += `' download='${c.uuid}.m3u'><img src='images/play.png' title='Play'></a></td>`;
       row.innerHTML = s;
       i++;
     }

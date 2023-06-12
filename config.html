@@ -107,6 +107,18 @@
     }
     taglist.innerHTML = s;
   }
+
+  async function get_stream_profiles() {
+    const response = await fetch("/api/profile/list");
+    const profiles = await response.json();
+    let a = [];
+    for (const p of profiles.entries) {
+      const r = await fetch(`/api/raw/export?uuid=${p.key}`);
+      const s = await r.json();
+      a.push(s[0])
+    }
+    return a;
+  }
 </script>
 </head> 
 <body>
@@ -147,8 +159,8 @@
 	  <tr class="heading">
 	    <td colspan="2"><h2>TVHeadend Server</h2></td>
 	  </tr>
-	  <tr class='row_alt' id='prof' title="TVheadend profile to use for recordings.">
-	  </tr>
+          <tr class='row_alt' id='prof' title="TVheadend profile to use for recordings."></tr>
+          <tr class='row_alt' id='sprof' title="TVheadend profile to use for streaming."></tr>
 	</table>
 	<table class='group'>
 	  <tr class='heading'>
@@ -278,6 +290,19 @@ async function main() {
   s = s + "</td>";
   let proflist = document.getElementById("prof");
   proflist.innerHTML = s;
+
+  let stream_profiles = await get_stream_profiles();
+  s = "<td class='col_label'><h5>Stream Profile:</h5></td>" +
+	    "<td class='col_value'><select name='SUUID'>";
+  for (const p of stream_profiles) {
+    let sel = '';
+    if (!cookies.SUUID && p.default) sel = 'selected';
+    else if (p.uuid === cookies.SUUID) sel = 'selected';
+    s += `<option value='${p.uuid}' ${sel}>${p.name}</option>`;
+  }
+  s += "</td>";
+  let sproflist = document.getElementById("sprof");
+  sproflist.innerHTML = s;
 
   let tags = await get_channeltags();
   let taglist = document.getElementById("alltags");
