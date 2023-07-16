@@ -6,7 +6,8 @@ function get_cookies() {
     return JSON.parse(decodeURIComponent(c));
   }
   catch {
-    var empty = {"Tag_All": "All", "Rec_All": "All", "Now_All": "All", "Tim_All": "All", "SORT": "1", "CSORT": "0", "TIMESPAN": "2", "EPGSTART": "0", "THEME": "0"};
+    var empty = {"Tag_All": "All", "Rec_All": "All", "Now_All": "All", "Tim_All": "All", "selected_channels": [],
+      "SORT": "1", "CSORT": "0", "TIMESPAN": "2", "EPGSTART": "0", "THEME": "0", "UUID": "None", "CLASHDET": "0"};
     return empty;
   }
 }

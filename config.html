@@ -82,7 +82,7 @@
       else if (field.type === 'radio' && (field.name in cookies) && (field.value == cookies[field.name])) {
 	field.checked = true;
       }
-      else if (field.type === 'select-one' && (field.name in cookies)) {
+      else if (field.type === 'select-one' && (field.name in cookies) && (cookies[field.name] !== 'None')) {
 	field.value = cookies[field.name];
       }
     } 
@@ -278,16 +278,17 @@ async function main() {
   let profiles = await get_profiles();
   var s = "<td class='col_label'><h5>Recording Profile:</h5></td>" +
 	    "<td class='col_value'><select name='UUID'>";
-  let config_uuid = cookies.UUID;
   for (const p of profiles) {
     if (!p.enabled) continue;
-    let pname = p.name;
-    if (pname == '') pname = '(default)';
     let sel = '';
-    if (p.uuid === config_uuid) sel = 'selected';
-    s = s + `<option value='${p.uuid}' ${sel}>${pname}</option>`;
+    if (p.name == '') {
+      p.name = '(default)';
+      if (cookies.UUID == 'None') sel = 'selected';
+    }
+    if (p.uuid === cookies.UUID) sel = 'selected';
+    s = s + `<option value='${p.uuid}' ${sel}>${p.name}</option>`;
   }
-  s = s + "</td>";
+  s += "</select></td>";
   let proflist = document.getElementById("prof");
   proflist.innerHTML = s;
 
@@ -300,7 +301,7 @@ async function main() {
     else if (p.uuid === cookies.SUUID) sel = 'selected';
     s += `<option value='${p.uuid}' ${sel}>${p.name}</option>`;
   }
-  s += "</td>";
+  s += "</select></td>";
   let sproflist = document.getElementById("sprof");
   sproflist.innerHTML = s;
 
