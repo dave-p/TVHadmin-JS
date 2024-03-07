@@ -47,6 +47,12 @@
     return ret;
   }
 
+  async function get_comet_poll() {
+    const response = await fetch("/comet/poll");
+    const ret = await response.json();
+    return ret;
+  }
+
 </script>
 </head> 
 <body>
@@ -90,6 +96,9 @@
           </tr>
           <tr class='row_alt'>
             <td class='col_channel'>System Load</td><td class='col_name'></td>
+          </tr>
+          <tr class='row_alt'>
+            <td class='col_channel'>Free Disk Space</td><td class='col_name'></td>
           </tr>
           <tr class='row_alt'>
             <td class='col_channel'>Recording</td><td class='col_name'></td>
@@ -137,8 +146,13 @@
     load = load.replace(/(\d{2})\d*/g, '$1');
     load = load.replace(/,/g, ', ');
     systable.rows[2].cells[1].innerHTML = load;
+    var poll = await get_comet_poll();
+    var free = poll.messages[0].freediskspace / 1000000000;
+    var total = poll.messages[0].totaldiskspace / 1000000000;
+    var pc = free*100/total;
+    var text = free.toFixed(1) + " GB (" + pc.toFixed(1) + "%)";
+    systable.rows[3].cells[1].innerHTML = text;
     var x = xmlDoc.getElementsByTagName("next")[0];
-    var text = '';
     if (x) {
       let t = x.childNodes[0].nodeValue;
       text = "Next: " + strftime('%F %H:%M', Date.now()/1000 + 60*t);
@@ -149,9 +163,9 @@
         text = `Recording: "${x.childNodes[0].nodeValue}"`;
       }
     }
-    systable.rows[3].cells[1].innerHTML = text;
+    systable.rows[4].cells[1].innerHTML = text;
     var subs = xmlDoc.getElementsByTagName("subscriptions")[0].childNodes[0].nodeValue;
-    systable.rows[4].cells[1].innerHTML = subs;
+    systable.rows[5].cells[1].innerHTML = subs;
     var devtable = document.getElementById("devtable");
     if (!stats) stats = await get_input_status();
     for (let i=0; i<stats.length; i++) {
