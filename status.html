@@ -162,6 +162,7 @@
       if (x) {
         text = `Recording: "${x.childNodes[0].nodeValue}"`;
       }
+      else text = "";
     }
     systable.rows[4].cells[1].innerHTML = text;
     var subs = xmlDoc.getElementsByTagName("subscriptions")[0].childNodes[0].nodeValue;
