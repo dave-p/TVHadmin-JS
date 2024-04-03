@@ -336,6 +336,11 @@ select.channels {
 	border: 1px solid #6d96a9;
 	padding: 1em 0px;
 }
+#navigation .nav_bar2 {
+	border: solid #6d96a9;
+	border-width: 0px 1px 1px;
+	padding: 1em 0px;
+}
 #navigation .logo {
 	padding-top: 1em;
 	padding-bottom: 2em;
