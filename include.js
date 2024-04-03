@@ -48,6 +48,20 @@ window.addEventListener('load',function() {
         <input type='submit' name='submit' value='Search'> \
         </form>";
   menu[0].appendChild(div);
+  if (cookies.ADV == "on") {
+    const Atitles = [ "Test1", "Test2" ];
+    const Alinks = [ "test1.html", "test2.html" ];
+    let nav=document.getElementById("navigation");
+    let amenu = document.createElement("div");
+    amenu.setAttribute("class", "nav_bar2");
+    nav.appendChild(amenu);
+    for (let i = 0; i < Atitles.length; i++) {
+      div = document.createElement("div");
+      div.setAttribute("class", "navi");
+      div.innerHTML = `<a href="${Alinks[i]}">${Atitles[i]}</a>`;
+      amenu.appendChild(div);
+    }
+  }
 },false);
 
 function checkForm() {
