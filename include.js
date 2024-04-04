@@ -37,12 +37,12 @@ window.addEventListener('load',function() {
   let menu = document.getElementsByClassName("nav_bar");
   for (let i = 0; i < titles.length; i++) {
     let div = document.createElement("div");
-    div.setAttribute("class", "navi");
+    div.className = "navi";
     div.innerHTML = `<a href="${links[i]}">${titles[i]}</a>`;
     menu[0].appendChild(div);
   }
   let div = document.createElement("div");
-  div.setAttribute("class", "navi");
+  div.className = "navi";
   div.innerHTML = "<form action='search.html' method='GET' name='search' class='search' onsubmit='return checkForm()'> \
         <input type='text' name='find'><br> \
         <input type='submit' name='submit' value='Search'> \
