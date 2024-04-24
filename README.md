@@ -39,10 +39,11 @@ The priority for a recording source is the sum of the service priority and the t
 The Tvheadend user must have 'Admin' privilege for clash detection to work.
 
 ### Security
-TVHadmin uses the same security controls as the standard TVHeadend user interface. For use over the open internet you may wish to use a proxy server for additional security.
+TVHadmin uses the same security controls as the standard TVHeadend user interface. For use over the open internet you may wish to use a VPN or proxy server for additional security.
 
 TVHadmin stores user preferences in a 'cookie' on the client, and uses Session Storage to maintain state. Login credentials are only stored if your browser is configured to store them.
 
 ### Issues
 - All timers created by TVHadmin use the same recording profile (the one set in the Config screen).
+- Some screens supply extra information as hover text. This is not accessible from mobile clients.
 
