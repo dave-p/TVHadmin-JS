@@ -53,6 +53,7 @@ window.addEventListener('load',function() {
 function checkForm() {
   var x = document.forms["search"]["find"].value;
   if (x == "") return false;
+  return true;
 }
 
 function create_by_event(event, event_id, element) {
