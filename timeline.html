@@ -22,37 +22,50 @@
     let recCancel = document.getElementById('recCancel');
     let recOnce = document.getElementById('recOnce');
     let recSeries = document.getElementById('recSeries');
-    recCancel.addEventListener('click', function() {
-      recDialog.close();
-    });
-    recOnce.addEventListener('click', function rec() {
-      const profile_uuid = cookies.UUID;
-      fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
-	if (response.ok) {
-	  update(2);
-	}
-      });
-      recOnce.removeEventListener('click', rec);
-      recDialog.close();
-    });
+    recCancel.addEventListener('click', canc);
+    recOnce.addEventListener('click', rec);
     if (is_series) {
       recSeries.style.display = "block";
-      recSeries.addEventListener('click', function recs(event) {
-	const profile_uuid = cookies.UUID;
-	fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
-	  if (response.ok) {
-	    update(2);
-	  }
-	});
-	recSeries.removeEventListener('click', recs);
-	recDialog.close();
-      });
+      recSeries.addEventListener('click', recs);
     }
     else {
 	recSeries.style.display = "none";
     }
     document.getElementById('recText').textContent = `Record "${title}"?`;
     recDialog.showModal();
+
+    function canc() {
+      recCancel.removeEventListener('click', canc);
+      recOnce.removeEventListener('click', rec);
+      recSeries.removeEventListener('click', recs);
+      recDialog.close();
+    }
+
+    function rec() {
+      const profile_uuid = cookies.UUID;
+      fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
+	if (response.ok) {
+	  update(2);
+	}
+      });
+      recCancel.removeEventListener('click', canc);
+      recOnce.removeEventListener('click', rec);
+      recSeries.removeEventListener('click', recs);
+      recDialog.close();
+    }
+
+    function recs(event) {
+	const profile_uuid = cookies.UUID;
+	fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
+	  if (response.ok) {
+	    update(2);
+	  }
+	});
+	recCancel.removeEventListener('click', canc);
+	recOnce.removeEventListener('click', rec);
+	recSeries.removeEventListener('click', recs);
+	recDialog.close();
+    }
   }
 
   function drawCursor(refresh) {
