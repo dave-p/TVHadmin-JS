@@ -36,7 +36,7 @@
       recDialog.close();
     });
     if (is_series) {
-      recSeries.disabled = false;
+      recSeries.style.display = "block";
       recSeries.addEventListener('click', function recs(event) {
 	const profile_uuid = cookies.UUID;
 	fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
@@ -49,7 +49,7 @@
       });
     }
     else {
-	recSeries.disabled = true;
+	recSeries.style.display = "none";
     }
     document.getElementById('recText').textContent = `Record "${title}"?`;
     recDialog.showModal();
