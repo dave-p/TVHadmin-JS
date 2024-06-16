@@ -46,4 +46,4 @@ TVHadmin stores user preferences in a 'cookie' on the client, and uses Session S
 ### Issues
 - All timers created by TVHadmin use the same recording profile (the one set in the Config screen).
 - Some screens supply extra information as hover text. This is not accessible from mobile clients.
-
+- No internationalisation (I18n)
