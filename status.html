@@ -145,9 +145,12 @@
       text = "Next: " + strftime('%F %H:%M', Date.now()/1000 + 60*t);
     }
     else {
-      x = xmlDoc.getElementsByTagName("title")[0];
+      x = xmlDoc.getElementsByTagName("title");
       if (x) {
-        text = `Recording: "${x.childNodes[0].nodeValue}"`;
+        text = "Recording:"
+	for (let i=0; i<x.length; i++) {
+	   text += ` "${x[i].childNodes[0].nodeValue}"`;
+	}
       }
       else text = "";
     }
