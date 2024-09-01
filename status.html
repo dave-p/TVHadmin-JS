@@ -134,8 +134,8 @@
     load = load.replace(/,/g, ', ');
     systable.rows[2].cells[1].innerHTML = load;
     var poll = await get_comet_poll();
-    var free = poll.messages[0].freediskspace / 1000000000;
-    var total = poll.messages[0].totaldiskspace / 1000000000;
+    var free = poll.messages[0].freediskspace / 1073741824;
+    var total = poll.messages[0].totaldiskspace / 1073741824;
     var pc = free*100/total;
     var text = free.toFixed(1) + " GB (" + pc.toFixed(1) + "%)";
     systable.rows[3].cells[1].innerHTML = text;
