@@ -144,6 +144,12 @@
       <form action="config.html" method="post" name="FormName" id="myForm">
 	<table class="group">
 	  <tr class="heading">
+	    <td colspan="2"><h2>TVHadmin Setup</h2></td>
+	  </tr>
+	  <tr class='row_alt' id='lang' title="Language."></tr>
+	</table>
+	<table class="group">
+	  <tr class="heading">
 	    <td colspan="2"><h2>TVHeadend Server</h2></td>
 	  </tr>
           <tr class='row_alt' id='prof' title="TVheadend profile to use for recordings."></tr>
@@ -261,19 +267,31 @@ async function main() {
     let formdata = JSON.stringify(saveForm(form));
     document.cookie = "TVHadmin="+encodeURIComponent(formdata)+"; Max-Age=315360000; SameSite=Lax";
   });
-  
+
+  let sel = '';
+  const langs = {"English (US)": "en_US", "English (UK)": "en_UK", "French": "fr"};
+  var s = "<td class='col_label'><h5>Language:</h5></td>" +
+	    "<td class='col_value'><select name='LANG'>";
+  for (const l in langs) {
+    if (cookies.LANG === langs[l]) sel = 'selected';
+    else sel = '';
+    s += `<option value='${langs[l]}' ${sel}>${l}</option>`;
+  }
+  s += "</select></td>";
+  lang.innerHTML = s;
+
   let profiles = await get_profiles();
-  var s = "<td class='col_label'><h5>Recording Profile:</h5></td>" +
+  s = "<td class='col_label'><h5>Recording Profile:</h5></td>" +
 	    "<td class='col_value'><select name='UUID'>";
   for (const p of profiles) {
     if (!p.enabled) continue;
-    let sel = '';
+    sel = '';
     if (p.name == '') {
       p.name = '(default)';
       if (cookies.UUID == 'None') sel = 'selected';
     }
     if (p.uuid === cookies.UUID) sel = 'selected';
-    s = s + `<option value='${p.uuid}' ${sel}>${p.name}</option>`;
+    s += `<option value='${p.uuid}' ${sel}>${p.name}</option>`;
   }
   s += "</select></td>";
   let proflist = document.getElementById("prof");
@@ -283,7 +301,7 @@ async function main() {
   s = "<td class='col_label'><h5>Stream Profile:</h5></td>" +
 	    "<td class='col_value'><select name='SUUID'>";
   for (const p of stream_profiles) {
-    let sel = '';
+    sel = '';
     if (!cookies.SUUID && p.default) sel = 'selected';
     else if (p.uuid === cookies.SUUID) sel = 'selected';
     s += `<option value='${p.uuid}' ${sel}>${p.name}</option>`;

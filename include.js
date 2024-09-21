@@ -7,7 +7,9 @@ function get_cookies() {
   }
   catch {
     var empty = {"Tag_All": "All", "Rec_All": "All", "Now_All": "All", "Tim_All": "All", "selected_channels": [],
-      "SORT": "1", "CSORT": "0", "TIMESPAN": "2", "EPGSTART": "0", "THEME": "0", "UUID": "None", "CLASHDET": "0"};
+      "SORT": "1", "CSORT": "0", "TIMESPAN": "2", "EPGSTART": "0", "THEME": "0", "UUID": "None", "CLASHDET": "0",
+      "LANG": "en_US"
+    };
     return empty;
   }
 }
