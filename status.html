@@ -146,7 +146,7 @@
     }
     else {
       x = xmlDoc.getElementsByTagName("title");
-      if (x) {
+      if (x.length) {
         text = "Recording:"
 	for (let i=0; i<x.length; i++) {
 	   text += ` "${x[i].childNodes[0].nodeValue}"`;
