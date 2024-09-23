@@ -258,10 +258,21 @@
   </div>
 </div>
 <script>
-        var m1 = document.FormName.all_channels;
-        var m2 = document.FormName.elements.selected_channels;
 
-async function main() {
+var m1 = document.FormName.all_channels;
+var m2 = document.FormName.elements.selected_channels;
+
+async function main () {
+  const scriptTag = document.createElement("script");
+  if (cookies.LANG) {
+    scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+    scriptTag.onload = config();
+  }
+  else config();
+  document.body.appendChild(scriptTag);
+}
+
+async function config() {
   let form = document.getElementById("myForm");
   form.addEventListener("submit", event => {
     let formdata = JSON.stringify(saveForm(form));
@@ -269,7 +280,7 @@ async function main() {
   });
 
   let sel = '';
-  const langs = {"English (US)": "en_US", "English (UK)": "en_UK", "French": "fr"};
+  const langs = {"English (US)": "en_US", "English (UK)": "en_GB", "French": "fr"};
   var s = "<td class='col_label'><h5>Language:</h5></td>" +
 	    "<td class='col_value'><select name='LANG'>";
   for (const l in langs) {
