@@ -58,6 +58,12 @@ function checkForm() {
   return true;
 }
 
+var tvh_locale = [];
+function _(s) {
+    const r = tvh_locale[s];
+    return typeof r === 'undefined' ? s : r;
+}
+
 function create_by_event(event, event_id, element) {
   event.preventDefault();
   const profile_uuid = cookies.UUID;

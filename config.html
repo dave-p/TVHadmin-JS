@@ -119,96 +119,111 @@
     }
     return a;
   }
-</script>
-</head> 
-<body>
-<div id="container">
-  <div id="navigation">
-    <div class="logo">
-      <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+
+  function show_html() {
+    const s = `
+    <div id="banner">
+      <table>
+	<tr>
+	  <td class="col_title">
+	    <div id='mobmenu'>&#9776;</div> <h1>${_("Configuration")}</h1>
+	  </td>
+	</tr>
+      </table>
     </div>
-    <div class="nav_bar">
-    </div>
-  </div>
-<div id="layout">
-  <div id="banner">
-	<table>
-	    <tr>
-		<td class="col_title">
-			<div id='mobmenu'>&#9776;</div> <h1>Configuration</h1>
-		</td>
-	    </tr>
-	</table>
-  </div>
     <div id='config'>
       <form action="config.html" method="post" name="FormName" id="myForm">
 	<table class="group">
 	  <tr class="heading">
-	    <td colspan="2"><h2>TVHadmin Setup</h2></td>
+	    <td colspan="2"><h2>${_("TVHadmin Setup")}</h2></td>
 	  </tr>
-	  <tr class='row_alt' id='lang' title="Language."></tr>
+	  <tr class='row_alt' id='lang' title="${_("Language")}."></tr>
 	</table>
 	<table class="group">
 	  <tr class="heading">
-	    <td colspan="2"><h2>TVHeadend Server</h2></td>
+	    <td colspan="2"><h2>${_("TVHeadend Server")}</h2></td>
 	  </tr>
-          <tr class='row_alt' id='prof' title="TVheadend profile to use for recordings."></tr>
-          <tr class='row_alt' id='sprof' title="TVheadend profile to use for streaming."></tr>
+	  <tr class='row_alt' id='prof' title="${_("TVheadend profile to use for recordings")}."></tr>
+	  <tr class='row_alt' id='sprof' title="${_("TVheadend profile to use for streaming")}."></tr>
 	</table>
 	<table class='group'>
 	  <tr class='heading'>
-	    <td colspan='2'><h2>Preferences</h2></td>
+	    <td colspan='2'><h2>${_("Preferences")}</h2></td>
 	  </tr>
-	  <tr class='row_alt' title='Select display theme'>
-	    <td class='col_label'><h5>Display theme:</h5></td>
-	    <td class='col_value'><label for='T0'>Light:</label><input type='radio' name='THEME' id='T0' value='0'><label for='T1'>Dark:</label><input type='radio' name='THEME' id='T1' value='1'><label for='T2'>Blue:</label><input type='radio' name='THEME' id='T2' value='2'>
+	  <tr class='row_alt' title='${_("Select display theme")}'>
+	    <td class='col_label'><h5>${_("Display theme")}:</h5></td>
+	    <td class='col_value'>
+	      <label for='T0'>${_("Light")}:</label><input type='radio' name='THEME' id='T0' value='0'>
+	      <label for='T1'>${_("Dark")}:</label><input type='radio' name='THEME' id='T1' value='1'>
+	      <label for='T2'>${_("Blue")}:</label><input type='radio' name='THEME' id='T2' value='2'>
 	     </td>
-          </tr>
-	  <tr class='row_alt' title='Time after which entries appear on tomorrow&apos;s EPG. Useful if you watch TV after midnight'>
-	    <td class='col_label'><h5>EPG Day starts at:</h5></td>
+	  </tr>
+	  <tr class='row_alt' title='${_("Time after which entries appear on tomorrow's EPG. Useful if you watch TV after midnight")}'>
+	    <td class='col_label'><h5>${_("EPG Day starts at")}:</h5></td>
 	    <td class='col_value'>
-	      <select name='EPGSTART'><option value='0'>0:00</option><option value='1'>1:00</option><option value='2'>2:00</option><option value='3'>3:00</option><option value='4'>4:00</option><option value='5'>5:00</option><option value='6'>6:00</option></select>
+	      <select name='EPGSTART'>
+	      <option value='0'>0:00</option>
+	      <option value='1'>1:00</option>
+	      <option value='2'>2:00</option>
+	      <option value='3'>3:00</option>
+	      <option value='4'>4:00</option>
+	      <option value='5'>5:00</option>
+	      <option value='6'>6:00</option></select>
 	    </td>
 	  </tr>
-	  <tr class='row_alt' title='Screen shown when entering TVHadmin'>
-	    <td class='col_label'><h5>Home Page:</h5></td>
+	  <tr class='row_alt' title='${_("Screen shown when entering TVHadmin")}'>
+	    <td class='col_label'><h5>${_("Home Page")}:</h5></td>
 	    <td class='col_value'>
-		<select name='HOME'><option value='now'>What's On Now?</option><option value='timeline'>Timeline</option><option value='channels'>Channels</option><option value='favourites'>Favourite Channels</option><option value='timers'>Timers</option><option value='recordings'>Recordings</option><option value='links'>Series Links</option><option value='status'>Status</option><option value='config'>Configuration</option></select>
+		<select name='HOME'>
+		  <option value='now'>${_("What's On Now?")}</option>
+		  <option value='timeline'>${_("Timeline")}</option>
+		  <option value='channels'>${_("Channels")}</option>
+		  <option value='favourites'>${_("Favourite Channels")}</option>
+		  <option value='timers'>${_("Timers")}</option>
+		  <option value='recordings'>${_("Recordings")}</option>
+		  <option value='links'>${_("Series Links")}</option>
+		  <option value='status'>${_("Status")}</option>
+		  <option value='config'>${_("Configuration")}</option></select>
 	    </td>
 	  </tr>
-	  <tr class='row_alt' title='Sort channels by name or Logical Channel Number'>
-	    <td class='col_label'><h5>Channels Sort Order:</h5></td>
-	    <td class='col_value'><label for='C0'>Name:</label><input type='radio' name='CSORT' id='C0' value='0'><label for='C1'>LCN:</label><input type='radio' name='CSORT' id='C1' value='1'>
+	  <tr class='row_alt' title='${_("Sort channels by name or Logical Channel Number")}'>
+	    <td class='col_label'><h5>${_("Channels Sort Order")}:</h5></td>
+	    <td class='col_value'>
+	      <label for='C0'>${_("Name")}:</label><input type='radio' name='CSORT' id='C0' value='0'>
+	      <label for='C1'>${_("LCN")}:</label><input type='radio' name='CSORT' id='C1' value='1'>
 	    </td>
-          </tr>
-	  <tr class='row_alt' title='Refresh the Whats On Now and Timeline screens every minute'>
-	    <td class='col_label'><h5>Refresh Whats On Now and Timeline screens:</h5></td>
+	  </tr>
+	  <tr class='row_alt' title='${_("Refresh the What's On Now and Timeline screens every minute")}'>
+	    <td class='col_label'><h5>${_("Refresh What's On Now and Timeline screens")}:</h5></td>
 	    <td class='col_value'><input type='checkbox' name='REFR'></td>
 	  </tr>
-          <tr class='row_alt' title='Refresh the status screen every 5 seconds'>
-            <td class='col_label'><h5>Refresh status screen:</h5></td>
-            <td class='col_value'><input type='checkbox' name='REFS'></td>
-          </tr>
-          <tr class='row_alt' title='Show icon instead of channel name. Needs picons installed and imagecache enabled on TVHeadend'>
-            <td class='col_label'><h5>Show channel icons in What's On Now & Recordings:</h5></td>
-            <td class='col_value'><input type='checkbox' name='ICONS'></td>
-          </tr>
-	  <tr class='row_alt' title='Show timer conflicts. Multiple tuner option is experimental and needs ADMIN privilege.'>
-	    <td class='col_label'><h5>Detect timer clashes:</h5></td>
+	  <tr class='row_alt' title='${_("Refresh the status screen every 5 seconds")}'>
+	    <td class='col_label'><h5>${_("Refresh status screen")}:</h5></td>
+	    <td class='col_value'><input type='checkbox' name='REFS'></td>
+	  </tr>
+	  <tr class='row_alt' title='${_("Show icon instead of channel name. Needs picons installed and imagecache enabled on TVHeadend")}'>
+	  <td class='col_label'><h5>${_("Show channel icons in What's On Now & Recordings")}:</h5></td>
+	  <td class='col_value'><input type='checkbox' name='ICONS'></td>
+	  </tr>
+	  <tr class='row_alt' title='${_("Show timer conflicts. Multiple tuner option is experimental and needs ADMIN privilege.")}'>
+	    <td class='col_label'><h5>${_("Detect timer clashes")}:</h5></td>
 	    <td class='col_value'>
-	      <label for='T0'>Off:</label><input type='radio' name='CLASHDET' id='T0' value='0'>
-	      <label for='T1'>Single tuner:</label><input type='radio' name='CLASHDET' id='T1' value='1'>
-	      <label for='T2'>Multiple tuners:</label><input type='radio' name='CLASHDET' id='T2' value='2'>
+	      <label for='T0'>${_("Off")}:</label><input type='radio' name='CLASHDET' id='T0' value='0'>
+	      <label for='T1'>${_("Single tuner")}:</label><input type='radio' name='CLASHDET' id='T1' value='1'>
+	      <label for='T2'>${_("Multiple tuners")}:</label><input type='radio' name='CLASHDET' id='T2' value='2'>
 	    </td>
 	  </tr>
 	  <tr class='row_alt' title='Time period for the Timeline screen'>
-	    <td class='col_label'><h5>Timeline length:</h5></td>
+	    <td class='col_label'><h5>${_("Timeline length")}:</h5></td>
 	    <td class='col_value'>
-		<select name='TIMESPAN'><option value='2'>2 hours</option><option value='4'>4 hours</option><option value='6'>6 hours</option></select>
+		<select name='TIMESPAN'>
+		  <option value='2'>2 ${_("hours")}</option>
+		  <option value='4'>4 ${_("hours")}</option>
+		  <option value='6'>6 ${_("hours")}</option></select>
 	    </td>
 	  </tr>
-	  <tr class='row_alt' title='Which TVH tags are to be used for filtering. Click &apos;Save&apos; after changing this selection to update the other preferences'>
-	    <td class='col_label'><h5>Media Tags to use for selection:</h5></td>
+	  <tr class='row_alt' title='${_("Which TVH tags are to be used for filtering. Click 'Save' after changing this selection to update the other preferences")}'>
+	    <td class='col_label'><h5>${_("Media Tags to use for selection")}:</h5></td>
 	    <td class='col_value' id='alltags'></td>
 	  </tr>
 	</table>
@@ -216,26 +231,29 @@
 	  <tr class='heading'>
 	    <td colspan='2'><h2>Defaults</h2></td>
 	  </tr>
-	  <tr class='row_alt' title='Default filter setting for the What&apos;s On Now screen'>
-	    <td class='col_label'><h5>Show in What's On Now:</h5></td>
+	  <tr class='row_alt' title='${_("Default filter setting for the What's On Now screen")}'>
+	    <td class='col_label'><h5>${_("Show in What's On Now")}:</h5></td>
 	    <td class='col_value' id='nowtags'></td>
 	  </tr>
-	  <tr class='row_alt' title='Default filter setting for the Timeline screen'>
-	    <td class='col_label'><h5>Show in Timeline:</h5></td>
+	  <tr class='row_alt' title='${_("Default filter setting for the Timeline screen")}'>
+	    <td class='col_label'><h5>${_("Show in Timeline")}:</h5></td>
 	    <td class='col_value' id='timetags'></td>
 	  </tr>
-	  <tr class='row_alt' title='Default filter setting for the Recordings screen'>
-	    <td class='col_label'><h5>Show in Recordings:</h5></td>
+	  <tr class='row_alt' title='${_("Default filter setting for the Recordings screen")}'>
+	    <td class='col_label'><h5>${_("Show in Recordings")}:</h5></td>
 	    <td class='col_value' id='rectags'></td>
 	  </tr>
-	  <tr class='row_alt' title='Sort recordings by date or by title (ignoring &apos;New:&apos;)'>
-	    <td class='col_label'><h5>Recordings Sort Order:</h5></td>
-	    <td class='col_value'><label for='B0'>Date Fwd:</label><input type='radio' name='SORT' id='B0' value='0'><label for='B1'>Date Rev:</label><input type='radio' name='SORT' id='B1' value='1'><label for='B2'>Title:</label><input type='radio' name='SORT' id='B2' value='2'></td>
+	  <tr class='row_alt' title='${_("Sort recordings by date or by title (ignoring 'New')")}'>
+	    <td class='col_label'><h5>${_("Recordings Sort Order")}:</h5></td>
+	    <td class='col_value'>
+	      <label for='B0'>${_("Date Fwd")}:</label><input type='radio' name='SORT' id='B0' value='0'>
+	      <label for='B1'>${_("Date Rev")}:</label><input type='radio' name='SORT' id='B1' value='1'>
+	      <label for='B2'>${_("Title")}:</label><input type='radio' name='SORT' id='B2' value='2'></td>
 	  </tr>
 	</table>
 	<table class='group'>
 	  <tr class='heading'>
-	    <td colspan='3'><h2>Favourite Channels</h2></td>
+	    <td colspan='3'><h2>${_("Favourite Channels")}</h2></td>
 	  </tr>
 	  <tr class='row_alt'>
 	    <td class='col_channels'>
@@ -251,28 +269,33 @@
 	  </tr>
 	</table>
 	<div id="buttons">
-	    <input type="submit" class="submit" name="save" value="Save" onclick="selectAll()">
+	    <input type="submit" class="submit" name="save" value="${_("Save")}" onclick="selectAll()">
 	</div>
       </form>
-    </div>
-  </div>
-</div>
-<script>
-
-var m1 = document.FormName.all_channels;
-var m2 = document.FormName.elements.selected_channels;
-
-async function main () {
-  const scriptTag = document.createElement("script");
-  if (cookies.LANG) {
-    scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
-    scriptTag.onload = config();
-  }
-  else config();
-  document.body.appendChild(scriptTag);
+    </div>`;
+  let node = document.getElementById('layout');
+  node.innerHTML = s;
 }
 
+</script>
+</head>
+<body>
+<div id="container">
+  <div id="navigation">
+    <div class="logo">
+      <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+    </div>
+    <div class="nav_bar">
+    </div>
+  </div>
+  <div id="layout">
+  </div>
+</div>
+
+<script>
+
 async function config() {
+  show_html();
   let form = document.getElementById("myForm");
   form.addEventListener("submit", event => {
     let formdata = JSON.stringify(saveForm(form));
@@ -281,7 +304,7 @@ async function config() {
 
   let sel = '';
   const langs = {"English (US)": "en_US", "English (UK)": "en_GB", "French": "fr"};
-  var s = "<td class='col_label'><h5>Language:</h5></td>" +
+  var s = `<td class='col_label'><h5>${_("Language")}:</h5></td>` +
 	    "<td class='col_value'><select name='LANG'>";
   for (const l in langs) {
     if (cookies.LANG === langs[l]) sel = 'selected';
@@ -292,7 +315,7 @@ async function config() {
   lang.innerHTML = s;
 
   let profiles = await get_profiles();
-  s = "<td class='col_label'><h5>Recording Profile:</h5></td>" +
+  s = `<td class='col_label'><h5>${_("Recording Profile")}:</h5></td>` +
 	    "<td class='col_value'><select name='UUID'>";
   for (const p of profiles) {
     if (!p.enabled) continue;
@@ -309,7 +332,7 @@ async function config() {
   proflist.innerHTML = s;
 
   let stream_profiles = await get_stream_profiles();
-  s = "<td class='col_label'><h5>Stream Profile:</h5></td>" +
+  s = `<td class='col_label'><h5>${_("Stream Profile")}:</h5></td>` +
 	    "<td class='col_value'><select name='SUUID'>";
   for (const p of stream_profiles) {
     sel = '';
@@ -341,7 +364,18 @@ async function config() {
   });
   reloadForm(form, cookies);
 }
-main();
+
+if (cookies.LANG) {
+  const scriptTag = document.createElement("script");
+  scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+  scriptTag.onload = config();
+  document.body.appendChild(scriptTag);
+}
+else config();
+
+var m1 = document.FormName.all_channels;
+var m2 = document.FormName.elements.selected_channels;
+
 </script>
 </body>
 </html>
