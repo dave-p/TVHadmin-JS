@@ -10,6 +10,8 @@
 <script>
 
   function one2two() {
+    let m1 = document.FormName.all_channels;
+    let m2 = document.FormName.elements.selected_channels;
     m1len = m1.length ;
     for ( i=0; i<m1len ; i++){
 	if (m1.options[i].selected == true ) {
@@ -26,6 +28,8 @@
   }
 
   function two2one() {
+    let m1 = document.FormName.all_channels;
+    let m2 = document.FormName.elements.selected_channels;
     m2len = m2.length ;
     for ( i=0; i<m2len ; i++){
 	if (m2.options[i].selected == true ) {
@@ -41,6 +45,7 @@
   }
 
   function selectAll() {
+    let m2 = document.FormName.elements.selected_channels;
     for (i=0; i<m2.length; i++) {  
 	m2.options[i].selected = true; 
     }
@@ -120,8 +125,25 @@
     return a;
   }
 
-  function show_html() {
-    const s = `
+</script>
+</head>
+<body>
+<div id="container">
+  <div id="navigation">
+    <div class="logo">
+      <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+    </div>
+    <div class="nav_bar">
+    </div>
+  </div>
+  <div id="layout">
+  </div>
+</div>
+
+<script>
+
+function show_html() {
+  const s = `
     <div id="banner">
       <table>
 	<tr>
@@ -277,23 +299,6 @@
   node.innerHTML = s;
 }
 
-</script>
-</head>
-<body>
-<div id="container">
-  <div id="navigation">
-    <div class="logo">
-      <img src="images/logo.png" alt="TVHeadend Logo" width="150">
-    </div>
-    <div class="nav_bar">
-    </div>
-  </div>
-  <div id="layout">
-  </div>
-</div>
-
-<script>
-
 async function config() {
   show_html();
   let form = document.getElementById("myForm");
@@ -368,13 +373,10 @@ async function config() {
 if (cookies.LANG) {
   const scriptTag = document.createElement("script");
   scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
-  scriptTag.onload = config();
-  document.body.appendChild(scriptTag);
+  document.body.append(scriptTag);
+  scriptTag.addEventListener('load', function() {config();});
 }
 else config();
-
-var m1 = document.FormName.all_channels;
-var m2 = document.FormName.elements.selected_channels;
 
 </script>
 </body>
