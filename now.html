@@ -25,7 +25,7 @@
         return;
       }
       done.style.width = pc + '%';
-      bar.title = (Math.round(elapsed/60)) + ' min / ' + (duration/60) + ' min';
+      bar.title = (Math.round(elapsed/60)) + ` ${_("min")} / ` + (duration/60) + ` ${_("min")}`;
     }
     if (cookies.REFR) {
       var sync = (now % 60) * 1000;
@@ -34,11 +34,13 @@
   }
 
   async function update(first) {
-    const utime = Date.now()/1000;
-    var date = strftime('%A, %e %b %Y', utime);
-    var time = strftime('%H:%M', utime);
-    td = document.getElementById("date");
-    td.innerHTML = date;
+    let lang;
+    if (cookies.LANG) lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
+    else lang = navigator.language;
+    const datestr = new Intl.DateTimeFormat(lang, {weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(Date.now());
+    document.getElementById("date").innerHTML = datestr;
+
+    document.getElementById("ttl").innerHTML = _("What's On Now");
 
     var events = await get_epg_now('');
     var table = document.getElementById("list").getElementsByTagName('tbody')[0];
@@ -72,22 +74,22 @@
 	else s += `${name}`;
 	s += `</div></td><td class='col_title'><div class='epg_title'>${e.title}</div><div class='epg_subtitle'>${summ}</div></td>`;
 	if (!e.dvrState || e.dvrState != 'scheduled' && e.dvrState != 'recording') {
-	  s += `<td><a href='now.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' alt='record' title='record'></a></td>`;
+	  s += `<td><a href='now.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' alt='${_("Record")}' title='${_("Record")}'></a></td>`;
 	}
 	else {
-	  s += "<td><img src='images/rec.png' alt='Recording' title='Recording'></td>";
+	  s += `<td><img src='images/rec.png' alt='${_("Recording")}' title='${_("Recording")}'></td>`;
 	}
       }
       else {
         var s = `<td></td><td class='col_channel'><div class='channel_name'>`;
         if (cookies.ICONS && c.icon_public_url) {
-          s += `<img src="/${c.icon_public_url}" height='48' width='80' alt="${name}" title="${name}"></div></td><td>No EPG available</td><td></td>`;
+          s += `<img src="/${c.icon_public_url}" height='48' width='80' alt="${name}" title="${name}"></div></td><td>${_("No EPG available")}</td><td></td>`;
         }
-        else s += `${name}</div></td><td>No EPG available</td><td></td>`;
+        else s += `${name}</div></td><td>${_("No EPG available")}</td><td></td>`;
       }
       s += `<td class='col_stream'><a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`;
       if (cookies.SUUID) s += `&profile=${cookies.SUUID}`
-      s += `' download='${c.uuid}.m3u'><img src='images/play.png' title='Play'></a></td>`;
+      s += `' download='${c.uuid}.m3u'><img src='images/play.png' title='${_("Play")}'></a></td>`;
       row.innerHTML = s;
       i++;
     }
@@ -116,7 +118,7 @@
       <div id='banner'>
         <table>
           <tr>
-	    <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>What's On Now</h1></td>
+	    <td class='col_title'><div id='mobmenu'>&#9776;</div><h1 id='ttl'>What's On Now</h1></td>
 	    <td id='mediatags'></td>
 	  </tr>
         </table>
@@ -165,8 +167,7 @@
       }
     }
     s = s + "</span>";
-    var td = document.getElementById("mediatags");
-    td.innerHTML = s;
+    document.getElementById("mediatags").innerHTML = s;
 
     update(1);
   }
