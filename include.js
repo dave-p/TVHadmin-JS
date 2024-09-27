@@ -32,8 +32,8 @@ window.addEventListener('load',function() {
       mynav.classList.remove('focus');
     else mynav.classList.add('focus');
   });
-  const titles = [ "What's On Now", "Timeline", "Channels", "Favourite Channels", "Timers",
-        "Recordings", "Series Links", "Status", "Configuration" ];
+  const titles = [ `${_("What's On Now")}`, `${_("Timeline")}`, `${_("Channels")}`, `${_("Favourite Channels")}`,
+	`${_("Timers")}`, `${_("Recordings")}`, `${_("Series Links")}`, `${_("Status")}`, `${_("Configuration")}` ];
   const links = [ "now.html", "timeline.html", "channels.html", "favourites.html", "timers.html",
         "recordings.html", "links.html", "status.html", "config.html" ];
   let menu = document.getElementsByClassName("nav_bar");
