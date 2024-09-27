@@ -39,6 +39,7 @@
     else lang = navigator.language;
     const datestr = new Intl.DateTimeFormat(lang, {weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(Date.now());
     document.getElementById("date").innerHTML = datestr;
+    const timefmt = new Intl.DateTimeFormat(lang, {hour:"numeric",minute:"numeric"});
 
     document.getElementById("ttl").innerHTML = _("What's On Now");
 
@@ -58,8 +59,8 @@
       else var row = table.children[i];
       var e = events.find(m => m.channelUuid === c.uuid);
       if (e) {
-	var start = strftime('%H:%M', e.start);
-	var end = strftime('%H:%M', e.stop);
+	var start = timefmt.format(e.start*1000);
+	var end = timefmt.format(e.stop*1000);
 	var summ = '';
 	if (e.summary) summ = e.summary;
 	else if (e.description) summ = e.description;
@@ -172,7 +173,13 @@
     update(1);
   }
 
-  main();
+if (cookies.LANG) {
+  const scriptTag = document.createElement("script");
+  scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+  document.body.append(scriptTag);
+  scriptTag.addEventListener('load', function() {main();});
+}
+else main();
 </script>
  </body>
 </html>

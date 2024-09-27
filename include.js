@@ -146,7 +146,8 @@ async function get_profiles() {
 async function get_channeltags() {
   const response = await fetch("/api/channeltag/list");
   const tags = await response.json();
-  let ret = {"All":"All"};
+  let ret = {};
+  ret[`${_("All")}`] = "All";
   tags.entries.forEach(function(tag) {
     ret[tag.val] = tag.key;
   });
