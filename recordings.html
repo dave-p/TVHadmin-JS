@@ -87,6 +87,10 @@
     const buttons = document.getElementsByName('SORT');
     buttons[sort].checked = true;
 
+    const lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
+    const timefmt = new Intl.DateTimeFormat(lang, {hour:"numeric",minute:"numeric"});
+    const datefmt = new Intl.DateTimeFormat(lang, {weekday:"short",year:"2-digit",month:"numeric",day:"numeric"});
+
     const [ tags, channels, recordings ] = await Promise.all([get_channeltags(), get_channels(0), get_recordings(sort)]);
     var s = "<span class='wideonly'>";
     var media = [];
@@ -125,8 +129,8 @@
           if (intersect(chtags[r.channel], media) == 0) return;
 	}
       }
-      var time = strftime("%H:%M", r.start);
-      var date = strftime("%a %e/%m/%y", r.start);
+      var time = timefmt.format(r.start*1000);
+      var date = datefmt.format(r.start*1000);
       if (r.uri && r.uri.includes("#")) {
         var duration = r.stop_real - r.start_real;
       }

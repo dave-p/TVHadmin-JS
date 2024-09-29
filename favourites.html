@@ -48,6 +48,9 @@
 <script>
   async function main() {
     const params = new URLSearchParams(window.location.search);
+    const lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
+    const timefmt = new Intl.DateTimeFormat(lang, {hour:"numeric",minute:"numeric"});
+    const datefmt = new Intl.DateTimeFormat(lang, {weekday:"short",month:"numeric",day:"numeric"});
 
     var lcn = 0;
     if (cookies.CSORT == "1") lcn = 1;
@@ -77,7 +80,7 @@
     }
     var day = today;
     for(i=0; i<8; i++) {
-      let d = strftime("%a %d/%n", day);
+      let d = datefmt.format(day*1000);
       let opt = document.createElement("option");
       opt.setAttribute("value", day);
       opt.text = d;
@@ -105,19 +108,10 @@
         var events = await get_epg(c, when+1, next-1);
         var last_date = ' ';
         events.forEach(function(e) {
-          if (next == 0) {
-            let d = strftime("%A %d/%n", e.start);
-            if (d != last_date) {
-              row = table.insertRow(-1);
-              row.className = 'newday';
-              row.innerHTML = `<td colspan='5'><span class='date_long'>${d}</span></td>`;
-              last_date = d;
-            }
-          }
           row = table.insertRow(-1);
           row.className = 'row_alt';
-          let start = strftime("%H:%M", e.start);
-          let stop = strftime("%H:%M", e.stop);
+	  let start = timefmt.format(e.start*1000);
+	  let stop = timefmt.format(e.stop*1000);
           let desc = '';
           if (e.summary) desc = e.summary;
 	  else if (e.description) desc = e.description;

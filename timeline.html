@@ -92,6 +92,9 @@
   }
 
   async function update(first) {
+    const lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
+    const timefmt = new Intl.DateTimeFormat(lang, {hour:"numeric",minute:"numeric"});
+    const datefmt = new Intl.DateTimeFormat(lang, {weekday:"short",month:"short",day:"numeric"});
     var now = Math.floor(Date.now() / 1000);
     var utime = now;
     if (params.has('start')) {
@@ -100,7 +103,7 @@
     tstart = utime - utime % 1800;
     tend = tstart + textent;
     tnext = tend;
-    var wday = strftime('%a %e %b', utime);
+    var wday = datefmt.format(utime*1000);
     var tnow = now - now % 1800;
     if ((tstart - tnow) >= 86400) {
       let tleft = utime - 86400;
@@ -120,7 +123,7 @@
     let s = `<th>${wday}</th><th>`;
     var t = tstart;
     for (i=0; i<4; i++) {
-      let time = strftime('%H:%M', t);
+      let time = timefmt.format(t*1000);
       s += `<div class='row_alt' style='float: left; width: 24.5%;'>${time}</div>`;
       t += textent / 4;
     }
@@ -257,7 +260,6 @@
   var textent, tstart, tend, tnext, ch_width, params, last_tend=0;
   var channels, tags, events, table, media, lcn;
   var globalResizeTimer = null;
-  var cookies = get_cookies();
 
   async function main() {
     var tags = await get_channeltags();

@@ -34,9 +34,7 @@
   }
 
   async function update(first) {
-    let lang;
-    if (cookies.LANG) lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
-    else lang = navigator.language;
+    const lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
     const datestr = new Intl.DateTimeFormat(lang, {weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(Date.now());
     document.getElementById("date").innerHTML = datestr;
     const timefmt = new Intl.DateTimeFormat(lang, {hour:"numeric",minute:"numeric"});

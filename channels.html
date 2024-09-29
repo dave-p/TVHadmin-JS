@@ -49,6 +49,11 @@
   </div>
 <script>
   async function main() {
+    const lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
+    const timefmt = new Intl.DateTimeFormat(lang, {hour:"numeric",minute:"numeric"});
+    const datefmt = new Intl.DateTimeFormat(lang, {weekday:"short",month:"numeric",day:"numeric"});
+    const datefmt2 = new Intl.DateTimeFormat(lang, {weekday:"long",month:"numeric",day:"numeric"});
+
     const params = new URLSearchParams(window.location.search);
     var lcn = 0;
     if (cookies.CSORT == "1") lcn = 1;
@@ -97,7 +102,7 @@
       }
       var day = today;
       for(i=0; i<8; i++) {
-        let d = strftime("%a %d/%n", day);
+        let d = datefmt.format(day*1000);
         let opt = document.createElement("option");
         opt.setAttribute("value", day);
         opt.text = d;
@@ -126,7 +131,7 @@
       var last_date = ' ';
       events.forEach(function(e) {
         if (next == 0) {
-          let d = strftime("%A %d/%n", e.start);
+          let d = datefmt2.format(e.start*1000);
           if (d != last_date) {
             row = table.insertRow(-1);
             row.className = 'newday';
@@ -136,8 +141,8 @@
         }
         row = table.insertRow(-1);
         row.className = 'row_alt';
-        let start = strftime("%H:%M", e.start);
-        let stop = strftime("%H:%M", e.stop);
+	var start = timefmt.format(e.start*1000);
+	var stop = timefmt.format(e.stop*1000);
         let desc = '';
         if (e.summary) desc = e.summary;
 	else if (e.description) desc = e.description;

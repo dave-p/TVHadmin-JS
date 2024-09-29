@@ -7,14 +7,14 @@ function get_cookies() {
   }
   catch {
     var empty = {"Tag_All": "All", "Rec_All": "All", "Now_All": "All", "Tim_All": "All", "selected_channels": [],
-      "SORT": "1", "CSORT": "0", "TIMESPAN": "2", "EPGSTART": "0", "THEME": "0", "UUID": "None", "CLASHDET": "0",
-      "LANG": "en_US"
+      "SORT": "1", "CSORT": "0", "TIMESPAN": "2", "EPGSTART": "0", "THEME": "0", "UUID": "None", "CLASHDET": "0"
     };
     return empty;
   }
 }
 
 var cookies = get_cookies();
+if (!cookies.LANG) cookies.LANG = navigator.language.replace('-', '_');
 var head = document.getElementsByTagName('HEAD')[0];
 var link = document.createElement('link');
 link.rel = 'stylesheet';
@@ -250,55 +250,6 @@ function intersect(tags, media) {
 // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
 function escapeRegExp(string) {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-}
-
-/* Port of strftime() by T. H. Doan (https://thdoan.github.io/strftime/)
- *
- * Un-needed features removed. Accepts Unix timestamp.
- */
-function strftime(sFormat, udate) {
-  date = new Date(udate*1000);
-  var nDay = date.getDay(),
-    nDate = date.getDate(),
-    nMonth = date.getMonth(),
-    nYear = date.getFullYear(),
-    nHour = date.getHours(),
-    aDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-    aMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-    zeroPad = function(nNum, nPad) {
-      return ('00000000' + nNum).slice(-nPad);
-    };
-  return sFormat.replace(/%[a-z]/gi, function(sMatch) {
-    return (({
-      '%a': aDays[nDay].slice(0,3),
-      '%A': aDays[nDay],
-      '%b': aMonths[nMonth].slice(0,3),
-      '%B': aMonths[nMonth],
-      '%c': date.toUTCString(),
-      '%d': zeroPad(nDate, 2),
-      '%e': nDate,
-      '%F': date.toISOString().slice(0,10),
-      '%H': zeroPad(nHour, 2),
-      '%I': zeroPad((nHour+11)%12 + 1, 2),
-      '%k': nHour,
-      '%l': (nHour+11)%12 + 1,
-      '%m': zeroPad(nMonth + 1, 2),
-      '%n': nMonth + 1,
-      '%M': zeroPad(date.getMinutes(), 2),
-      '%p': (nHour<12) ? 'AM' : 'PM',
-      '%P': (nHour<12) ? 'am' : 'pm',
-      '%s': Math.round(date.getTime()/1000),
-      '%S': zeroPad(date.getSeconds(), 2),
-      '%u': nDay || 7,
-      '%w': nDay,
-      '%x': date.toLocaleDateString(),
-      '%X': date.toLocaleTimeString(),
-      '%y': (nYear + '').slice(2),
-      '%Y': nYear,
-      '%z': date.toTimeString().replace(/.+GMT([+-]\d+).+/, '$1'),
-      '%Z': date.toTimeString().replace(/.+\((.+?)\)$/, '$1')
-    }[sMatch] || '') + '') || sMatch;
-  });
 }
 
 // https://medium.com/@Charles_Stover/phps-htmlspecialchars-implemented-in-javascript-3da9ac36d481

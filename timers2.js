@@ -65,7 +65,7 @@
     }
     debug += "\nNo tuner available";
     for (const t in tuners) {
-      let exp = strftime("%d/%e:%H.%M", tuners[t].alloc);
+      let exp = dtfmt.format(tuners[t].alloc*1000);
       debug += `\n${t}: exp: ${exp} mux: ${tuners[t].mux}`;
     }
     return 2;
@@ -134,6 +134,7 @@
   async function main() {
     var images = ['images/tick_green.png','images/tick_yellow.png','images/tick_red.png','images/rec.png', 'images/spacer.gif', 'images/tick_gray.png'];
     var autorecs, status, running, run_time = 0;
+
     [ timers, autorecs ] = await Promise.all([get_timers(), get_autorecs()]);
     if (cookies.CLASHDET != "0") {
       [ channels, services, networks, tuners, profile ] = await Promise.all([get_channels(), get_services(), get_networks(), get_tuners(), get_profile()]);
@@ -142,14 +143,14 @@
     var table = document.getElementById("list");
     for (const t of timers) {
       debug = '';
-      let start = strftime("%H:%M", t.start);
-      let d = strftime("%a %d/%n", t.start);
+      let start = timefmt.format(t.start*1000);
+      let d = datefmt.format(t.start*1000);
       if (t.uri && t.uri.includes("#")) {
         let s = await get_ms_stop(t);
-	var stop = strftime("%H:%M", s);
+	var stop = timefmt.format(s*1000);
       }
       else {
-	var stop = strftime("%H:%M", t.stop);
+	var stop = timefmt.format(t.stop*1000);
       }
       if (!t.enabled) {
         status = 4;
@@ -209,5 +210,10 @@
 		0, 0, 0, 0, 0, 0, 0, 0,		// 0x08 - 0x0F
 		0, 2, 0, 0, 0, 0, 1, 1,		// 0x10 - 0x17
 		1, 2, 2, 2, 2, 2, 2, 2, 3 ];	// 0x18 - 0x20
+
+  const lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
+  const timefmt = new Intl.DateTimeFormat(lang, {hour:"numeric",minute:"numeric"});
+  const datefmt = new Intl.DateTimeFormat(lang, {weekday:"short",month:"numeric",day:"numeric"});
+  const dtfmt   = new Intl.DateTimeFormat(lang, {month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
 
   main();
