@@ -175,7 +175,7 @@
 	  else var desc = "";
 	  var subtitle = htmlspecialchars(desc);
 	  if (p.onNow) {
-	    s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`
+	    s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`;
             if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
             s += `' download='${c.uuid}.m3u'><div class='item ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div></a>`;
           }
@@ -213,7 +213,7 @@
       <div id='banner'>
         <table>
           <tr>
-	    <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Timeline</h1></td>
+	    <td class='col_title'><div id='mobmenu'>&#9776;</div><h1 id='ttl'></h1></td>
 	    <td id='mediatags'></td>
 	    <td id='arrows'>
 	      <a id='left2'><img src='images/left2.png' title='Back 1 day' style='visibility:hidden'></a>
@@ -286,6 +286,7 @@
     }
     s += "</span>";
     document.getElementById("mediatags").innerHTML = s;
+    document.getElementById("ttl").innerHTML = _("Timeline");
 
     const query = window.location.search;
     params = new URLSearchParams(query);
@@ -315,7 +316,14 @@
     drawCursor(refresh);
   }
 
-  main();
+if (cookies.LANG) {
+  const scriptTag = document.createElement("script");
+  scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+  document.body.append(scriptTag);
+  scriptTag.addEventListener('load', function() {main();});
+}
+else main();
+
 </script>
  </body>
 </html>
