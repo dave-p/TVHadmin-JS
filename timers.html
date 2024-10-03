@@ -25,7 +25,7 @@
       var url = `/api/dvr/entry/stop?uuid=${uuid}`;
     }
     else {
-      var url = `/api/dvr/entry/cancel?uuid=${uuid}`
+      var url = `/api/dvr/entry/cancel?uuid=${uuid}`;
     }
     fetch(url).then(response => {
       if (response.ok) {

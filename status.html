@@ -149,7 +149,7 @@
     else {
       x = xmlDoc.getElementsByTagName("title");
       if (x.length) {
-        text = "Recording:"
+        text = "Recording:";
 	for (let i=0; i<x.length; i++) {
 	   text += ` "${x[i].childNodes[0].nodeValue}"`;
 	}
@@ -212,7 +212,7 @@
         title.innerHTML = `<h2>${s.input}</h2>`;
         var button = dev2.insertCell();
         button.className = 'col_name';
-        button.innerHTML = `<button type='button' onclick='clear_input_stats("${s.uuid}")'>Clear Counters</button>`
+        button.innerHTML = `<button type='button' onclick='clear_input_stats("${s.uuid}")'>Clear Counters</button>`;
     }
     for (var k in items) {
         var row = devtable.insertRow(-1);

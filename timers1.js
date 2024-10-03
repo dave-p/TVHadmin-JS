@@ -134,7 +134,7 @@ async function main() {
     }
     var alts = await search_epg("", ts);
     if (alts.length > 1) {
-      var s2 = ""
+      var s2 = "";
       alts.forEach(function(a) {
         if (a.dvrUuid && (a.dvrUuid == c.uuid)) return;
         var sl = "";
