@@ -45,10 +45,10 @@ window.addEventListener('load',function() {
   }
   let div = document.createElement("div");
   div.className = "navi";
-  div.innerHTML = "<form action='search.html' method='GET' name='search' class='search' onsubmit='return checkForm()'> \
-        <input type='text' name='find'><br> \
-        <input type='submit' name='submit' value='Search'> \
-        </form>";
+  div.innerHTML = `<form action='search.html' method='GET' name='search' class='search' onsubmit='return checkForm()'>
+        <input type='text' name='find'><br>
+        <input type='submit' name='submit' value='${_("Search")}'>
+        </form>`;
   menu[0].appendChild(div);
 },false);
 
