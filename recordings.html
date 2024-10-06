@@ -31,54 +31,61 @@
       }
     });
   }
+
+  function scaffold() {
+    const s = `
+      <div id='banner'>
+	<table>
+	  <tr>
+	    <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>${_("Recordings")}</h1></td>
+	    <td>
+	      <div class='media'>
+		<label for='B0'>${_("Date Fwd")}:</label><input type='radio' name='SORT' id='B0' value='0' onChange='change_order(this)'></div>
+	      <div class='media'>
+		<label for='B1'>${_("Date Rev")}:</label><input type='radio' name='SORT' id='B1' value='1' onChange='change_order(this)'></div>
+	    <div class='media'>
+		<label for='B2'>${_("Title")}:</label><input type='radio' name='SORT' id='B2' value='2' onChange='change_order(this)'></div>
+	    </td>
+	    <td id='recmediatags'>
+	    </td>
+	  </tr>
+        </table>
+      </div>
+      <div id='wrapper'>
+        <div id='content'>
+	  <table class='list' id='list'>
+	    <tr class='heading'>
+	      <td class='col_date'><h2>${_("Date")}</h2></td>
+	      <td class='wideonly col_time'><h2>${_("Time")}</h2></td>
+	      <td class='col_channel'><h2>${_("Channel")}</h2></td>
+	      <td class='wideonly col_length'><h2>${_("Length")}</h2></td>
+	      <td class='col_name'><h2>${_("Name")}</h2></td>
+	      <td class='col_delete'></td>
+	      <td class='col_stream'></td>
+	    </tr>
+	  </table>
+	</div>
+      </div>`;
+    return s;
+  }
 </script>
 </head> 
 <body>
-<div id="container">
-  <div id="navigation">
-    <div class="logo">
-      <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+  <div id="container">
+    <div id="navigation">
+      <div class="logo">
+        <img src="images/logo.png" alt="TVHeadend Logo" width="150">
+      </div>
+      <div class="nav_bar">
+      </div>
     </div>
-    <div class="nav_bar">
-    </div>
-  </div>
     <div id='layout'>
-     <div id='banner'>
-      <table>
-        <tr>
-	  <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Recordings</h1></td>
-	  <td>
-	    <div class='media'>
-	      <label for='B0'>Date Fwd:</label><input type='radio' name='SORT' id='B0' value='0' onChange='change_order(this)'></div>
-	    <div class='media'>
-	      <label for='B1'>Date Rev:</label><input type='radio' name='SORT' id='B1' value='1' onChange='change_order(this)'></div>
-	    <div class='media'>
-	      <label for='B2'>Title:</label><input type='radio' name='SORT' id='B2' value='2' onChange='change_order(this)'></div>
-	  </td>
-	  <td id='recmediatags'>
-	  </td>
-	</tr>
-      </table>
-     </div>
-     <div id='wrapper'>
-       <div id='content'>
-         <table class='list' id='list'>
-	  <tr class='heading'>
-	    <td class='col_date'><h2>Date</h2></td>
-	    <td class='wideonly col_time'><h2>Time</h2></td>
-	    <td class='col_channel'><h2>Channel</h2></td>
-	    <td class='wideonly col_length'><h2>Length</h2></td>
-	    <td class='col_name'><h2>Name</h2></td>
-	    <td class='col_delete'></td>
-	    <td class='col_stream'></td>
-	  </tr>
-         </table>
-       </div>
-     </div>
-   </div>
+    </div>
   </div>
+
 <script>
   async function main() {
+    document.getElementById("layout").innerHTML = scaffold();
     var sort = 1;
     if (sessionStorage.getItem('recordings-sort')) {
       sort = sessionStorage.getItem('recordings-sort');
@@ -114,8 +121,7 @@
       }
     }
     s = s + "</span>";
-    var td = document.getElementById("recmediatags");
-    td.innerHTML = s;
+    document.getElementById("recmediatags").innerHTML = s;
 
     var chtags = [];
     channels.forEach(function(c) {
@@ -174,7 +180,14 @@
       row.innerHTML = s;
     });
   }
-  main();
+if (cookies.LANG) {
+  const scriptTag = document.createElement("script");
+  scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+  document.body.append(scriptTag);
+  scriptTag.addEventListener('load', function() {main();});
+}
+else main();
+
 </script>
  </body>
 </html>

@@ -29,7 +29,7 @@
         <form name='whatandwhen' method='GET' action='favourites.html' id='whatandwhen' hidden>
           <table>
             <tr>
-              <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Favourite Channels</h1></td>
+              <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1 id='ttl'></h1></td>
 	      <td>
                 <a href='favourites.html' id='left' hidden><img src='images/left.png'></a>&nbsp;
                 <select name='when' size='1' id='select_date' onchange='formSubmit()'></select>&nbsp;
@@ -94,8 +94,9 @@
       right.hidden = false;
     }
     document.getElementById("whatandwhen").hidden = false;
+    document.getElementById("ttl").innerHTML = _("Favourite Channels");
     var content = document.getElementById("content");
-    if (cookies.selected_channels) {
+    if (cookies.selected_channels.length) {
       for (var c of cookies.selected_channels) {
         if (!channelnames.includes(c)) continue;
         var table = document.createElement("TABLE");
@@ -144,11 +145,17 @@
     else {
       var msg = document.createElement("DIV");
       msg.className = 'epg_title';
-      msg.innerHTML = "No favourite channels have been defined.";
+      msg.innerHTML = `${_("No favourite channels have been defined.")}`;
       content.append(msg);
     }
   }
-  main();
+if (cookies.LANG) {
+  const scriptTag = document.createElement("script");
+  scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+  document.body.append(scriptTag);
+  scriptTag.addEventListener('load', function() {main();});
+}
+else main();
 </script>
 </body>
 </html>
