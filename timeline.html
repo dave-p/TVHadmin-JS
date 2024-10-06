@@ -68,6 +68,17 @@
     }
   }
 
+  function arrows() {
+    const s = `<a id='left2'><img src='images/left2.png' title='${_("Back 1 day")}' style='visibility:hidden'></a>
+	      <img src='images/spacer.gif' style='width:10px;height:32px;'>
+	      <a id='left'><img src='images/left.png' title='${_("Back")}' style='visibility:hidden'></a>
+	      <img src='images/spacer.gif' style='width:10px;height:32px;'>
+	      <a href='timeline.html' id='right'><img src='images/right.png' title='${_("Forward")}'></a>
+	      <img src='images/spacer.gif' style='width:10px;height:32px;'>
+	      <a href='timeline.html' id='right2'><img src='images/right2.png' title='${_("Forward 1 day")}'></a>`;
+    return s;
+  }
+
   function drawCursor(refresh) {
     var time = Date.now()/1000;
     if(time > tnext) {
@@ -216,13 +227,6 @@
 	    <td class='col_title'><div id='mobmenu'>&#9776;</div><h1 id='ttl'></h1></td>
 	    <td id='mediatags'></td>
 	    <td id='arrows'>
-	      <a id='left2'><img src='images/left2.png' title='Back 1 day' style='visibility:hidden'></a>
-	      <img src='images/spacer.gif' style='width:10px;height:32px;'>
-	      <a id='left'><img src='images/left.png' title='Back' style='visibility:hidden'></a>
-	      <img src='images/spacer.gif' style='width:10px;height:32px;'>
-	      <a href='timeline.html' id='right'><img src='images/right.png' title='Forward'></a>
-	      <img src='images/spacer.gif' style='width:10px;height:32px;'>
-	      <a href='timeline.html' id='right2'><img src='images/right2.png' title='Forward 1 day'></a>
 	    </td>
 	  </tr>
         </table>
@@ -286,6 +290,7 @@
     }
     s += "</span>";
     document.getElementById("mediatags").innerHTML = s;
+    document.getElementById("arrows").innerHTML = arrows();
     document.getElementById("ttl").innerHTML = _("Timeline");
 
     const query = window.location.search;
