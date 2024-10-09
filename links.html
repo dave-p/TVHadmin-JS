@@ -18,6 +18,33 @@
       }
     });
   }
+
+  function skeleton() {
+    const s = `
+      <div id='banner'>
+        <table>
+          <tr>
+	    <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>${_("Series Links")}</h1></td>
+	  </tr>
+        </table>
+      </div>
+      <div id='wrapper'>
+	<div id='content'>
+          <table class='list' id='list'>
+	    <tr class='heading'>
+	      <td class='col_value'><h2>${_("Timers")}</h2></td>
+	      <td class='col_value'><h2>${_("Recs")}</h2></td>
+	      <td class='col_channel'><h2>${_("Channel")}</h2></td>
+	      <td class='col_name'><h2>${_("Name")}</h2></td>
+	      <td class='wideonly col_channel'><h2>${_("Next Timer")}</h2></td>
+	      <td class='col_delete'></td>
+	    </tr>
+	  </table>
+	</div>
+      </div>`;
+    return s;
+  }
+
 </script>
 </head> 
 <body>
@@ -30,33 +57,13 @@
       </div>
     </div>
     <div id='layout'>
-     <div id='banner'>
-      <table>
-        <tr>
-	  <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Series Links</h1></td>
-	</tr>
-      </table>
-     </div>
-       <div id='wrapper'>
-         <div id='content'>
-           <table class='list' id='list'>
-	     <tr class='heading'>
-	       <td class='col_value'><h2>Timers</h2></td>
-	       <td class='col_value'><h2>Recs</h2></td>
-	       <td class='col_channel'><h2>Channel</h2></td>
-	       <td class='col_name'><h2>Name</h2></td>
-	       <td class='wideonly col_channel'><h2>Next Timer</h2></td>
-	       <td class='col_delete'></td>
-	     </tr>
-           </table>
-	</div>
-     </div>
    </div>
  </div>
 <script>
   async function main() {
     const lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
     const datefmt = new Intl.DateTimeFormat(lang, {weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
+    document.getElementById("layout").innerHTML = skeleton();
     const [ recordings, channels ] = await Promise.all([get_recordings(), get_channels(0)]);
     var cname = [];
     channels.forEach(function(c) {
@@ -101,7 +108,14 @@
 	`<td class='col_delete'><a href='links.html' onclick='delete_link(this, "${link.uuid}")'><img src='images/delete.png'></a></td>`;
     });
   }
-  main();
+if (cookies.LANG) {
+  const scriptTag = document.createElement("script");
+  scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+  document.body.append(scriptTag);
+  scriptTag.addEventListener('load', function() {main();});
+}
+else main();
+
 </script>
   </body>
 </html>
