@@ -68,6 +68,8 @@ async function main() {
   var images = ['images/tick_green.png','images/tick_yellow.png','images/tick_red.png','images/rec.png', 'images/spacer.gif'];
   var clashes = [];
   var timers, autorecs;
+
+  document.getElementById("layout").innerHTML = scaffold();
   [ timers, autorecs, channels, muxes ] = await Promise.all([get_timers(), get_autorecs(), get_channels(), get_muxes()]);
   var now = new Date() / 1000;
   var table = document.getElementById("list");
@@ -91,19 +93,19 @@ async function main() {
       var running = false;
     }
     if (t.autorec != "") {
-      var type = "Autorec", type2 = "Autorec";
+      var type = _("Autorec"), type2 = _("Autorec");
       if (autorecs[t.autorec] != "") {
-        type = "Series Link", type2 = "Series";
+        type = _("Series Link"), type2 = _("Series");
       }
     }
     else if (t.timerec != "") {
-      var type = "Timed Recording", type2 = "Timer";
+      var type = _("Timed Recording"), type2 = _("Timer");
     }
     else {
       var type = "", type2 = "";
     }
     if (t.enabled == true) {
-      var en = "checked";
+      var en = _("checked");
     }
     else {
       var en = "";
@@ -145,13 +147,13 @@ async function main() {
             s2 += `<li>${when} ${a.channelName} ${a.title} ${sl}</li>`;
           }
           else {
-            s2 += `<li>${when} ${a.channelName} ${a.title} ${sl} (CLASH)</li>`;
+            s2 += `<li>${when} ${a.channelName} ${a.title} ${sl} (${_("CLASH")})</li>`;
           }
         }
       });
       if (s2.length) {
         let dt = dtfmt.format(c.start*1000);
-        s += `<p>Alternatives for \"${ts}\" on ${dt}</p><ul>` + s2 + "</ul>";
+        s += `<p>${_("Alternatives for")} \"${ts}\" ${_("on")} ${dt}</p><ul>` + s2 + "</ul>";
       }
     }
   }
@@ -164,5 +166,12 @@ const lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
 const timefmt = new Intl.DateTimeFormat(lang, {hour:"numeric",minute:"numeric"});
 const datefmt = new Intl.DateTimeFormat(lang, {weekday:"short",month:"numeric",day:"numeric"});
 const dtfmt   = new Intl.DateTimeFormat(lang, {weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
-main();
+
+if (cookies.LANG) {
+  const scriptTag = document.createElement("script");
+  scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+  document.body.append(scriptTag);
+  scriptTag.addEventListener('load', function() {main();});
+}
+else main();
 

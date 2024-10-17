@@ -135,6 +135,7 @@
     var images = ['images/tick_green.png','images/tick_yellow.png','images/tick_red.png','images/rec.png', 'images/spacer.gif', 'images/tick_gray.png'];
     var autorecs, status, running, run_time = 0;
 
+    document.getElementById("layout").innerHTML = scaffold();
     [ timers, autorecs ] = await Promise.all([get_timers(), get_autorecs()]);
     if (cookies.CLASHDET != "0") {
       [ channels, services, networks, tuners, profile ] = await Promise.all([get_channels(), get_services(), get_networks(), get_tuners(), get_profile()]);
@@ -174,13 +175,13 @@
         }
       }
       if (t.autorec != "") {
-	var type = "Autorec", type2 = "Autorec";
+	var type = _("Autorec"), type2 = _("Autorec");
 	if (autorecs[t.autorec] != "") {
-	  type = "Series Link", type2 = "Series";
+	  type = _("Series Link"), type2 = _("Series");
 	}
       }
       else if (t.timerec != "") {
-	var type = "Timed Recording", type2 = "Timer";
+	var type = _("Timed Recording"), type2 = _("Timer");
       }
       else {
 	var type = "", type2 = "";
@@ -200,7 +201,7 @@
 	`<td class='col_name'>${t.disp_title}</td>` +
 	`<td class='col_channel'><span class='wideonly'>${type}</span><span class='thinonly'>${type2}</span></td>` +
         `<td class='col_delete'><input type='checkbox' class='smaller' oninput='toggle(event,"${t.uuid}",${t.enabled})' ${en}></td>` +
-        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(this,"${t.uuid}",${running})'><img src='images/delete.png' title='Delete Timer'></a></td>`;
+        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(this,"${t.uuid}",${running})'><img src='images/delete.png' title='${_("Delete Timer")}'></a></td>`;
       row.innerHTML = s;
     }
   }
@@ -216,4 +217,10 @@
   const datefmt = new Intl.DateTimeFormat(lang, {weekday:"short",month:"numeric",day:"numeric"});
   const dtfmt   = new Intl.DateTimeFormat(lang, {month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
 
-  main();
+  if (cookies.LANG) {
+    const scriptTag = document.createElement("script");
+    scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+    document.body.append(scriptTag);
+    scriptTag.addEventListener('load', function() {main();});
+  }
+  else main();
