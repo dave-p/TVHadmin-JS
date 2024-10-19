@@ -180,7 +180,7 @@ function show_html() {
 	      <label for='T2'>${_("Blue")}:</label><input type='radio' name='THEME' id='T2' value='2'>
 	     </td>
 	  </tr>
-	  <tr class='row_alt' title='${_("Time after which entries appear on tomorrow's EPG. Useful if you watch TV after midnight")}'>
+	  <tr class='row_alt' title='${_("Time after which EPG entries appear on the following day. Useful if you watch TV after midnight")}'>
 	    <td class='col_label'><h5>${_("EPG Day starts at")}:</h5></td>
 	    <td class='col_value'>
 	      <select name='EPGSTART'>
@@ -215,7 +215,7 @@ function show_html() {
 	      <label for='C1'>${_("LCN")}:</label><input type='radio' name='CSORT' id='C1' value='1'>
 	    </td>
 	  </tr>
-	  <tr class='row_alt' title='${_("Refresh the What's On Now and Timeline screens every minute")}'>
+	  <tr class='row_alt' title='${_("Refresh the Whats On Now and Timeline screens every minute")}'>
 	    <td class='col_label'><h5>${_("Refresh What's On Now and Timeline screens")}:</h5></td>
 	    <td class='col_value'><input type='checkbox' name='REFR'></td>
 	  </tr>
@@ -227,7 +227,7 @@ function show_html() {
 	  <td class='col_label'><h5>${_("Show channel icons in What's On Now & Recordings")}:</h5></td>
 	  <td class='col_value'><input type='checkbox' name='ICONS'></td>
 	  </tr>
-	  <tr class='row_alt' title='${_("Show timer conflicts. Multiple tuner option is experimental and needs ADMIN privilege.")}'>
+	  <tr class='row_alt' title='${_("Show timer conflicts. Multiple tuner option needs ADMIN privilege.")}'>
 	    <td class='col_label'><h5>${_("Detect timer clashes")}:</h5></td>
 	    <td class='col_value'>
 	      <label for='T0'>${_("Off")}:</label><input type='radio' name='CLASHDET' id='T0' value='0'>
@@ -244,7 +244,7 @@ function show_html() {
 		  <option value='6'>6 ${_("hours")}</option></select>
 	    </td>
 	  </tr>
-	  <tr class='row_alt' title='${_("Which TVH tags are to be used for filtering. Click 'Save' after changing this selection to update the other preferences")}'>
+	  <tr class='row_alt' title='${_("Which TVH tags are to be used for filtering. Click Save after changing this selection to update the other preferences")}'>
 	    <td class='col_label'><h5>${_("Media Tags to use for selection")}:</h5></td>
 	    <td class='col_value' id='alltags'></td>
 	  </tr>
@@ -253,7 +253,7 @@ function show_html() {
 	  <tr class='heading'>
 	    <td colspan='2'><h2>Defaults</h2></td>
 	  </tr>
-	  <tr class='row_alt' title='${_("Default filter setting for the What's On Now screen")}'>
+	  <tr class='row_alt' title='${_("Default filter setting for the Whats On Now screen")}'>
 	    <td class='col_label'><h5>${_("Show in What's On Now")}:</h5></td>
 	    <td class='col_value' id='nowtags'></td>
 	  </tr>
@@ -265,7 +265,7 @@ function show_html() {
 	    <td class='col_label'><h5>${_("Show in Recordings")}:</h5></td>
 	    <td class='col_value' id='rectags'></td>
 	  </tr>
-	  <tr class='row_alt' title='${_("Sort recordings by date or by title (ignoring 'New')")}'>
+	  <tr class='row_alt' title='${_("Sort recordings by date or by title (ignoring New)")}'>
 	    <td class='col_label'><h5>${_("Recordings Sort Order")}:</h5></td>
 	    <td class='col_value'>
 	      <label for='B0'>${_("Date Fwd")}:</label><input type='radio' name='SORT' id='B0' value='0'>
