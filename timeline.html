@@ -172,7 +172,7 @@
 	  else var desc = "";
 	  var subtitle = htmlspecialchars(desc);
 	  if (p.onNow) {
-	    s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`
+	    s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`;
             if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
             s += `' download='${c.uuid}.m3u'><div class='item ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div></a>`;
           }

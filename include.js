@@ -218,8 +218,8 @@ function sort_title(x, y) {
 }
 
 function strcasecmp(a, b) {
-  let s1 = (a.name + '').toLowerCase()
-  let s2 = (b.name + '').toLowerCase()
+  let s1 = (a.name + '').toLowerCase();
+  let s2 = (b.name + '').toLowerCase();
   if (s1 > s2) return 1;
   else if (s1 === s2) return 0;
   return -1;
@@ -233,7 +233,7 @@ function strncmp(str1, str2, n) {
 
 function intersect(tags, media) {
   for (var t in tags) {
-    if (media[tags[t]]) return 1
+    if (media[tags[t]]) return 1;
   }
   return 0;
 }

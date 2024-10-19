@@ -53,7 +53,7 @@
     var lcn = 0;
     if (cookies.CSORT == "1") lcn = 1;
     const [ links, channels ] = await Promise.all([get_links(), get_channels(lcn)]);
-    var slinks = []
+    var slinks = [];
     links.forEach(function(l) {
       slinks[l["serieslink"]] = 1;
     });
@@ -61,14 +61,14 @@
     var channel_dropdown = document.getElementById("select_channel");
     let opt = document.createElement("option");
     opt.setAttribute("value", -1);
-    opt.text = "Select Channel"
+    opt.text = "Select Channel";
     channel_dropdown.appendChild(opt);
     var i = 0;
     channels.forEach(function(c) {
       let opt = document.createElement("option");
       opt.setAttribute("value", i);
-      if (lcn) opt.text = `${c.number} ${c.name}`
-      else opt.text = `${c.name}`
+      if (lcn) opt.text = `${c.number} ${c.name}`;
+      else opt.text = `${c.name}`;
       channel_dropdown.appendChild(opt);
       i++;
     });
@@ -77,7 +77,7 @@
 
     let d = new Date();
     var dt = d/1000;
-    var today = dt - (dt%86400) + d.getTimezoneOffset()*60 + (cookies.EPGSTART * 3600)
+    var today = dt - (dt%86400) + d.getTimezoneOffset()*60 + (cookies.EPGSTART * 3600);
     if (params.has("when")) var when = Number(params.get("when"));
     else var when = today;
 

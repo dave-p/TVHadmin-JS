@@ -54,7 +54,7 @@
 
     const [ links, channels ] = await Promise.all([get_links(), get_channels(lcn)]);
 
-    var slinks = []
+    var slinks = [];
     links.forEach(function(l) {
       slinks[l["serieslink"]] = 1;
     });
@@ -63,7 +63,7 @@
 
     let d = new Date();
     var dt = d/1000;
-    var today = dt - (dt%86400) + d.getTimezoneOffset()*60 + (cookies.EPGSTART * 3600)
+    var today = dt - (dt%86400) + d.getTimezoneOffset()*60 + (cookies.EPGSTART * 3600);
     if (params.has("when")) var when = Number(params.get("when"));
     else var when = today;
 

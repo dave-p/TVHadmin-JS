@@ -37,7 +37,7 @@
     var needle = params.get('find');
     if (needle == "") return;
     var links = await get_links();
-    var slinks = []
+    var slinks = [];
     links.forEach(function(l) {
       slinks[l["serieslink"]] = 1;
     });

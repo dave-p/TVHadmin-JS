@@ -120,8 +120,8 @@
         for (const t of d.params) {
           if ((t.id == "enabled") && !t.value) break;
           if (t.id == "priority") {
-            let r3 = await fetch(`/api/mpegts/input/network_list?uuid=${d.uuid}`)
-            let tuner = await r3.json()
+            let r3 = await fetch(`/api/mpegts/input/network_list?uuid=${d.uuid}`);
+            let tuner = await r3.json();
             ret[d.text] = { "network": tuner.entries[0].val, "priority": t.value, "alloc": 0, "mux": "" };
             break;
 	  }
