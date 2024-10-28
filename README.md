@@ -19,7 +19,7 @@ For an alternative version which requires a PHP-enabled web server see https://g
 - Browse to http://your.tvh.server:9981/static/TVHadmin-JS/TVHadmin.html. Enter the username and password of the TVHeadend user. Make any changes to the settings then click the 'save' button.
 - TVHadmin should now be working.
 
-For LibreElec users, a patch for the Tvheadend addon is available [here](https://github.com/dave-p/TVHadmin-JS/releases/tag/v0.0.1).
+For LibreElec users, a patch for the Tvheadend addon is available [here](https://github.com/dave-p/TVHadmin-JS/releases).
 
 ### Timer Clashes
 TVHadmin can optionally detect and warn about timer clashes (where there is no free source to make a recording). Clash detection is set up using the Configuration screen.
