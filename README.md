@@ -19,7 +19,18 @@ For an alternative version which requires a PHP-enabled web server see https://g
 - Browse to http://your.tvh.server:9981/static/TVHadmin-JS/TVHadmin.html. Enter the username and password of the TVHeadend user. Make any changes to the settings then click the 'save' button.
 - TVHadmin should now be working.
 
-For LibreElec users, a patch for the Tvheadend addon is available [here](https://github.com/dave-p/TVHadmin-JS/releases).
+### LibreElec Installation
+The installation process using GUI tools is shown in this video https://www.youtube.com/watch?v=vlcYkYyRZaU (thanks to "Eyerex").
+
+To install manually, log into LibreElec using SSH as 'root' and execute the following:
+
+`cd .kodi/addons/service.tvheadend43`
+
+`mkdir -p src/webui/static`
+
+`cd src/webui/static`
+
+then follow the instructions above from the second bullet point.
 
 ### Timer Clashes
 TVHadmin can optionally detect and warn about timer clashes (where there is no free source to make a recording). Clash detection is set up using the Configuration screen.
