@@ -147,9 +147,9 @@
       var title = htmlspecialchars(r.disp_title);
       var summ = r.disp_extratext;
       var row = table.insertRow(-1);
+      var ok = 1;
       if (r.sched_status == 'completed') {
-	var ok = 1;
-	if (r.status == 'Completed OK') {
+	if (!r.errorcode) {
 	  row.className = 'row_alt';
 	}
 	else {
@@ -157,11 +157,10 @@
 	}
       }
       else if (r.sched_status == 'recording') {
-	var ok = 1;
 	row.className = 'row_inprogress';
       }
       else {
-	var ok = 0;
+	ok = 0;
 	row.className = 'row_error';
       }
       var s = `<td class='col_date'>${date}` +
