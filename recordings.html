@@ -149,7 +149,7 @@
       var row = table.insertRow(-1);
       var ok = 1;
       if (r.sched_status == 'completed') {
-	if (!r.errorcode) {
+	if (!r.errorcode && r.data_errors < 10000) {
 	  row.className = 'row_alt';
 	}
 	else {
