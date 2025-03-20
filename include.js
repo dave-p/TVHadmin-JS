@@ -49,8 +49,8 @@ window.addEventListener('load',function() {
         </form>";
   menu[0].appendChild(div);
   if (cookies.ADV == "on") {
-    const Atitles = [ "Test1", "Test2" ];
-    const Alinks = [ "test1.html", "test2.html" ];
+    const Atitles = [ "Networks", "Muxes", "Services" ];
+    const Alinks = [ "networks.html", "muxes.html", "services.html" ];
     let nav=document.getElementById("navigation");
     let amenu = document.createElement("div");
     amenu.setAttribute("class", "nav_bar2");
