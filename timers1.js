@@ -68,18 +68,20 @@ async function main() {
   var images = ['images/tick_green.png','images/tick_yellow.png','images/tick_red.png','images/rec.png', 'images/spacer.gif'];
   var clashes = [];
   var timers, autorecs;
+
+  document.getElementById("layout").innerHTML = scaffold();
   [ timers, autorecs, channels, muxes ] = await Promise.all([get_timers(), get_autorecs(), get_channels(), get_muxes()]);
   var now = new Date() / 1000;
   var table = document.getElementById("list");
   for await (const t of timers) {
-    let start = strftime("%H:%M", t.start);
-    let d = strftime("%a %d/%n", t.start);
+    let start = timefmt.format(t.start*1000);
+    let d = datefmt.format(t.start*1000);
     if (t.uri && t.uri.includes("#")) {
       let s = await get_ms_stop(t);
-      var stop = strftime("%H:%M", s);
+      var stop = timefmt.format(s*1000);
     }
     else {
-      var stop = strftime("%H:%M", t.stop);
+      var stop = timefmt.format(t.stop*1000);
     }
     if(t.start_real < now) {
       var status = 3;
@@ -91,19 +93,19 @@ async function main() {
       var running = false;
     }
     if (t.autorec != "") {
-      var type = "Autorec", type2 = "Autorec";
+      var type = _("Autorec"), type2 = _("Autorec");
       if (autorecs[t.autorec] != "") {
-        type = "Series Link", type2 = "Series";
+        type = _("Series Link"), type2 = _("Series");
       }
     }
     else if (t.timerec != "") {
-      var type = "Timed Recording", type2 = "Timer";
+      var type = _("Timed Recording"), type2 = _("Timer");
     }
     else {
       var type = "", type2 = "";
     }
     if (t.enabled == true) {
-      var en = "checked";
+      var en = _("checked");
     }
     else {
       var en = "";
@@ -140,18 +142,18 @@ async function main() {
         var sl = "";
         if (a.deafsigned) sl = '[SL]';
         if (a.episodeUri && (c.uri === a.episodeUri)) {
-          var when = strftime("%a %e/%n %H:%M", a.start);
+          var when = dtfmt.format(a.start*1000);
           if (!check_event(timers, a)) {
             s2 += `<li>${when} ${a.channelName} ${a.title} ${sl}</li>`;
           }
           else {
-            s2 += `<li>${when} ${a.channelName} ${a.title} ${sl} (CLASH)</li>`;
+            s2 += `<li>${when} ${a.channelName} ${a.title} ${sl} (${_("CLASH")})</li>`;
           }
         }
       });
       if (s2.length) {
-        let dt = strftime("%a %e/%n at %H:%M", c.start);
-        s += `<p>Alternatives for \"${ts}\" on ${dt}</p><ul>` + s2 + "</ul>";
+        let dt = dtfmt.format(c.start*1000);
+        s += `<p>${_("Alternatives for")} \"${ts}\" ${_("on")} ${dt}</p><ul>` + s2 + "</ul>";
       }
     }
   }
@@ -160,5 +162,16 @@ async function main() {
 }
 
 var channels = {}, muxes = {};
-main();
+const lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
+const timefmt = new Intl.DateTimeFormat(lang, {hour:"numeric",minute:"numeric"});
+const datefmt = new Intl.DateTimeFormat(lang, {weekday:"short",month:"numeric",day:"numeric"});
+const dtfmt   = new Intl.DateTimeFormat(lang, {weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
+
+if (cookies.LANG) {
+  const scriptTag = document.createElement("script");
+  scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+  document.body.append(scriptTag);
+  scriptTag.addEventListener('load', function() {main();});
+}
+else main();
 

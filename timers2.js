@@ -65,7 +65,7 @@
     }
     debug += "\nNo tuner available";
     for (const t in tuners) {
-      let exp = strftime("%d/%e:%H.%M", tuners[t].alloc);
+      let exp = dtfmt.format(tuners[t].alloc*1000);
       debug += `\n${t}: exp: ${exp} mux: ${tuners[t].mux}`;
     }
     return 2;
@@ -134,6 +134,8 @@
   async function main() {
     var images = ['images/tick_green.png','images/tick_yellow.png','images/tick_red.png','images/rec.png', 'images/spacer.gif', 'images/tick_gray.png'];
     var autorecs, status, running, run_time = 0;
+
+    document.getElementById("layout").innerHTML = scaffold();
     [ timers, autorecs ] = await Promise.all([get_timers(), get_autorecs()]);
     if (cookies.CLASHDET != "0") {
       [ channels, services, networks, tuners, profile ] = await Promise.all([get_channels(), get_services(), get_networks(), get_tuners(), get_profile()]);
@@ -142,14 +144,14 @@
     var table = document.getElementById("list");
     for (const t of timers) {
       debug = '';
-      let start = strftime("%H:%M", t.start);
-      let d = strftime("%a %d/%n", t.start);
+      let start = timefmt.format(t.start*1000);
+      let d = datefmt.format(t.start*1000);
       if (t.uri && t.uri.includes("#")) {
         let s = await get_ms_stop(t);
-	var stop = strftime("%H:%M", s);
+	var stop = timefmt.format(s*1000);
       }
       else {
-	var stop = strftime("%H:%M", t.stop);
+	var stop = timefmt.format(t.stop*1000);
       }
       if (!t.enabled) {
         status = 4;
@@ -173,13 +175,13 @@
         }
       }
       if (t.autorec != "") {
-	var type = "Autorec", type2 = "Autorec";
+	var type = _("Autorec"), type2 = _("Autorec");
 	if (autorecs[t.autorec] != "") {
-	  type = "Series Link", type2 = "Series";
+	  type = _("Series Link"), type2 = _("Series");
 	}
       }
       else if (t.timerec != "") {
-	var type = "Timed Recording", type2 = "Timer";
+	var type = _("Timed Recording"), type2 = _("Timer");
       }
       else {
 	var type = "", type2 = "";
@@ -199,7 +201,7 @@
 	`<td class='col_name'>${t.disp_title}</td>` +
 	`<td class='col_channel'><span class='wideonly'>${type}</span><span class='thinonly'>${type2}</span></td>` +
         `<td class='col_delete'><input type='checkbox' class='smaller' oninput='toggle(event,"${t.uuid}",${t.enabled})' ${en}></td>` +
-        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(this,"${t.uuid}",${running})'><img src='images/delete.png' title='Delete Timer'></a></td>`;
+        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(this,"${t.uuid}",${running})'><img src='images/delete.png' title='${_("Delete Timer")}'></a></td>`;
       row.innerHTML = s;
     }
   }
@@ -210,4 +212,15 @@
 		0, 2, 0, 0, 0, 0, 1, 1,		// 0x10 - 0x17
 		1, 2, 2, 2, 2, 2, 2, 2, 3 ];	// 0x18 - 0x20
 
-  main();
+  const lang = cookies.LANG.replace('_','-'); // JS expects eg 'en-GB' not 'en_GB'
+  const timefmt = new Intl.DateTimeFormat(lang, {hour:"numeric",minute:"numeric"});
+  const datefmt = new Intl.DateTimeFormat(lang, {weekday:"short",month:"numeric",day:"numeric"});
+  const dtfmt   = new Intl.DateTimeFormat(lang, {month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
+
+  if (cookies.LANG) {
+    const scriptTag = document.createElement("script");
+    scriptTag.src = `/static/intl/tvh.${cookies.LANG}.js.gz`;
+    document.body.append(scriptTag);
+    scriptTag.addEventListener('load', function() {main();});
+  }
+  else main();
