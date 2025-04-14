@@ -32,6 +32,15 @@ To install manually, log into LibreElec using SSH as 'root' and execute the foll
 
 then follow the instructions above from the second bullet point.
 
+### Integration with Docker container
+- Clone the repository to a location of your choosing, for example: **/docker/tvheadend/TVHadmin-JS**
+- **docker**: Add the following to your docker run command:
+
+`-v /docker/tvheadend/TVHadmin-JS:/usr/share/tvheadend/src/webui/static/TVHadmin`
+- **docker-compose**: Add the following under volume mounts:
+
+`- /docker/tvheadend/TVHadmin-JS:/usr/share/tvheadend/src/webui/static/TVHadmin`
+
 ### Timer Clashes
 TVHadmin can optionally detect and warn about timer clashes (where there is no free source to make a recording). Clash detection is set up using the Configuration screen.
 

@@ -156,9 +156,9 @@
       x = xmlDoc.getElementsByTagName("title");
       if (x.length) {
         text = `${_('Recording')}:`;
-	for (let i=0; i<x.length; i++) {
-	   text += ` "${x[i].childNodes[0].nodeValue}"`;
-	}
+	      for (let i=0; i<x.length; i++) {
+	        text += ` "${x[i].childNodes[0].nodeValue}"`;
+	      }
       }
       else text = "";
     }
