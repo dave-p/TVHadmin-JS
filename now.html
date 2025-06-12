@@ -34,12 +34,6 @@
   }
 
   async function update(first) {
-    const utime = Date.now()/1000;
-    var date = strftime('%A, %e %b %Y', utime);
-    var time = strftime('%H:%M', utime);
-    td = document.getElementById("date");
-    td.innerHTML = date;
-
     var events = await get_epg_now('');
     var table = document.getElementById("list").getElementsByTagName('tbody')[0];
     var i = 0;
@@ -56,8 +50,8 @@
       else var row = table.children[i];
       var e = events.find(m => m.channelUuid === c.uuid);
       if (e) {
-	var start = strftime('%H:%M', e.start);
-	var end = strftime('%H:%M', e.stop);
+	var start = timefmt.format(e.start*1000);
+	var end = timefmt.format(e.stop*1000);
 	var summ = '';
 	if (e.summary) summ = e.summary;
 	else if (e.description) summ = e.description;
@@ -170,6 +164,10 @@
 
     update(1);
   }
+
+  const datestr = new Intl.DateTimeFormat(navigator.language, {weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(Date.now());
+  document.getElementById("date").innerHTML = datestr;
+  const timefmt = new Intl.DateTimeFormat(navigator.language, {hour:"numeric",minute:"numeric"});
 
   main();
 </script>

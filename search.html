@@ -33,6 +33,8 @@
   </div>
 <script>
   async function main() {
+    const timefmt = new Intl.DateTimeFormat(navigator.language, {hour:"numeric",minute:"numeric"});
+    const datefmt = new Intl.DateTimeFormat(navigator.language, {weekday:"long",month:"numeric",day:"numeric"});
     const params = new URLSearchParams(window.location.search);
     var needle = params.get('find');
     if (needle == "") return;
@@ -48,7 +50,7 @@
     var last_date = ' ';
     var results = await search_epg("", needle);
     for (e of results) {
-      let d = strftime("%A %d/%n", e.start);
+      let d = datefmt.format(e.start*1000);
       if (d != last_date) {
         row = table.insertRow(-1);
         row.className = 'newday';
@@ -57,8 +59,8 @@
       }
       row = table.insertRow(-1);
       row.className = 'row_alt';
-      let start = strftime("%H:%M", e.start);
-      let stop = strftime("%H:%M", e.stop);
+      let start = timefmt.format(e.start*1000);
+      let stop = timefmt.format(e.stop*1000);
       let desc = '';
       if (e.summary) desc = e.summary;
       else if (e.description) desc = e.description;

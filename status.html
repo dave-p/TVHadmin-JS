@@ -124,6 +124,7 @@
 	tc_block: 'Total Block Error Count',
 	ec_bit: 'Bit Error Count',
   };
+  const datefmt = new Intl.DateTimeFormat(navigator.language, {weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
 
   async function update(stats) {
     var systable = document.getElementById("systable");
@@ -143,7 +144,7 @@
     var x = xmlDoc.getElementsByTagName("next")[0];
     if (x) {
       let t = x.childNodes[0].nodeValue;
-      text = "Next: " + strftime('%F %H:%M', Date.now()/1000 + 60*t);
+      text = "Next: " + datefmt.format(Date.now() + 60000*t);
     }
     else {
       x = xmlDoc.getElementsByTagName("title");

@@ -55,6 +55,7 @@
  </div>
 <script>
   async function main() {
+    const datefmt = new Intl.DateTimeFormat(navigator.language, {weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
     const [ recordings, channels ] = await Promise.all([get_recordings(), get_channels(0)]);
     var cname = [];
     channels.forEach(function(c) {
@@ -88,7 +89,7 @@
       var next = '';
       if (rcnt[link.uuid]) recs = rcnt[link.uuid];
       if (tcnt[link.uuid]) timers = tcnt[link.uuid];
-      if (tnext[link.uuid]) next = strftime("%a %e/%n %H:%M", tnext[link.uuid]);
+      if (tnext[link.uuid]) next = datefmt.format(tnext[link.uuid]*1000);
       var row = table.insertRow(-1);
       row.className = "row_alt";
       row.innerHTML = `<td class='col_value'>${timers}</td>` +

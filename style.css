@@ -209,7 +209,7 @@ a:hover {
 	padding: 0;
 }
 #whatson table.percent {
-	width: 90px;
+	width: 100%;
 	border: 1px solid #6d96a9;
         border-collapse: collapse;
         border-spacing: 0;
@@ -272,8 +272,8 @@ a:hover {
 
 .col_duration {
 	padding-left: 3px;
-	padding-right: 3px;
-	width: 100px;
+	padding-right: 5px !important;
+	white-space: nowrap;
 	vertical-align: middle;
 }
 .col_name {

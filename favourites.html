@@ -77,7 +77,7 @@
     }
     var day = today;
     for(i=0; i<8; i++) {
-      let d = strftime("%a %d/%n", day);
+      let d = datefmt.format(day*1000);
       let opt = document.createElement("option");
       opt.setAttribute("value", day);
       opt.text = d;
@@ -107,8 +107,8 @@
         events.forEach(function(e) {
           row = table.insertRow(-1);
           row.className = 'row_alt';
-          let start = strftime("%H:%M", e.start);
-          let stop = strftime("%H:%M", e.stop);
+	  let start = timefmt.format(e.start*1000);
+	  let stop = timefmt.format(e.stop*1000);
           let desc = '';
           if (e.summary) desc = e.summary;
 	  else if (e.description) desc = e.description;
@@ -145,6 +145,10 @@
       content.append(msg);
     }
   }
+
+  const timefmt = new Intl.DateTimeFormat(navigator.language, {hour:"numeric",minute:"numeric"});
+  const datefmt = new Intl.DateTimeFormat(navigator.language, {weekday:"short",month:"numeric",day:"numeric"});
+
   main();
 </script>
 </body>
