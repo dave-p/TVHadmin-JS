@@ -125,8 +125,8 @@
           if (intersect(chtags[r.channel], media) == 0) return;
 	}
       }
-      var time = strftime("%H:%M", r.start);
-      var date = strftime("%a %e/%m/%y", r.start);
+      var time = timefmt.format(r.start*1000);
+      var date = datefmt.format(r.start*1000);
       if (r.uri && r.uri.includes("#")) {
         var duration = r.stop_real - r.start_real;
       }
@@ -169,6 +169,10 @@
       row.innerHTML = s;
     });
   }
+
+  const timefmt = new Intl.DateTimeFormat(navigator.language, {hour:"numeric",minute:"numeric"});
+  const datefmt = new Intl.DateTimeFormat(navigator.language, {weekday:"short",year:"2-digit",month:"numeric",day:"numeric"});
+
   main();
 </script>
  </body>
