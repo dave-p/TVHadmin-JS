@@ -56,7 +56,9 @@ A yellow 'tick' mark is shown if overlapping timers are from the same network an
 #### Multiple Tuners
 TVHadmin checks the allocation of sources to timers using the same algorithm as TVHeadend. However in order for the check to work correctly it is important that each source for a channel should have a different priority set - if TVHeadend has two or more sources with the same priority to make a recording it will choose one at random, so the clash detection will not be accurate.
 
-The priority for a recording source is the sum of the service priority and the tuner priority (network priority for IPTV). If not using IPTV the simplest approach is to set each TV tuner to a different priority and leave the service priorities as default. If TVHadmin detects that there are multiple 'best' sources for a recording with the same priority, the 'tick' mark against the recording will show grey.
+The priority for a recording source is the sum of the service priority and the tuner priority (network priority for IPTV). If not using IPTV the simplest approach is to set each TV tuner to a different priority and leave the service priorities as default. If TVHadmin detects that there are multiple 'best' sources for a recording with the same priority, the 'tick' mark against the timer will show grey.
+
+The hover text on the Timers screen shows the tuner and service which TVHadmin believes will be used for each timer.
 
 The Tvheadend user must have 'Admin' privilege for clash detection to work.
 
