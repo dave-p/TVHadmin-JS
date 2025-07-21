@@ -243,30 +243,17 @@ function escapeRegExp(string) {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-// https://medium.com/@Charles_Stover/phps-htmlspecialchars-implemented-in-javascript-3da9ac36d481
-var htmlspecialchars = function(string) {
-  
-  var escapedString = string;
-
-  // For each of the special characters,
-  var len = htmlspecialchars.specialchars.length;
-  for (var x = 0; x < len; x++) {
-
-    // Replace all instances of the special character with its entity.
-    escapedString = escapedString.replace(
-      new RegExp(htmlspecialchars.specialchars[x][0], 'g'),
-      htmlspecialchars.specialchars[x][1]
-    );
-  }
-
-  return escapedString;
+// https://stackoverflow.com/questions/1787322/what-is-the-htmlspecialchars-equivalent-in-javascript
+function htmlspecialchars(string) {
+  if (string === undefined) return "";
+  return string.replace(/[&<>"']/g, function(m) { return specialchars[m]; });
 };
 
 // A collection of special characters and their entities.
-htmlspecialchars.specialchars = [
-  [ '&', '&amp;' ],
-  [ '<', '&lt;' ],
-  [ '>', '&gt;' ],
-  [ '"', '&quot;' ],
-  [ "'", '&apos;' ]
-];
+var specialchars = {
+  '&': '&amp;' ,
+  '<': '&lt;' ,
+  '>': '&gt;' ,
+  '"': '&quot;' ,
+  "'": '&apos;'
+};
