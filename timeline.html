@@ -148,6 +148,7 @@
         for (const p of e) {
           if (p.start >= tend) break;
           if (p.stop <= now) continue;
+	  var colour = 'onSoon';
 	  if (init) {
 	    if (p.start > tstart) {	//Need a spacer
 	      spc = ((p.start - tstart) * wd) / textent;
@@ -158,9 +159,9 @@
 	      tnext = Math.min(tnext, p.stop);
 	      p.onNow = 1;
 	    }
+	    else colour = 'onSoon';
 	    init = 0;
 	  }
-	  else var colour = 'onSoon';
 	  if (p.dvrState == 'scheduled' || p.dvrState == 'recording') {
 	    colour = 'record';
 	  }
