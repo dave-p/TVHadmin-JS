@@ -25,9 +25,14 @@
   }
 
   async function get_input_status() {
-    const response = await fetch("/api/status/inputs");
-    const ret = await response.json();
-    return ret.entries;
+    try {
+      const response = await fetch("/api/status/inputs");
+      const ret = await response.json();
+      return ret.entries;
+    }
+    catch {
+      return [];
+    }
   }
 
   async function get_server_info() {

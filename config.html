@@ -112,10 +112,13 @@
     const response = await fetch("/api/profile/list");
     const profiles = await response.json();
     let a = [];
-    for (const p of profiles.entries) {
-      const r = await fetch(`/api/raw/export?uuid=${p.key}`);
-      const s = await r.json();
-      a.push(s[0])
+    try {
+      for (const p of profiles.entries) {
+        const r = await fetch(`/api/raw/export?uuid=${p.key}`);
+        const s = await r.json();
+        a.push(s[0])
+      }
+    } catch (error) {
     }
     return a;
   }
