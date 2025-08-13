@@ -283,17 +283,19 @@ async function main() {
   proflist.innerHTML = s;
 
   let stream_profiles = await get_stream_profiles();
-  s = "<td class='col_label'><h5>Stream Profile:</h5></td>" +
+  if (stream_profiles.length) {
+    s = "<td class='col_label'><h5>Stream Profile:</h5></td>" +
 	    "<td class='col_value'><select name='SUUID'>";
-  for (const p of stream_profiles) {
-    let sel = '';
-    if (!cookies.SUUID && p.default) sel = 'selected';
-    else if (p.uuid === cookies.SUUID) sel = 'selected';
-    s += `<option value='${p.uuid}' ${sel}>${p.name}</option>`;
+    for (const p of stream_profiles) {
+      let sel = '';
+      if (!cookies.SUUID && p.default) sel = 'selected';
+      else if (p.uuid === cookies.SUUID) sel = 'selected';
+      s += `<option value='${p.uuid}' ${sel}>${p.name}</option>`;
+    }
+    s += "</select></td>";
+    let sproflist = document.getElementById("sprof");
+    sproflist.innerHTML = s;
   }
-  s += "</select></td>";
-  let sproflist = document.getElementById("sprof");
-  sproflist.innerHTML = s;
 
   let tags = await get_channeltags();
   let taglist = document.getElementById("alltags");
