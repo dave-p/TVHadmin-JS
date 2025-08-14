@@ -9,11 +9,11 @@ For an alternative version which requires a PHP-enabled web server see https://g
 
 ### Requirements
 - A recent version of TVHeadend (the latest version 4.3 preferred).
-- TVHeadend must be set up to use 'Basic' or 'Basic+Digest' authentication.
+- TVHeadend must be set up to use 'Plain' authentication.
 - An up-to-date web browser on your client device. TVHadmin has been tested with Firefox, Brave and Chromium under Linux and Chromium on Android; IE will not work.
 
 ### Installation
-- Log in to your TVHeadend server and `cd /usr/share/tvheadend/src/webui/static` (your distribution may have used a different directory for this).
+- Log in to your TVHeadend server and `cd /var/lib/tvheadend/src/webui/static`. If this directory does not exist try `cd /usr/share/tvheadend/src/webui/static`.
 - `git clone https://github.com/dave-p/TVHadmin-JS.git`. Alternatively, copy the file `https://github.com/dave-p/TVHadmin-JS/archive/master.zip` into this location, unzip it, then rename the directory `TVHadmin-JS-master` to `TVHadmin-JS`.
 - If necessary create a TVHeadend user. The user must have the 'Web Interface' box ticked, and for full fuctionality should have all the 'Streaming' and 'Video Recorder' boxes ticked. The Status screen and multi-tuner clash detection require that the user have 'Admin' privilege. If you are using Kodi with the 'TVHeadend HTSP' plugin, you should make use of the same user for both TVHadmin and Kodi.
 - Browse to http://your.tvh.server:9981/static/TVHadmin-JS/TVHadmin.html. Enter the username and password of the TVHeadend user. Make any changes to the settings then click the 'save' button.
