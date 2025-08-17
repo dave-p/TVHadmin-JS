@@ -17,7 +17,7 @@
     location.reload();
   }
 
-  function make_timer(event_id, title, is_series) {
+  function show_modal(eventId, title, subtitle, is_series) {
     let recDialog = document.getElementById('recDialog');
     let recCancel = document.getElementById('recCancel');
     let recOnce = document.getElementById('recOnce');
@@ -30,46 +30,47 @@
         e.clientY < dimensions.top ||
         e.clientY > dimensions.bottom
         ) {
-        canc()
+        cancel_modal()
       }
     });
-    recCancel.addEventListener('click', canc);
-    recOnce.addEventListener('click', rec);
+    recCancel.addEventListener('click', cancel_modal);
+    recOnce.addEventListener('click', make_timer);
     if (is_series) {
       recSeries.style.display = "block";
-      recSeries.addEventListener('click', recs);
+      recSeries.addEventListener('click', make_series_timer);
     }
     else {
 	recSeries.style.display = "none";
     }
-    document.getElementById('recText').textContent = `Record "${title}"?`;
+    const esctitle = htmlspecialchars(title);
+    document.getElementById('recText').textContent = `"${subtitle}"?`;
     recDialog.showModal();
 
-    function canc() {
-      recCancel.removeEventListener('click', canc);
-      recOnce.removeEventListener('click', rec);
-      recSeries.removeEventListener('click', recs);
+    function cancel_modal() {
+      recCancel.removeEventListener('click', cancel_modal);
+      recOnce.removeEventListener('click', make_timer);
+      recSeries.removeEventListener('click', make_series_timer);
       recDialog.close();
     }
 
-    function rec() {
+    function make_timer() {
       const profile_uuid = cookies.UUID;
-      fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
+      fetch(`/api/dvr/entry/create_by_event?event_id=${eventId}&config_uuid=${profile_uuid}`).then(function(response) {
 	if (response.ok) {
 	  update(2);
 	}
       });
-      canc();
+      cancel_modal();
     }
 
-    function recs(event) {
+    function make_series_timer() {
 	const profile_uuid = cookies.UUID;
-	fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
+	fetch(`/api/dvr/autorec/create_by_series?event_id=${eventId}&config_uuid=${profile_uuid}`).then(function(response) {
 	  if (response.ok) {
 	    update(2);
 	  }
 	});
-        canc();
+        cancel_modal();
     }
   }
 
@@ -184,10 +185,9 @@
           }
 	  else if (p.dvrState) s += `<div class='item  ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
 	  else {
-	    var esctitle = htmlspecialchars(p.title);
 	    if (p.serieslinkUri) var is_series = 1;
 	    else var is_series = 0;
-	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='make_timer("${p.eventId}", "${esctitle}", ${is_series})'>${p.title}</div>`;
+	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_modal("${p.eventId}", "${p.title}", "${subtitle}", ${is_series})'>${p.title}</div>`;
 	  }
 	}
 	s += "</td>";
