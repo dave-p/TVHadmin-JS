@@ -22,6 +22,17 @@
     let recCancel = document.getElementById('recCancel');
     let recOnce = document.getElementById('recOnce');
     let recSeries = document.getElementById('recSeries');
+    recDialog.addEventListener('click', e => {
+      const dimensions = recDialog.getBoundingClientRect();
+      if (
+        e.clientX < dimensions.left ||
+        e.clientX > dimensions.right ||
+        e.clientY < dimensions.top ||
+        e.clientY > dimensions.bottom
+        ) {
+        canc()
+      }
+    });
     recCancel.addEventListener('click', canc);
     recOnce.addEventListener('click', rec);
     if (is_series) {
@@ -48,10 +59,7 @@
 	  update(2);
 	}
       });
-      recCancel.removeEventListener('click', canc);
-      recOnce.removeEventListener('click', rec);
-      recSeries.removeEventListener('click', recs);
-      recDialog.close();
+      canc();
     }
 
     function recs(event) {
@@ -61,10 +69,7 @@
 	    update(2);
 	  }
 	});
-	recCancel.removeEventListener('click', canc);
-	recOnce.removeEventListener('click', rec);
-	recSeries.removeEventListener('click', recs);
-	recDialog.close();
+        canc();
     }
   }
 
