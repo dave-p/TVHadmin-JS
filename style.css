@@ -78,6 +78,9 @@ h2 {
 	font-weight: bold;
 	display: inline;
 }
+dialog {
+	width: 50%;
+}
 .epg_title {
 	margin: 0px;
 	font-size: 12px;

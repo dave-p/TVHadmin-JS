@@ -42,8 +42,7 @@
     else {
 	recSeries.style.display = "none";
     }
-    const esctitle = htmlspecialchars(title);
-    document.getElementById('recText').textContent = `"${subtitle}"?`;
+    document.getElementById('recText').innerHTML = `<h2>${title}</h2><p>${subtitle}</p>`;
     recDialog.showModal();
 
     function cancel_modal() {
@@ -187,7 +186,8 @@
 	  else {
 	    if (p.serieslinkUri) var is_series = 1;
 	    else var is_series = 0;
-	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_modal("${p.eventId}", "${p.title}", "${subtitle}", ${is_series})'>${p.title}</div>`;
+	    const esctitle = htmlspecialchars(p.title);
+	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_modal("${p.eventId}", "${esctitle}", "${subtitle}", ${is_series})'>${p.title}</div>`;
 	  }
 	}
 	s += "</td>";
@@ -252,7 +252,7 @@
 	    <img src='images/spacer.gif' width='1' height='1' alt=''>
 	  </span>
 	  <dialog id='recDialog'>
-	    <p id='recText'></p>
+	    <div id='recText'></div>
 	    <div style='display: flex; justify-content: center;'>
 	      <button id='recCancel'>Cancel</button>
 	      <button id='recOnce' style='margin-left: 10px;'>Record</button>
