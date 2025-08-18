@@ -81,6 +81,10 @@ h2 {
 dialog {
 	width: 50%;
 }
+dialog img {
+	width: 20%;
+	height: 200px;
+}
 .epg_title {
 	margin: 0px;
 	font-size: 12px;
