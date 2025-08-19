@@ -114,6 +114,11 @@ dialog .img-container {
 	max-height: 200px;
 	margin-bottom: 5px;
 }
+.epg_title {
+	margin: 0px;
+	font-size: 12px;
+	font-weight: bold;
+}
 .col_label {
 	width: 100px;
 	text-align: right;
