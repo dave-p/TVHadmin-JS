@@ -17,7 +17,7 @@
     location.reload();
   }
 
-  function show_modal(eventId, title, subtitle, is_series, image) {
+  function show_rec_modal(eventId, title, subtitle, is_series, image) {
     let recDialog = document.getElementById('recDialog');
     let recCancel = document.getElementById('recCancel');
     let recOnce = document.getElementById('recOnce');
@@ -30,26 +30,26 @@
         e.clientY < dimensions.top ||
         e.clientY > dimensions.bottom
         ) {
-        cancel_modal()
+        cancel_rec_modal()
       }
     });
-    recCancel.addEventListener('click', cancel_modal);
+    recCancel.addEventListener('click', cancel_rec_modal);
     recOnce.addEventListener('click', make_timer);
     if (is_series) {
       recSeries.style.display = "block";
       recSeries.addEventListener('click', make_series_timer);
     }
     else {
-	recSeries.style.display = "none";
+      recSeries.style.display = "none";
     }
     let s = "";
-    if (image !== "undefined") s += `<div><img src="${image}"></div>`;
+    if (image !== "undefined") s += `<div class="img-container"><img src="${image}"></div>`;
     s += `<h2>${title}</h2><p>${subtitle}</p>`;
     document.getElementById('recText').innerHTML = s;
     recDialog.showModal();
 
-    function cancel_modal() {
-      recCancel.removeEventListener('click', cancel_modal);
+    function cancel_rec_modal() {
+      recCancel.removeEventListener('click', cancel_rec_modal);
       recOnce.removeEventListener('click', make_timer);
       recSeries.removeEventListener('click', make_series_timer);
       recDialog.close();
@@ -62,7 +62,7 @@
 	  update(2);
 	}
       });
-      cancel_modal();
+      cancel_rec_modal();
     }
 
     function make_series_timer() {
@@ -72,7 +72,48 @@
 	    update(2);
 	  }
 	});
-        cancel_modal();
+        cancel_rec_modal();
+    }
+  }
+
+  function show_play_modal(uuid, title, subtitle, channel, image) {
+    let playDialog = document.getElementById('playDialog');
+    let playCancel = document.getElementById('playCancel');
+    let playNow = document.getElementById('playNow');
+    playDialog.addEventListener('click', e => {
+      const dimensions = playDialog.getBoundingClientRect();
+      if (
+        e.clientX < dimensions.left ||
+        e.clientX > dimensions.right ||
+        e.clientY < dimensions.top ||
+        e.clientY > dimensions.bottom
+        ) {
+        cancel_play_modal()
+      }
+    });
+    playCancel.addEventListener('click', cancel_play_modal);
+    playNow.addEventListener('click', play_now);
+    let s = "";
+    if (image !== "undefined") s += `<div><img src="${image}"></div>`;
+    s += `<h2>${title}</h2><p>${subtitle}</p>`;
+    document.getElementById('playText').innerHTML = s;
+    playDialog.showModal();
+
+    function cancel_play_modal() {
+      playCancel.removeEventListener('click', cancel_play_modal);
+      playNow.removeEventListener('click', play_now);
+      playDialog.close();
+    }
+
+    function play_now() {
+      const downloadLink = document.createElement('a');
+      let s = `/play/ticket/stream/channel/${uuid}?title=${title}`;
+      if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
+      downloadLink.href = s;
+      downloadLink.download = `${channel}.m3u`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      cancel_play_modal();
     }
   }
 
@@ -179,18 +220,16 @@
 	  if (p.summary) var desc = p.summary;
 	  else if (p.description) var desc = p.description;
 	  else var desc = "";
-	  var subtitle = htmlspecialchars(desc);
+          const esctitle = htmlspecialchars(p.title);
+          const subtitle = htmlspecialchars(desc);
 	  if (p.onNow) {
-	    s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`;
-            if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
-            s += `' download='${c.uuid}.m3u'><div class='item ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div></a>`;
+            s += `<div class='item ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_play_modal("${c.uuid}", "${esctitle}", "${subtitle}", "${c.name}", "${p.image}")'>${p.title}</div>`;
           }
 	  else if (p.dvrState) s += `<div class='item  ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
 	  else {
 	    if (p.serieslinkUri) var is_series = 1;
 	    else var is_series = 0;
-	    const esctitle = htmlspecialchars(p.title);
-	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_modal("${p.eventId}", "${esctitle}", "${subtitle}", ${is_series},"${p.image}")'>${p.title}</div>`;
+	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_rec_modal("${p.eventId}", "${esctitle}", "${subtitle}", ${is_series},"${p.image}")'>${p.title}</div>`;
 	  }
 	}
 	s += "</td>";
@@ -198,7 +237,7 @@
       else {
         s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`;
         if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
-        s += `' download='${c.uuid}.m3u'><div class='item onNow' style='width: 98%;'>No EPG Available</div></a></td>`;
+        s += `' download='${c.name}.m3u'><div class='item onNow' style='width: 98%;'>No EPG Available</div></a></td>`;
       }
       row.innerHTML = s;
       i++;
@@ -262,6 +301,13 @@
 	      <button id='recSeries' style='margin-left: 10px;'>Series</button>
 	    </div>
 	  </dialog>
+          <dialog id='playDialog'>
+            <div id='playText'></div>
+            <div style='display: flex; justify-content: center;'>
+              <button id='playCancel'>Cancel</button>
+              <button id='playNow' style='margin-left: 10px;'>Play</button>
+            </div>
+          </dialog>
 	</div>
       </div>
    </div>
