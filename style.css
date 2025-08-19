@@ -79,11 +79,20 @@ h2 {
 	display: inline;
 }
 dialog {
-	width: 50%;
+	width: 33%;
 }
 dialog img {
-	width: 20%;
-	height: 200px;
+	width: 100%;
+	max-height: 100%;
+}
+dialog img:hover {
+	transform: scale(1.7,1.7);
+	transform-origin: top left;
+}
+dialog .img-container {
+	width: 33%;
+	max-height: 200px;
+	margin-bottom: 5px;
 }
 .epg_title {
 	margin: 0px;
