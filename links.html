@@ -90,12 +90,15 @@
       if (rcnt[link.uuid]) recs = rcnt[link.uuid];
       if (tcnt[link.uuid]) timers = tcnt[link.uuid];
       if (tnext[link.uuid]) next = datefmt.format(tnext[link.uuid]*1000);
+      if (link.channel.length > 0) var channel = cname[link.channel];
+      else var channel = "(any)";
+      var name = `${link.name} (Regex: ${link.title})`
       var row = table.insertRow(-1);
       row.className = "row_alt";
       row.innerHTML = `<td class='col_value'>${timers}</td>` +
 	`<td class='col_value'>${recs}</td>` +
-	`<td class='col_channel'>${cname[link.channel]}</td>` +
-	`<td class='col_name'>${link.name}</td>` +
+	`<td class='col_channel'>${channel}</td>` +
+	`<td class='col_name'>${name}</td>` +
 	`<td class='wideonly col_channel'>${next}</td>` +
 	`<td class='col_delete'><a href='links.html' onclick='delete_link(this, "${link.uuid}")'><img src='images/delete.png'></a></td>`;
     });
