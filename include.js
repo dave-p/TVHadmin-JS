@@ -246,7 +246,7 @@ function escapeRegExp(string) {
 // https://stackoverflow.com/questions/1787322/what-is-the-htmlspecialchars-equivalent-in-javascript
 function htmlspecialchars(string) {
   if (string === undefined) return "";
-  return string.replace(/[&<>"']/g, function(m) { return specialchars[m]; });
+  return string.replace(/([&<>"']|\n)/g, function(m) { return specialchars[m]; });
 };
 
 // A collection of special characters and their entities.
@@ -255,5 +255,6 @@ var specialchars = {
   '<': '&lt;' ,
   '>': '&gt;' ,
   '"': '&quot;' ,
-  "'": '&apos;'
+  "'": '&apos;' ,
+ '\n': ' '
 };
