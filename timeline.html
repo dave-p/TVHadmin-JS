@@ -181,6 +181,7 @@
       last_tend = tend;
     }
     var i = 0;
+    var j = 0;
     for (const c of channels) {
       if (!(media.All)) {
         if (intersect(c.tags, media) == 0) continue;
@@ -193,7 +194,7 @@
       var wd = 98 - e.length/8;
       s = `<td class='col_channel row_${i%2}'><div class='channel_name'>${name}</div></td><td class='col_schedule'>`;
       if (e.length) {
-	var init = 1;
+        var init = 1;
         for (const p of e) {
           if (p.start >= tend) break;
           if (p.stop <= now) continue;
@@ -223,14 +224,15 @@
           const esctitle = htmlspecialchars(p.title);
           const subtitle = htmlspecialchars(desc);
 	  if (p.onNow) {
-            s += `<div class='item ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_play_modal("${c.uuid}", "${esctitle}", "${subtitle}", "${c.name}", "${p.image}")'>${p.title}</div>`;
+            s += `<div class='item ${colour}' id='R${i}I${j}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_play_modal("${c.uuid}", "${esctitle}", "${subtitle}", "${c.name}", "${p.image}")'>${p.title}</div>`;
           }
 	  else if (p.dvrState) s += `<div class='item  ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
 	  else {
 	    if (p.serieslinkUri) var is_series = 1;
 	    else var is_series = 0;
-	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_rec_modal("${p.eventId}", "${esctitle}", "${subtitle}", ${is_series},"${p.image}")'>${p.title}</div>`;
+	    s += `<div class='item  ${colour}' id='R${i}I${j}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_rec_modal("${p.eventId}", "${esctitle}", "${subtitle}", ${is_series},"${p.image}")'>${p.title}</div>`;
 	  }
+          j++;
 	}
 	s += "</td>";
       }
