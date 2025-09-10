@@ -43,7 +43,7 @@
       recSeries.style.display = "none";
     }
     let s = "";
-    if (image !== "undefined") s += `<div class="img-container"><img src="${image}"></div>`;
+    if (image !== undefined) s += `<div class="img-container"><img src="${image}"></div>`;
     s += `<h2>${title}</h2><p>${subtitle}</p>`;
     document.getElementById('recText').innerHTML = s;
     recDialog.showModal();
@@ -94,7 +94,7 @@
     playCancel.addEventListener('click', cancel_play_modal);
     playNow.addEventListener('click', play_now);
     let s = "";
-    if (image !== "undefined") s += `<div><img src="${image}"></div>`;
+    if (image !== undefined) s += `<div><img src="${image}"></div>`;
     s += `<h2>${title}</h2><p>${subtitle}</p>`;
     document.getElementById('playText').innerHTML = s;
     playDialog.showModal();
@@ -180,9 +180,10 @@
       events = await get_epg('', tstart, tend);
       last_tend = tend;
     }
+    const elements = new Map();
     var i = 0;
-    var j = 0;
     for (const c of channels) {
+      var j = 0;
       if (!(media.All)) {
         if (intersect(c.tags, media) == 0) continue;
       }
@@ -217,15 +218,18 @@
 	  else var desc = "";
           const esctitle = htmlspecialchars(p.title);
           const subtitle = htmlspecialchars(desc);
+          const id = `R${i}C${j}`;
 	  if (p.onNow) {
-            s += `<div class='item onNow' id='R${i}I${j}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_play_modal("${c.uuid}", "${esctitle}", "${subtitle}", "${c.name}", "${p.image}")'>${p.title}</div>`;
+            s += `<div class='item onNow' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
+            elements.set(id, {uuid:c.uuid, channel:c.name, image:p.image});
           }
 	  else if (p.dvrState) s += `<div class='item record' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
 	  else {
 	    if (p.serieslinkUri) var is_series = 1;
 	    else var is_series = 0;
-	    s += `<div class='item onSoon' id='R${i}I${j}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='show_rec_modal("${p.eventId}", "${esctitle}", "${subtitle}", ${is_series},"${p.image}")'>${p.title}</div>`;
-	  }
+	    s += `<div class='item onSoon' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
+            elements.set(id, {eventID:p.eventId, is_series:is_series, image:p.image});
+          }
           j++;
 	}
 	s += "</td>";
@@ -237,6 +241,16 @@
       }
       row.innerHTML = s;
       i++;
+    }
+    const timeline = document.getElementById('list');
+    list.addEventListener("click", clickHandler);
+
+    function clickHandler(event) {
+      if (!event.target.className.includes("item")) return;
+      if (!event.target.id) return;
+      const ele = elements.get(event.target.id);
+      if (event.target.className.includes("onNow")) show_play_modal(ele.uuid, event.target.textContent, event.target.title, ele.channel, ele.image);
+      else show_rec_modal(ele.eventID, event.target.textContent, event.target.title, ele.is_series, ele.image)
     }
   }
 
