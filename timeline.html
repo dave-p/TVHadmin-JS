@@ -34,13 +34,18 @@
       }
     });
     recCancel.addEventListener('click', cancel_rec_modal);
-    recOnce.addEventListener('click', make_timer);
-    if (is_series) {
-      recSeries.style.display = "block";
-      recSeries.addEventListener('click', make_series_timer);
+    if (is_series == -1) {
+      recOnce.style.display = "none";
+      recSeries.style.display = "none";
     }
     else {
-      recSeries.style.display = "none";
+      recOnce.style.display = "block";
+      recOnce.addEventListener('click', make_timer);
+      if (is_series) {
+        recSeries.style.display = "block";
+        recSeries.addEventListener('click', make_series_timer);
+      }
+      else recSeries.style.display = "none";
     }
     let s = "";
     if (image !== undefined) s += `<div class="img-container"><img src="${image}"></div>`;
@@ -223,11 +228,14 @@
             s += `<div class='item onNow' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
             elements.set(id, {uuid:c.uuid, channel:c.name, image:p.image});
           }
-	  else if (p.dvrState) s += `<div class='item record' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
-	  else {
-	    if (p.serieslinkUri) var is_series = 1;
-	    else var is_series = 0;
-	    s += `<div class='item onSoon' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
+          else {
+            var is_series = -1;
+            if (p.dvrState) s += `<div class='item record' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
+            else {
+              if (p.serieslinkUri) is_series = 1;
+              else is_series = 0;
+              s += `<div class='item onSoon' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
+            }
             elements.set(id, {eventID:p.eventId, is_series:is_series, image:p.image});
           }
           j++;
