@@ -13,14 +13,14 @@ function get_cookies() {
 }
 
 var cookies = get_cookies();
-var head = document.getElementsByTagName('HEAD')[0];
 var link = document.createElement('link');
 link.rel = 'stylesheet';
 link.type = 'text/css';
+link.onload = ()=>document.body.style.display = 'block';
 if (cookies.THEME == 1) link.href = 'style.dark.css';
 else if (cookies.THEME == 2) link.href = 'style.blue.css';
 else link.href = 'style.css';
-head.appendChild(link);
+document.head.appendChild(link);
 
 window.addEventListener('load',function() {
   var mytop=document.getElementById("mobmenu");
