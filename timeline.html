@@ -220,6 +220,7 @@
 	  var pc = (wd * duration) / textent;
 	  if (p.summary) var desc = p.summary;
 	  else if (p.description) var desc = p.description;
+	  else if (p.subtitle) var desc = p.subtitle;
 	  else var desc = "";
           const esctitle = htmlspecialchars(p.title);
           const subtitle = htmlspecialchars(desc);

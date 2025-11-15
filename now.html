@@ -55,6 +55,7 @@
 	var summ = '';
 	if (e.summary) summ = e.summary;
 	else if (e.description) summ = e.description;
+	else if (e.subtitle) summ = e.subtitle;
 	var s = `<td class='col_duration'>${start} - ${end}` +
 		    `<table class='percent'><tr>` +
 		    `<td class='elapsed' data-start='${e.start}' data-stop=${e.stop}><img src='images/spacer.gif' width=1 height=1 alt=''></td>` +

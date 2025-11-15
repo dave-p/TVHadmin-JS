@@ -141,6 +141,7 @@
         let desc = '';
         if (e.summary) desc = e.summary;
 	else if (e.description) desc = e.description;
+	else if (e.subtitle) desc = e.subtitle;
         let s = `<td class='col_duration'>${start} - ${stop}</td>` +
 	    `<td class='col_title'>` +
 	    `<div class='epg_title'>${e.title}</div>` +
