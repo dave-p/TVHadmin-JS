@@ -64,6 +64,7 @@
       let desc = '';
       if (e.summary) desc = e.summary;
       else if (e.description) desc = e.description;
+      else if (e.subtitle) desc = e.subtitle;
       let s = `<td class='col_duration'><span class='time_duration'>${start} - ${stop}</span></td>` +
 	    `<td class='col_channel'><div class='channel_name'>${e.channelName}</div></td>` +
 	    `<td class='col_title'>` +
