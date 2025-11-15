@@ -17,11 +17,12 @@
     location.reload();
   }
 
-  function show_rec_modal(eventId, title, subtitle, is_series, image) {
+  function show_modal(ele, title, subtitle) {
     let recDialog = document.getElementById('recDialog');
     let recCancel = document.getElementById('recCancel');
     let recOnce = document.getElementById('recOnce');
     let recSeries = document.getElementById('recSeries');
+    let playNow = document.getElementById('playNow');
     recDialog.addEventListener('click', e => {
       const dimensions = recDialog.getBoundingClientRect();
       if (
@@ -30,95 +31,73 @@
         e.clientY < dimensions.top ||
         e.clientY > dimensions.bottom
         ) {
-        cancel_rec_modal()
+        cancel_modal()
       }
     });
-    recCancel.addEventListener('click', cancel_rec_modal);
-    if (is_series == -1) {
+    recCancel.addEventListener('click', cancel_modal);
+    if (!ele.on_now) {
+      playNow.style.display = "none";
+    }
+    else {
+      playNow.style.display = "block";
+      playNow.addEventListener('click', play_now);
+    }
+    if (ele.is_series == -1) {
       recOnce.style.display = "none";
       recSeries.style.display = "none";
     }
     else {
       recOnce.style.display = "block";
       recOnce.addEventListener('click', make_timer);
-      if (is_series) {
+      if (ele.is_series) {
         recSeries.style.display = "block";
         recSeries.addEventListener('click', make_series_timer);
       }
       else recSeries.style.display = "none";
     }
     let s = "";
-    if (image !== undefined) s += `<div class="img-container"><img src="${image}"></div>`;
+    if (ele.image !== undefined) s += `<div class="img-container"><img src="${ele.image}"></div>`;
     s += `<h2>${title}</h2><p>${subtitle}</p>`;
     document.getElementById('recText').innerHTML = s;
     recDialog.showModal();
 
-    function cancel_rec_modal() {
-      recCancel.removeEventListener('click', cancel_rec_modal);
+    function cancel_modal() {
+      recCancel.removeEventListener('click', cancel_modal);
       recOnce.removeEventListener('click', make_timer);
       recSeries.removeEventListener('click', make_series_timer);
+      playNow.removeEventListener('click', play_now);
       recDialog.close();
     }
 
     function make_timer() {
       const profile_uuid = cookies.UUID;
-      fetch(`/api/dvr/entry/create_by_event?event_id=${eventId}&config_uuid=${profile_uuid}`).then(function(response) {
+      fetch(`/api/dvr/entry/create_by_event?event_id=${ele.eventId}&config_uuid=${profile_uuid}`).then(function(response) {
 	if (response.ok) {
 	  update(2);
 	}
       });
-      cancel_rec_modal();
+      cancel_modal();
     }
 
     function make_series_timer() {
 	const profile_uuid = cookies.UUID;
-	fetch(`/api/dvr/autorec/create_by_series?event_id=${eventId}&config_uuid=${profile_uuid}`).then(function(response) {
+	fetch(`/api/dvr/autorec/create_by_series?event_id=${ele.eventId}&config_uuid=${profile_uuid}`).then(function(response) {
 	  if (response.ok) {
 	    update(2);
 	  }
 	});
-        cancel_rec_modal();
-    }
-  }
-
-  function show_play_modal(uuid, title, subtitle, channel, image) {
-    let playDialog = document.getElementById('playDialog');
-    let playCancel = document.getElementById('playCancel');
-    let playNow = document.getElementById('playNow');
-    playDialog.addEventListener('click', e => {
-      const dimensions = playDialog.getBoundingClientRect();
-      if (
-        e.clientX < dimensions.left ||
-        e.clientX > dimensions.right ||
-        e.clientY < dimensions.top ||
-        e.clientY > dimensions.bottom
-        ) {
-        cancel_play_modal()
-      }
-    });
-    playCancel.addEventListener('click', cancel_play_modal);
-    playNow.addEventListener('click', play_now);
-    let s = "";
-    if (image !== undefined) s += `<div><img src="${image}"></div>`;
-    s += `<h2>${title}</h2><p>${subtitle}</p>`;
-    document.getElementById('playText').innerHTML = s;
-    playDialog.showModal();
-
-    function cancel_play_modal() {
-      playCancel.removeEventListener('click', cancel_play_modal);
-      playNow.removeEventListener('click', play_now);
-      playDialog.close();
+        cancel_modal();
     }
 
     function play_now() {
       const downloadLink = document.createElement('a');
-      let s = `/play/ticket/stream/channel/${uuid}?title=${title}`;
+      let s = `/play/ticket/stream/channel/${ele.uuid}?title=${title}`;
       if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
       downloadLink.href = s;
-      downloadLink.download = `${channel}.m3u`;
+      downloadLink.download = `${ele.channel}.m3u`;
       document.body.appendChild(downloadLink);
       downloadLink.click();
-      cancel_play_modal();
+      cancel_modal();
     }
   }
 
@@ -213,6 +192,7 @@
 	      tnext = Math.min(tnext, p.stop);
 	      p.onNow = 1;
 	    }
+	    else p.onNow = 0;
 	    init = 0;
 	  }
 	  var duration = Math.min(tend, p.stop) - Math.max(tstart, p.start);
@@ -225,9 +205,8 @@
           const esctitle = htmlspecialchars(p.title);
           const subtitle = htmlspecialchars(desc);
           const id = `R${i}C${j}`;
-	  if (p.onNow) {
+          if (p.onNow) {
             s += `<div class='item onNow' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
-            elements.set(id, {uuid:c.uuid, channel:c.name, image:p.image});
           }
           else {
             var is_series = -1;
@@ -237,11 +216,11 @@
               else is_series = 0;
               s += `<div class='item onSoon' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
             }
-            elements.set(id, {eventID:p.eventId, is_series:is_series, image:p.image});
           }
+          elements.set(id, {eventID:p.eventId, uuid:c.uuid, channel:c.name, is_series:is_series, on_now:p.onNow, image:p.image});
           j++;
-	}
-	s += "</td>";
+        }
+        s += "</td>";
       }
       else {
         s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`;
@@ -258,8 +237,7 @@
       if (!event.target.className.includes("item")) return;
       if (!event.target.id) return;
       const ele = elements.get(event.target.id);
-      if (event.target.className.includes("onNow")) show_play_modal(ele.uuid, event.target.textContent, event.target.title, ele.channel, ele.image);
-      else show_rec_modal(ele.eventID, event.target.textContent, event.target.title, ele.is_series, ele.image)
+      show_modal(ele, event.target.textContent, event.target.title)
     }
   }
 
@@ -316,17 +294,11 @@
 	    <div id='recText'></div>
 	    <div style='display: flex; justify-content: center;'>
 	      <button id='recCancel'>Cancel</button>
+              <button id='playNow' style='margin-left: 10px;'>Play</button>
 	      <button id='recOnce' style='margin-left: 10px;'>Record</button>
 	      <button id='recSeries' style='margin-left: 10px;'>Series</button>
 	    </div>
 	  </dialog>
-          <dialog id='playDialog'>
-            <div id='playText'></div>
-            <div style='display: flex; justify-content: center;'>
-              <button id='playCancel'>Cancel</button>
-              <button id='playNow' style='margin-left: 10px;'>Play</button>
-            </div>
-          </dialog>
 	</div>
       </div>
    </div>
