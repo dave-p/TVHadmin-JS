@@ -71,7 +71,7 @@
 
     function make_timer() {
       const profile_uuid = cookies.UUID;
-      fetch(`/api/dvr/entry/create_by_event?event_id=${ele.eventId}&config_uuid=${profile_uuid}`).then(function(response) {
+      fetch(`/api/dvr/entry/create_by_event?event_id=${ele.eventID}&config_uuid=${profile_uuid}`).then(function(response) {
 	if (response.ok) {
 	  update(2);
 	}
@@ -81,7 +81,7 @@
 
     function make_series_timer() {
 	const profile_uuid = cookies.UUID;
-	fetch(`/api/dvr/autorec/create_by_series?event_id=${ele.eventId}&config_uuid=${profile_uuid}`).then(function(response) {
+	fetch(`/api/dvr/autorec/create_by_series?event_id=${ele.eventID}&config_uuid=${profile_uuid}`).then(function(response) {
 	  if (response.ok) {
 	    update(2);
 	  }
