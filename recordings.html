@@ -163,7 +163,7 @@
       else s = s + r["channelname"];
       s = s + `</div></td><td class='wideonly col_length'>${length}</td>` +
 	  `<td class='col_name'><div class='epg_title'>${title}</div><div class='epg_subtitle'>${summ}</div></td>` +
-	  `<td class='col_delete'><a href='recordings.html' onclick='delete_recording(this, "${r.uuid}")'><img src='images/delete.png' title='Delete Recording'></a></td>`;
+	  `<td class='col_delete'><a href='recordings.html' onclick='if(confirm("Confirm delete recording:\n ${title}")) delete_recording(this, "${r.uuid}")'><img src='images/delete.png' title='Delete Recording'></a></td>`;
       if(ok) s = s + `<td class='col_stream'><a href='/play/ticket/dvrfile/${r.uuid}?title=${title}' download='${r.uuid}.m3u'><img src='images/play.png' title='Play'></a></td>`;
       else s = s + "<td></td>";
       row.innerHTML = s;

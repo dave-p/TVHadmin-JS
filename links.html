@@ -101,7 +101,7 @@
 	`<td class='col_channel'>${channel}</td>` +
 	`<td class='col_name'>${name}</td>` +
 	`<td class='wideonly col_channel'>${next}</td>` +
-	`<td class='col_delete'><a href='links.html' onclick='delete_link(this, "${link.uuid}")'><img src='images/delete.png'></a></td>`;
+	`<td class='col_delete'><a href='links.html' onclick='if(confirm("Confirm delete series timer: ${name}")) delete_link(this, "${link.uuid}")'><img src='images/delete.png'></a></td>`;
     });
   }
   main();
