@@ -9,14 +9,16 @@
 <script src="include.js"></script>
 <script>
 
-  function delete_link(r, uuid) {
+  function delete_link(r, uuid, name) {
     event.preventDefault();
-    fetch("/api/idnode/delete?uuid=" + uuid).then(response => {
-      if (response.ok) {
-        var i = r.parentNode.parentNode.rowIndex;
-        document.getElementById("list").deleteRow(i);
-      }
-    });
+    if (confirm(`Delete series link "${name}"?`)) {
+      fetch("/api/idnode/delete?uuid=" + uuid).then(response => {
+        if (response.ok) {
+          var i = r.parentNode.parentNode.rowIndex;
+          document.getElementById("list").deleteRow(i);
+        }
+      });
+    }
   }
 </script>
 </head> 
@@ -101,7 +103,7 @@
 	`<td class='col_channel'>${channel}</td>` +
 	`<td class='col_name'>${name}</td>` +
 	`<td class='wideonly col_channel'>${next}</td>` +
-	`<td class='col_delete'><a href='links.html' onclick='delete_link(this, "${link.uuid}")'><img src='images/delete.png'></a></td>`;
+	`<td class='col_delete'><a href='links.html' onclick='delete_link(this, "${link.uuid}", "${name}")'><img src='images/delete.png'></a></td>`;
     });
   }
   main();

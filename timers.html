@@ -19,7 +19,7 @@
     return ret;
   }
 
-  function delete_timer(r, uuid, running) {
+  function delete_timer(r, uuid, running, name) {
     event.preventDefault();
     if (running) {
       var url = `/api/dvr/entry/stop?uuid=${uuid}`;
@@ -27,15 +27,17 @@
     else {
       var url = `/api/dvr/entry/cancel?uuid=${uuid}`;
     }
-    fetch(url).then(response => {
-      if (response.ok) {
-        if (cookies.CLASHDET) location.reload();
-        else {
-          var i = r.parentNode.parentNode.rowIndex;
-          document.getElementById("list").deleteRow(i);
+    if (confirm(`Delete timer "${name}"?`)) {
+      fetch(url).then(response => {
+        if (response.ok) {
+          if (cookies.CLASHDET) location.reload();
+          else {
+            var i = r.parentNode.parentNode.rowIndex;
+            document.getElementById("list").deleteRow(i);
+          }
         }
-      }
-    });
+      });
+    }
     return;
   }
 
