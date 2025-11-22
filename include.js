@@ -85,6 +85,36 @@ function create_by_series(event, event_id, element) {
   });
 }
 
+function delete_by_event(event, title, uuid, element) {
+  event.preventDefault();
+  if (confirm(`Delete timer "${title}"?`)) {
+    fetch(`/api/dvr/entry/cancel?uuid=${uuid}`).then(function(response) {
+      if (response.ok) {
+        var outer = element.parentNode;
+        outer.removeChild(outer.childNodes[0]);
+        var img = document.createElement("img");
+        img.src = "images/rec_button1.png";
+        outer.appendChild(img);
+      }
+    });
+  }
+}
+
+function delete_by_series(event, title, uuid, element) {
+  event.preventDefault();
+  if (confirm(`Delete series link "${title}"?`)) {
+    fetch(`/api/idnode/delete?uuid=${uuid}`).then(function(response) {
+      if (response.ok) {
+        var outer = element.parentNode;
+        outer.removeChild(outer.childNodes[0]);
+        var img = document.createElement("img");
+        img.src = "images/rec_buttonS.png";
+        outer.appendChild(img);
+      }
+    });
+  }
+}
+
 async function get_epg(channel, start, to) {
   var url = "/api/epg/events/grid?limit=9999";
   if (to > 0) {
