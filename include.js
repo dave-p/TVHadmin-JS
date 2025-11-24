@@ -61,11 +61,16 @@ function create_by_event(event, event_id, element) {
   const profile_uuid = cookies.UUID;
   fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
     if (response.ok) {
-      var outer = element.parentNode;
+      const outer = element.parentNode;
       outer.removeChild(outer.childNodes[0]);
-      var img = document.createElement("img");
+      const a = document.createElement("a");
+      a.title = "Remove scheduled recording";
+      a.href = "channels.html"
+      a.onclick = event => {delete_new_event(event, event_id, outer)};
+      const img = document.createElement("img");
       img.src = "images/rec.png";
-      outer.appendChild(img);
+      a.appendChild(img);
+      outer.appendChild(a);
     }
   });
 }
@@ -90,11 +95,15 @@ function delete_by_event(event, title, uuid, element) {
   if (confirm(`Delete timer "${title}"?`)) {
     fetch(`/api/dvr/entry/cancel?uuid=${uuid}`).then(function(response) {
       if (response.ok) {
-        var outer = element.parentNode;
+        let outer = element.parentNode;
         outer.removeChild(outer.childNodes[0]);
-        var img = document.createElement("img");
+        let a = document.createElement("a");
+        a.title = "Record";
+        a.href = "channels.html"
+        let img = document.createElement("img");
         img.src = "images/rec_button1.png";
-        outer.appendChild(img);
+        a.appendChild(img);
+        outer.appendChild(a);
       }
     });
   }
@@ -113,6 +122,36 @@ function delete_by_series(event, title, uuid, element) {
       }
     });
   }
+}
+
+async function delete_new_event(event, event_id, outer) {
+  event.preventDefault();
+  let entry = await get_timer_by_id(event_id);
+  let uuid = entry.uuid;
+  let title = entry.disp_title;
+  if (confirm(`Delete timer "${title}"?`)) {
+    await fetch(`/api/dvr/entry/cancel?uuid=${uuid}`).then(function(response) {
+      if (response.ok) {
+        outer.removeChild(outer.childNodes[0]);
+        const a = document.createElement("a");
+        a.title = "Record";
+        a.href = "channels.html"
+        const img = document.createElement("img");
+        img.src = "images/rec_button1.png";
+        a.appendChild(img);
+        outer.appendChild(a);
+      }
+    });
+  }
+}
+
+async function get_timer_by_id(id) {
+  let url = "/api/dvr/entry/grid_upcoming?limit=1";
+  const filter = `[{"field":"broadcast","type":"numeric","value":"${id}","comparison":"eq"}]`;
+  url += `&filter=${filter}`;
+  const response = await fetch(url);
+  const timers = await response.json();
+  return timers.entries[0];
 }
 
 async function get_epg(channel, start, to) {
