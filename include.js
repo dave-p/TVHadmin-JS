@@ -80,12 +80,17 @@ function create_by_series(event, event_id, element) {
   const profile_uuid = cookies.UUID;
   fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
     if (response.ok) {
-      var outer = element.parentNode;
+      const outer = element.parentNode;
       outer.removeChild(outer.childNodes[0]);
       outer.previousSibling.removeChild(outer.previousSibling.childNodes[0]);
-      var img = document.createElement("img");
+      const a = document.createElement("a");
+      a.title = "Remove series link";
+      a.href = "channels.html"
+      a.onclick = event => {delete_new_series(event, event_id, outer)};
+      const img = document.createElement("img");
       img.src = "images/rec.png";
-      outer.appendChild(img);
+      a.appendChild(img);
+      outer.appendChild(a);
     }
   });
 }
@@ -140,6 +145,33 @@ async function delete_new_event(event, event_id, outer) {
         img.src = "images/rec_button1.png";
         a.appendChild(img);
         outer.appendChild(a);
+      }
+    });
+  }
+}
+
+async function delete_new_series(event, event_id, outer) {
+  event.preventDefault();
+  let entry = await get_timer_by_id(event_id);
+  let autorec = entry.autorec;
+  let title = entry.autorec_caption;
+  if (confirm(`Delete series link "${title}"?`)) {
+    fetch(`/api/idnode/delete?uuid=${autorec}`).then(function(response) {
+      if (response.ok) {
+        outer.removeChild(outer.childNodes[0]);
+        let a = document.createElement("a");
+        a.title = "Record series";
+        a.href = "channels.html"
+        let img = document.createElement("img");
+        img.src = "images/rec_buttonS.png";
+        a.appendChild(img);
+        outer.appendChild(a);
+        a = document.createElement("a");
+        a.title = "Record";
+        img = document.createElement("img");
+        img.src = "images/rec_button1.png";
+        a.appendChild(img);
+        outer.previousSibling.appendChild(a);
       }
     });
   }
