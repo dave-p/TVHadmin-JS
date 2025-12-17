@@ -13,14 +13,14 @@ function get_cookies() {
 }
 
 var cookies = get_cookies();
-var head = document.getElementsByTagName('HEAD')[0];
 var link = document.createElement('link');
 link.rel = 'stylesheet';
 link.type = 'text/css';
+link.onload = ()=>document.body.style.display = 'block';
 if (cookies.THEME == 1) link.href = 'style.dark.css';
 else if (cookies.THEME == 2) link.href = 'style.blue.css';
 else link.href = 'style.css';
-head.appendChild(link);
+document.head.appendChild(link);
 
 window.addEventListener('load',function() {
   var mytop=document.getElementById("mobmenu");
@@ -61,11 +61,16 @@ function create_by_event(event, event_id, element) {
   const profile_uuid = cookies.UUID;
   fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
     if (response.ok) {
-      var outer = element.parentNode;
+      const outer = element.parentNode;
       outer.removeChild(outer.childNodes[0]);
-      var img = document.createElement("img");
+      const a = document.createElement("a");
+      a.title = "Remove scheduled recording";
+      a.href = "channels.html"
+      a.onclick = event => {delete_new_event(event, event_id, outer)};
+      const img = document.createElement("img");
       img.src = "images/rec.png";
-      outer.appendChild(img);
+      a.appendChild(img);
+      outer.appendChild(a);
     }
   });
 }
@@ -75,14 +80,110 @@ function create_by_series(event, event_id, element) {
   const profile_uuid = cookies.UUID;
   fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
     if (response.ok) {
-      var outer = element.parentNode;
+      const outer = element.parentNode;
       outer.removeChild(outer.childNodes[0]);
       outer.previousSibling.removeChild(outer.previousSibling.childNodes[0]);
-      var img = document.createElement("img");
+      const a = document.createElement("a");
+      a.title = "Remove series link";
+      a.href = "channels.html"
+      a.onclick = event => {delete_new_series(event, event_id, outer)};
+      const img = document.createElement("img");
       img.src = "images/rec.png";
-      outer.appendChild(img);
+      a.appendChild(img);
+      outer.appendChild(a);
     }
   });
+}
+
+function delete_by_event(event, title, uuid, element) {
+  event.preventDefault();
+  if (confirm(`Delete timer "${title}"?`)) {
+    fetch(`/api/dvr/entry/cancel?uuid=${uuid}`).then(function(response) {
+      if (response.ok) {
+        let outer = element.parentNode;
+        outer.removeChild(outer.childNodes[0]);
+        let a = document.createElement("a");
+        a.title = "Record";
+        a.href = "channels.html"
+        let img = document.createElement("img");
+        img.src = "images/rec_button1.png";
+        a.appendChild(img);
+        outer.appendChild(a);
+      }
+    });
+  }
+}
+
+function delete_by_series(event, title, uuid, element) {
+  event.preventDefault();
+  if (confirm(`Delete series link "${title}"?`)) {
+    fetch(`/api/idnode/delete?uuid=${uuid}`).then(function(response) {
+      if (response.ok) {
+        var outer = element.parentNode;
+        outer.removeChild(outer.childNodes[0]);
+        var img = document.createElement("img");
+        img.src = "images/rec_buttonS.png";
+        outer.appendChild(img);
+      }
+    });
+  }
+}
+
+async function delete_new_event(event, event_id, outer) {
+  event.preventDefault();
+  let entry = await get_timer_by_id(event_id);
+  let uuid = entry.uuid;
+  let title = entry.disp_title;
+  if (confirm(`Delete timer "${title}"?`)) {
+    await fetch(`/api/dvr/entry/cancel?uuid=${uuid}`).then(function(response) {
+      if (response.ok) {
+        outer.removeChild(outer.childNodes[0]);
+        const a = document.createElement("a");
+        a.title = "Record";
+        a.href = "channels.html"
+        const img = document.createElement("img");
+        img.src = "images/rec_button1.png";
+        a.appendChild(img);
+        outer.appendChild(a);
+      }
+    });
+  }
+}
+
+async function delete_new_series(event, event_id, outer) {
+  event.preventDefault();
+  let entry = await get_timer_by_id(event_id);
+  let autorec = entry.autorec;
+  let title = entry.autorec_caption;
+  if (confirm(`Delete series link "${title}"?`)) {
+    fetch(`/api/idnode/delete?uuid=${autorec}`).then(function(response) {
+      if (response.ok) {
+        outer.removeChild(outer.childNodes[0]);
+        let a = document.createElement("a");
+        a.title = "Record series";
+        a.href = "channels.html"
+        let img = document.createElement("img");
+        img.src = "images/rec_buttonS.png";
+        a.appendChild(img);
+        outer.appendChild(a);
+        a = document.createElement("a");
+        a.title = "Record";
+        img = document.createElement("img");
+        img.src = "images/rec_button1.png";
+        a.appendChild(img);
+        outer.previousSibling.appendChild(a);
+      }
+    });
+  }
+}
+
+async function get_timer_by_id(id) {
+  let url = "/api/dvr/entry/grid_upcoming?limit=1";
+  const filter = `[{"field":"broadcast","type":"numeric","value":"${id}","comparison":"eq"}]`;
+  url += `&filter=${filter}`;
+  const response = await fetch(url);
+  const timers = await response.json();
+  return timers.entries[0];
 }
 
 async function get_epg(channel, start, to) {
@@ -243,79 +344,18 @@ function escapeRegExp(string) {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-/* Port of strftime() by T. H. Doan (https://thdoan.github.io/strftime/)
- *
- * Un-needed features removed. Accepts Unix timestamp.
- */
-function strftime(sFormat, udate) {
-  date = new Date(udate*1000);
-  var nDay = date.getDay(),
-    nDate = date.getDate(),
-    nMonth = date.getMonth(),
-    nYear = date.getFullYear(),
-    nHour = date.getHours(),
-    aDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-    aMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-    zeroPad = function(nNum, nPad) {
-      return ('00000000' + nNum).slice(-nPad);
-    };
-  return sFormat.replace(/%[a-z]/gi, function(sMatch) {
-    return (({
-      '%a': aDays[nDay].slice(0,3),
-      '%A': aDays[nDay],
-      '%b': aMonths[nMonth].slice(0,3),
-      '%B': aMonths[nMonth],
-      '%c': date.toUTCString(),
-      '%d': zeroPad(nDate, 2),
-      '%e': nDate,
-      '%F': date.toISOString().slice(0,10),
-      '%H': zeroPad(nHour, 2),
-      '%I': zeroPad((nHour+11)%12 + 1, 2),
-      '%k': nHour,
-      '%l': (nHour+11)%12 + 1,
-      '%m': zeroPad(nMonth + 1, 2),
-      '%n': nMonth + 1,
-      '%M': zeroPad(date.getMinutes(), 2),
-      '%p': (nHour<12) ? 'AM' : 'PM',
-      '%P': (nHour<12) ? 'am' : 'pm',
-      '%s': Math.round(date.getTime()/1000),
-      '%S': zeroPad(date.getSeconds(), 2),
-      '%u': nDay || 7,
-      '%w': nDay,
-      '%x': date.toLocaleDateString(),
-      '%X': date.toLocaleTimeString(),
-      '%y': (nYear + '').slice(2),
-      '%Y': nYear,
-      '%z': date.toTimeString().replace(/.+GMT([+-]\d+).+/, '$1'),
-      '%Z': date.toTimeString().replace(/.+\((.+?)\)$/, '$1')
-    }[sMatch] || '') + '') || sMatch;
-  });
-}
-
-// https://medium.com/@Charles_Stover/phps-htmlspecialchars-implemented-in-javascript-3da9ac36d481
-var htmlspecialchars = function(string) {
-  
-  var escapedString = string;
-
-  // For each of the special characters,
-  var len = htmlspecialchars.specialchars.length;
-  for (var x = 0; x < len; x++) {
-
-    // Replace all instances of the special character with its entity.
-    escapedString = escapedString.replace(
-      new RegExp(htmlspecialchars.specialchars[x][0], 'g'),
-      htmlspecialchars.specialchars[x][1]
-    );
-  }
-
-  return escapedString;
+// https://stackoverflow.com/questions/1787322/what-is-the-htmlspecialchars-equivalent-in-javascript
+function htmlspecialchars(string) {
+  if (string === undefined) return "";
+  return string.replace(/([&<>"']|\n)/g, function(m) { return specialchars[m]; });
 };
 
 // A collection of special characters and their entities.
-htmlspecialchars.specialchars = [
-  [ '&', '&amp;' ],
-  [ '<', '&lt;' ],
-  [ '>', '&gt;' ],
-  [ '"', '&quot;' ],
-  [ "'", '&apos;' ]
-];
+var specialchars = {
+  '&': '&amp;' ,
+  '<': '&lt;' ,
+  '>': '&gt;' ,
+  '"': '&quot;' ,
+  "'": '&apos;' ,
+ '\n': ' '
+};

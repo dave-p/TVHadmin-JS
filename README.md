@@ -9,11 +9,11 @@ For an alternative version which requires a PHP-enabled web server see https://g
 
 ### Requirements
 - A recent version of TVHeadend (the latest version 4.3 preferred).
-- TVHeadend must be set up to use 'Basic' or 'Basic+Digest' authentication.
+- TVHeadend must be set up to use 'Plain' authentication.
 - An up-to-date web browser on your client device. TVHadmin has been tested with Firefox, Brave and Chromium under Linux and Chromium on Android; IE will not work.
 
 ### Installation
-- Log in to your TVHeadend server and `cd /usr/share/tvheadend/src/webui/static` (your distribution may have used a different directory for this).
+- Log in to your TVHeadend server and `cd /var/lib/tvheadend/src/webui/static`. If this directory does not exist try `cd /usr/share/tvheadend/src/webui/static`.
 - `git clone https://github.com/dave-p/TVHadmin-JS.git`. Alternatively, copy the file `https://github.com/dave-p/TVHadmin-JS/archive/master.zip` into this location, unzip it, then rename the directory `TVHadmin-JS-master` to `TVHadmin-JS`.
 - If necessary create a TVHeadend user. The user must have the 'Web Interface' box ticked, and for full fuctionality should have all the 'Streaming' and 'Video Recorder' boxes ticked. The Status screen and multi-tuner clash detection require that the user have 'Admin' privilege. If you are using Kodi with the 'TVHeadend HTSP' plugin, you should make use of the same user for both TVHadmin and Kodi.
 - Browse to http://your.tvh.server:9981/static/TVHadmin-JS/TVHadmin.html. Enter the username and password of the TVHeadend user. Make any changes to the settings then click the 'save' button.
@@ -56,7 +56,9 @@ A yellow 'tick' mark is shown if overlapping timers are from the same network an
 #### Multiple Tuners
 TVHadmin checks the allocation of sources to timers using the same algorithm as TVHeadend. However in order for the check to work correctly it is important that each source for a channel should have a different priority set - if TVHeadend has two or more sources with the same priority to make a recording it will choose one at random, so the clash detection will not be accurate.
 
-The priority for a recording source is the sum of the service priority and the tuner priority (network priority for IPTV). If not using IPTV the simplest approach is to set each TV tuner to a different priority and leave the service priorities as default. If TVHadmin detects that there are multiple 'best' sources for a recording with the same priority, the 'tick' mark against the recording will show grey.
+The priority for a recording source is the sum of the service priority and the tuner priority (network priority for IPTV). If not using IPTV the simplest approach is to set each TV tuner to a different priority and leave the service priorities as default. If TVHadmin detects that there are multiple 'best' sources for a recording with the same priority, the 'tick' mark against the timer will show grey.
+
+The hover text on the Timers screen shows the tuner and service which TVHadmin believes will be used for each timer.
 
 The Tvheadend user must have 'Admin' privilege for clash detection to work.
 
@@ -68,4 +70,4 @@ TVHadmin stores user preferences in a 'cookie' on the client, and uses Session S
 ### Issues
 - All timers created by TVHadmin use the same recording profile (the one set in the Config screen).
 - Some screens supply extra information as hover text. This is not accessible from mobile clients.
-- No internationalisation (I18n)
+- Dates and times are shown in the appropriate format for your browser language; if the format is incorrect then check your browser settings. There is no internationalisation of text.

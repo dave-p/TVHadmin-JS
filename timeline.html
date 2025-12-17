@@ -17,54 +17,87 @@
     location.reload();
   }
 
-  function make_timer(event_id, title, is_series) {
+  function show_modal(ele, title, subtitle) {
     let recDialog = document.getElementById('recDialog');
     let recCancel = document.getElementById('recCancel');
     let recOnce = document.getElementById('recOnce');
     let recSeries = document.getElementById('recSeries');
-    recCancel.addEventListener('click', canc);
-    recOnce.addEventListener('click', rec);
-    if (is_series) {
-      recSeries.style.display = "block";
-      recSeries.addEventListener('click', recs);
+    let playNow = document.getElementById('playNow');
+    recDialog.addEventListener('click', e => {
+      const dimensions = recDialog.getBoundingClientRect();
+      if (
+        e.clientX < dimensions.left ||
+        e.clientX > dimensions.right ||
+        e.clientY < dimensions.top ||
+        e.clientY > dimensions.bottom
+        ) {
+        cancel_modal()
+      }
+    });
+    recCancel.addEventListener('click', cancel_modal);
+    if (!ele.on_now) {
+      playNow.style.display = "none";
     }
     else {
-	recSeries.style.display = "none";
+      playNow.style.display = "block";
+      playNow.addEventListener('click', play_now);
     }
-    document.getElementById('recText').textContent = `Record "${title}"?`;
+    if (ele.is_series == -1) {
+      recOnce.style.display = "none";
+      recSeries.style.display = "none";
+    }
+    else {
+      recOnce.style.display = "block";
+      recOnce.addEventListener('click', make_timer);
+      if (ele.is_series) {
+        recSeries.style.display = "block";
+        recSeries.addEventListener('click', make_series_timer);
+      }
+      else recSeries.style.display = "none";
+    }
+    let s = "";
+    if (ele.image !== undefined) s += `<div class="img-container"><img src="${ele.image}"></div>`;
+    s += `<h2>${title}</h2><p>${subtitle}</p>`;
+    document.getElementById('recText').innerHTML = s;
     recDialog.showModal();
 
-    function canc() {
-      recCancel.removeEventListener('click', canc);
-      recOnce.removeEventListener('click', rec);
-      recSeries.removeEventListener('click', recs);
+    function cancel_modal() {
+      recCancel.removeEventListener('click', cancel_modal);
+      recOnce.removeEventListener('click', make_timer);
+      recSeries.removeEventListener('click', make_series_timer);
+      playNow.removeEventListener('click', play_now);
       recDialog.close();
     }
 
-    function rec() {
+    function make_timer() {
       const profile_uuid = cookies.UUID;
-      fetch(`/api/dvr/entry/create_by_event?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
+      fetch(`/api/dvr/entry/create_by_event?event_id=${ele.eventID}&config_uuid=${profile_uuid}`).then(function(response) {
 	if (response.ok) {
 	  update(2);
 	}
       });
-      recCancel.removeEventListener('click', canc);
-      recOnce.removeEventListener('click', rec);
-      recSeries.removeEventListener('click', recs);
-      recDialog.close();
+      cancel_modal();
     }
 
-    function recs(event) {
+    function make_series_timer() {
 	const profile_uuid = cookies.UUID;
-	fetch(`/api/dvr/autorec/create_by_series?event_id=${event_id}&config_uuid=${profile_uuid}`).then(function(response) {
+	fetch(`/api/dvr/autorec/create_by_series?event_id=${ele.eventID}&config_uuid=${profile_uuid}`).then(function(response) {
 	  if (response.ok) {
 	    update(2);
 	  }
 	});
-	recCancel.removeEventListener('click', canc);
-	recOnce.removeEventListener('click', rec);
-	recSeries.removeEventListener('click', recs);
-	recDialog.close();
+        cancel_modal();
+    }
+
+    function play_now() {
+      const downloadLink = document.createElement('a');
+      let s = `/play/ticket/stream/channel/${ele.uuid}?title=${title}`;
+      if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
+      downloadLink.href = s;
+      downloadLink.download = `${ele.channel}.m3u`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      cancel_modal();
     }
   }
 
@@ -100,7 +133,7 @@
     tstart = utime - utime % 1800;
     tend = tstart + textent;
     tnext = tend;
-    var wday = strftime('%a %e %b', utime);
+    var wday = datefmt.format(utime*1000);
     var tnow = now - now % 1800;
     if ((tstart - tnow) >= 86400) {
       let tleft = utime - 86400;
@@ -120,7 +153,7 @@
     let s = `<th>${wday}</th><th>`;
     var t = tstart;
     for (i=0; i<4; i++) {
-      let time = strftime('%H:%M', t);
+      let time = timefmt.format(t*1000);
       s += `<div class='row_alt' style='float: left; width: 24.5%;'>${time}</div>`;
       t += textent / 4;
     }
@@ -131,8 +164,10 @@
       events = await get_epg('', tstart, tend);
       last_tend = tend;
     }
+    const elements = new Map();
     var i = 0;
     for (const c of channels) {
+      var j = 0;
       if (!(media.All)) {
         if (intersect(c.tags, media) == 0) continue;
       }
@@ -144,7 +179,7 @@
       var wd = 98 - e.length/8;
       s = `<td class='col_channel row_${i%2}'><div class='channel_name'>${name}</div></td><td class='col_schedule'>`;
       if (e.length) {
-	var init = 1;
+        var init = 1;
         for (const p of e) {
           if (p.start >= tend) break;
           if (p.stop <= now) continue;
@@ -154,50 +189,64 @@
 	      s += `<div class='spacer' style='width: ${spc}%;'> <img src='images/spacer.gif' width=1 height=1 alt=''></div>`;
 	    }
 	    if (p.start <= now && p.stop > now) {
-	      var colour = 'onNow';
 	      tnext = Math.min(tnext, p.stop);
 	      p.onNow = 1;
 	    }
+	    else p.onNow = 0;
 	    init = 0;
-	  }
-	  else var colour = 'onSoon';
-	  if (p.dvrState == 'scheduled' || p.dvrState == 'recording') {
-	    colour = 'record';
 	  }
 	  var duration = Math.min(tend, p.stop) - Math.max(tstart, p.start);
 	  if (duration == 0) continue;
 	  var pc = (wd * duration) / textent;
 	  if (p.summary) var desc = p.summary;
 	  else if (p.description) var desc = p.description;
+	  else if (p.subtitle) var desc = p.subtitle;
 	  else var desc = "";
-	  var subtitle = htmlspecialchars(desc);
-	  if (p.onNow) {
-	    s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`;
-            if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
-            s += `' download='${c.uuid}.m3u'><div class='item ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div></a>`;
+          const esctitle = htmlspecialchars(p.title);
+          const subtitle = htmlspecialchars(desc);
+          const id = `R${i}C${j}`;
+          if (p.onNow) {
+            s += `<div class='item onNow' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
           }
-	  else if (p.dvrState) s += `<div class='item  ${colour}' style='width: ${pc}%;' title='${subtitle}'>${p.title}</div>`;
-	  else {
-	    var esctitle = htmlspecialchars(p.title);
-	    if (p.serieslinkUri) var is_series = 1;
-	    else var is_series = 0;
-	    s += `<div class='item  ${colour}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}' onclick='make_timer("${p.eventId}", "${esctitle}", ${is_series})'>${p.title}</div>`;
-	  }
-	}
-	s += "</td>";
+          else {
+            var is_series = -1;
+            if (p.dvrState) s += `<div class='item record' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
+            else {
+              if (p.serieslinkUri) is_series = 1;
+              else is_series = 0;
+              s += `<div class='item onSoon' id='${id}' style='width: ${pc}%; cursor: pointer;' title='${subtitle}'>${p.title}</div>`;
+            }
+          }
+          elements.set(id, {eventID:p.eventId, uuid:c.uuid, channel:c.name, is_series:is_series, on_now:p.onNow, image:p.image});
+          j++;
+        }
+        s += "</td>";
       }
       else {
         s += `<a href='/play/ticket/stream/channel/${c.uuid}?title=${c.name}`;
         if (cookies.SUUID) s += `&profile=${cookies.SUUID}`;
-        s += `' download='${c.uuid}.m3u'><div class='item onNow' style='width: 98%;'>No EPG Available</div></a></td>`;
+        s += `' download='${c.name}.m3u'><div class='item onNow' style='width: 98%;'>No EPG Available</div></a></td>`;
       }
       row.innerHTML = s;
       i++;
     }
+    const timeline = document.getElementById('list');
+    list.addEventListener("click", clickHandler);
+
+    function clickHandler(event) {
+      if (!event.target.className.includes("item")) return;
+      if (!event.target.id) return;
+      const ele = elements.get(event.target.id);
+      show_modal(ele, event.target.textContent, event.target.title)
+    }
   }
+
+  const timefmt = new Intl.DateTimeFormat(navigator.language, {hour:"numeric",minute:"numeric"});
+  const datefmt = new Intl.DateTimeFormat(navigator.language, {weekday:"short",month:"short",day:"numeric"});
+
 </script>
 </head> 
-<body>
+<body style='display: none;'>
 <div id="container">
   <div id="navigation">
     <div class="logo">
@@ -242,9 +291,10 @@
 	    <img src='images/spacer.gif' width='1' height='1' alt=''>
 	  </span>
 	  <dialog id='recDialog'>
-	    <p id='recText'></p>
+	    <div id='recText'></div>
 	    <div style='display: flex; justify-content: center;'>
 	      <button id='recCancel'>Cancel</button>
+              <button id='playNow' style='margin-left: 10px;'>Play</button>
 	      <button id='recOnce' style='margin-left: 10px;'>Record</button>
 	      <button id='recSeries' style='margin-left: 10px;'>Series</button>
 	    </div>

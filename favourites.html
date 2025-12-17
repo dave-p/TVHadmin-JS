@@ -15,7 +15,7 @@
 
 </script>
 </head> 
-<body>
+<body style='display: none;'>
   <div id="container">
     <div id="navigation">
       <div class="logo">
@@ -77,7 +77,7 @@
     }
     var day = today;
     for(i=0; i<8; i++) {
-      let d = strftime("%a %d/%n", day);
+      let d = datefmt.format(day*1000);
       let opt = document.createElement("option");
       opt.setAttribute("value", day);
       opt.text = d;
@@ -107,33 +107,42 @@
         events.forEach(function(e) {
           row = table.insertRow(-1);
           row.className = 'row_alt';
-          let start = strftime("%H:%M", e.start);
-          let stop = strftime("%H:%M", e.stop);
+          let start = timefmt.format(e.start*1000);
+          let stop = timefmt.format(e.stop*1000);
           let desc = '';
           if (e.summary) desc = e.summary;
-	  else if (e.description) desc = e.description;
+          else if (e.description) desc = e.description;
+          else if (e.subtitle) desc = e.subtitle;
           let s = `<td class='col_duration'>${start} - ${stop}</td>` +
-	    `<td class='col_title'>` +
-	    `<div class='epg_title'>${e.title}</div>` +
-	    `<div class='epg_subtitle'>${desc}</div></td>`;
-	  if (e.dvrState == 'scheduled' || e.dvrState == 'recording') {
-	    if (slinks[e.serieslinkUri]) {
-	      s += "<td></td><td><img src='images/rec.png' title='Series recording scheduled'></td>";
-	    }
-	    else {
-	      s += "<td><img src='images/rec.png' title='Recording scheduled'></td>";
-	    }
-	  }
-	  else {
-	    s += `<td><a href='favourites.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' title='record'></a></td>`;
-	    if (e.serieslinkUri) {
-	      s += `<td><a href='favourites.html' onclick='create_by_series(event, "${e.eventId}", this)'><img src='images/rec_buttonS.png' title='record series'></a></td>`;
-	    }
-	    else {
-	      s += "<td></td>";
-	    }
-	  }
-	  row.innerHTML = s;
+            `<td class='col_title'>` +
+            `<div class='epg_title'>${e.title}</div>` +
+            `<div class='epg_subtitle'>${desc}</div></td>`;
+          if (e.dvrState == 'recording') {
+            if (slinks[e.serieslinkUri]) {
+              s += "<td></td><td><img src='images/rec.png' title='Series recording scheduled'></td>";
+            }
+            else {
+              s += "<td><img src='images/rec.png' title='Recording scheduled'></td>";
+            }
+          }
+          else if (e.dvrState == 'scheduled') {
+            if (slinks[e.serieslinkUri]) {
+              s += `<td></td><td><a href='channels.html' onclick='delete_by_series(event, "${e.title}", "${e.dvrUuid}", this)'><img src='images/rec.png' title='Remove series recording'></a></td>`;
+            }
+            else {
+              s += `<td><a href='channels.html' onclick='delete_by_event(event, "${e.title}", "${e.dvrUuid}", this)'><img src='images/rec.png' title='Remove scheduled recording'></a></td>`;
+            }
+          }
+          else {
+            s += `<td><a href='channels.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' title='record'></a></td>`;
+            if (e.serieslinkUri) {
+            s += `<td><a href='channels.html' onclick='create_by_series(event, "${e.eventId}", this)'><img src='images/rec_buttonS.png' title='record series'></a></td>`;
+            }
+            else {
+              s += "<td></td>";
+            }
+          }
+          row.innerHTML = s;
         });
         content.append(table);
       }
@@ -145,6 +154,10 @@
       content.append(msg);
     }
   }
+
+  const timefmt = new Intl.DateTimeFormat(navigator.language, {hour:"numeric",minute:"numeric"});
+  const datefmt = new Intl.DateTimeFormat(navigator.language, {weekday:"short",month:"numeric",day:"numeric"});
+
   main();
 </script>
 </body>

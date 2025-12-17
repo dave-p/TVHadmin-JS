@@ -9,18 +9,20 @@
 <script src="include.js"></script>
 <script>
 
-  function delete_link(r, uuid) {
+  function delete_link(r, uuid, name) {
     event.preventDefault();
-    fetch("/api/idnode/delete?uuid=" + uuid).then(response => {
-      if (response.ok) {
-        var i = r.parentNode.parentNode.rowIndex;
-        document.getElementById("list").deleteRow(i);
-      }
-    });
+    if (confirm(`Delete series link "${name}"?`)) {
+      fetch("/api/idnode/delete?uuid=" + uuid).then(response => {
+        if (response.ok) {
+          var i = r.parentNode.parentNode.rowIndex;
+          document.getElementById("list").deleteRow(i);
+        }
+      });
+    }
   }
 </script>
 </head> 
-<body>
+<body style='display: none;'>
   <div id="container">
     <div id="navigation">
       <div class="logo">
@@ -55,6 +57,7 @@
  </div>
 <script>
   async function main() {
+    const datefmt = new Intl.DateTimeFormat(navigator.language, {weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
     const [ recordings, channels ] = await Promise.all([get_recordings(), get_channels(0)]);
     var cname = [];
     channels.forEach(function(c) {
@@ -88,15 +91,19 @@
       var next = '';
       if (rcnt[link.uuid]) recs = rcnt[link.uuid];
       if (tcnt[link.uuid]) timers = tcnt[link.uuid];
-      if (tnext[link.uuid]) next = strftime("%a %e/%n %H:%M", tnext[link.uuid]);
+      if (tnext[link.uuid]) next = datefmt.format(tnext[link.uuid]*1000);
+      if (link.channel.length > 0) var channel = cname[link.channel];
+      else var channel = "(any)";
+      var name = link.name;
+      if (!link.serieslink && link.title) name += ` (Regex: /${link.title}/)`
       var row = table.insertRow(-1);
       row.className = "row_alt";
       row.innerHTML = `<td class='col_value'>${timers}</td>` +
 	`<td class='col_value'>${recs}</td>` +
-	`<td class='col_channel'>${cname[link.channel]}</td>` +
-	`<td class='col_name'>${link.name}</td>` +
+	`<td class='col_channel'>${channel}</td>` +
+	`<td class='col_name'>${name}</td>` +
 	`<td class='wideonly col_channel'>${next}</td>` +
-	`<td class='col_delete'><a href='links.html' onclick='delete_link(this, "${link.uuid}")'><img src='images/delete.png'></a></td>`;
+	`<td class='col_delete'><a href='links.html' onclick='delete_link(this, "${link.uuid}", "${name}")'><img src='images/delete.png'></a></td>`;
     });
   }
   main();

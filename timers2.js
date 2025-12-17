@@ -65,7 +65,7 @@
     }
     debug += "\nNo tuner available";
     for (const t in tuners) {
-      let exp = strftime("%d/%e:%H.%M", tuners[t].alloc);
+      let exp = dtfmt.format(tuners[t].alloc*1000);
       debug += `\n${t}: exp: ${exp} mux: ${tuners[t].mux}`;
     }
     return 2;
@@ -142,14 +142,14 @@
     var table = document.getElementById("list");
     for (const t of timers) {
       debug = '';
-      let start = strftime("%H:%M", t.start);
-      let d = strftime("%a %d/%n", t.start);
+      let start = timefmt.format(t.start*1000);
+      let d = datefmt.format(t.start*1000);
       if (t.uri && t.uri.includes("#")) {
         let s = await get_ms_stop(t);
-	var stop = strftime("%H:%M", s);
+        var stop = timefmt.format(s*1000);
       }
       else {
-	var stop = strftime("%H:%M", t.stop);
+        var stop = timefmt.format(t.stop*1000);
       }
       if (!t.enabled) {
         status = 4;
@@ -199,7 +199,7 @@
 	`<td class='col_name'>${t.disp_title}</td>` +
 	`<td class='col_channel'><span class='wideonly'>${type}</span><span class='thinonly'>${type2}</span></td>` +
         `<td class='col_delete'><input type='checkbox' class='smaller' oninput='toggle(event,"${t.uuid}",${t.enabled})' ${en}></td>` +
-        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(this,"${t.uuid}",${running})'><img src='images/delete.png' title='Delete Timer'></a></td>`;
+        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(this,"${t.uuid}",${running},"${t.disp_title}")'><img src='images/delete.png' title='Delete Timer'></a></td>`;
       row.innerHTML = s;
     }
   }
@@ -209,5 +209,9 @@
 		0, 0, 0, 0, 0, 0, 0, 0,		// 0x08 - 0x0F
 		0, 2, 0, 0, 0, 0, 1, 1,		// 0x10 - 0x17
 		1, 2, 2, 2, 2, 2, 2, 2, 3 ];	// 0x18 - 0x20
+
+  const timefmt = new Intl.DateTimeFormat(navigator.language, {hour:"numeric",minute:"numeric"});
+  const datefmt = new Intl.DateTimeFormat(navigator.language, {weekday:"short",month:"numeric",day:"numeric"});
+  const dtfmt   = new Intl.DateTimeFormat(navigator.language, {month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
 
   main();

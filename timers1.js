@@ -72,14 +72,14 @@ async function main() {
   var now = new Date() / 1000;
   var table = document.getElementById("list");
   for await (const t of timers) {
-    let start = strftime("%H:%M", t.start);
-    let d = strftime("%a %d/%n", t.start);
+    let start = timefmt.format(t.start*1000);
+    let d = datefmt.format(t.start*1000);
     if (t.uri && t.uri.includes("#")) {
       let s = await get_ms_stop(t);
-      var stop = strftime("%H:%M", s);
+      var stop = timefmt.format(s*1000);
     }
     else {
-      var stop = strftime("%H:%M", t.stop);
+      var stop = timefmt.format(t.stop*1000);
     }
     if(t.start_real < now) {
       var status = 3;
@@ -117,7 +117,7 @@ async function main() {
       `<td class='col_name'>${t.disp_title}</td>` +
       `<td class='col_channel'><span class='wideonly'>${type}</span><span class='thinonly'>${type2}</span></td>` +
       `<td class='col_delete'><input type='checkbox' class='smaller' oninput='toggle(event,"${t.uuid}",${t.enabled})' ${en}></td>` +
-      `<td class='col_delete'><a href='timers.html' onclick='delete_timer(this,"${t.uuid}",${running})'><img src='images/delete.png' title='Delete Timer'></a></td>`;
+      `<td class='col_delete'><a href='timers.html' onclick='delete_timer(this,"${t.uuid}",${running},"${t.disp_title}")'><img src='images/delete.png' title='Delete Timer'></a></td>`;
     row.innerHTML = s;
   }
   var s = '';
@@ -140,7 +140,7 @@ async function main() {
         var sl = "";
         if (a.deafsigned) sl = '[SL]';
         if (a.episodeUri && (c.uri === a.episodeUri)) {
-          var when = strftime("%a %e/%n %H:%M", a.start);
+          var when = dtfmt.format(a.start*1000);
           if (!check_event(timers, a)) {
             s2 += `<li>${when} ${a.channelName} ${a.title} ${sl}</li>`;
           }
@@ -150,7 +150,7 @@ async function main() {
         }
       });
       if (s2.length) {
-        let dt = strftime("%a %e/%n at %H:%M", c.start);
+        let dt = dtfmt.format(c.start*1000);
         s += `<p>Alternatives for \"${ts}\" on ${dt}</p><ul>` + s2 + "</ul>";
       }
     }
@@ -159,6 +159,10 @@ async function main() {
   notice.innerHTML = s;
 }
 
-var channels = {}, muxes = {};
+  var channels = {}, muxes = {};
+  const timefmt = new Intl.DateTimeFormat(navigator.language, {hour:"numeric",minute:"numeric"});
+  const datefmt = new Intl.DateTimeFormat(navigator.language, {weekday:"short",month:"numeric",day:"numeric"});
+  const dtfmt   = new Intl.DateTimeFormat(navigator.language, {month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});
+
 main();
 
