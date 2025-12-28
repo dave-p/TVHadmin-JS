@@ -193,13 +193,14 @@
       let row = table.insertRow(-1);
       row.className = 'row_alt';
       row.title = t.disp_extratext + debug;
+      let htitle = htmlspecialchars(t.disp_title);
       let s = `<td class='col_info'><img src='${images[status]}'></td><td class='col_channel'>${t.channelname}</td>` +
 	`<td class='col_date'>${d}<span class='thinonly'><br />${start}-${stop}</span></td>` +
 	`<td class='wideonly col_start'>${start}</td><td class='wideonly col_stop'>${stop}</td>` +
 	`<td class='col_name'>${t.disp_title}</td>` +
 	`<td class='col_channel'><span class='wideonly'>${type}</span><span class='thinonly'>${type2}</span></td>` +
         `<td class='col_delete'><input type='checkbox' class='smaller' oninput='toggle(event,"${t.uuid}",${t.enabled})' ${en}></td>` +
-        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(this,"${t.uuid}",${running},"${t.disp_title}")'><img src='images/delete.png' title='Delete Timer'></a></td>`;
+        `<td class='col_delete'><a href='timers.html' onclick='delete_timer(this,"${t.uuid}",${running},"${htitle}")'><img src='images/delete.png' title='Delete Timer'></a></td>`;
       row.innerHTML = s;
     }
   }

@@ -133,7 +133,7 @@ async function delete_new_event(event, event_id, outer) {
   event.preventDefault();
   let entry = await get_timer_by_id(event_id);
   let uuid = entry.uuid;
-  let title = entry.disp_title;
+  let title = htmlspecialchars(entry.disp_title);
   if (confirm(`Delete timer "${title}"?`)) {
     await fetch(`/api/dvr/entry/cancel?uuid=${uuid}`).then(function(response) {
       if (response.ok) {
@@ -154,7 +154,7 @@ async function delete_new_series(event, event_id, outer) {
   event.preventDefault();
   let entry = await get_timer_by_id(event_id);
   let autorec = entry.autorec;
-  let title = entry.autorec_caption;
+  let title = htmlspecialchars(entry.autorec_caption);
   if (confirm(`Delete series link "${title}"?`)) {
     fetch(`/api/idnode/delete?uuid=${autorec}`).then(function(response) {
       if (response.ok) {
