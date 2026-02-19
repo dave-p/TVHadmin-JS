@@ -436,4 +436,7 @@ select.channels {
 	.thinonly {
 		display: inline;
 	}
+	#recmediatags {
+		display: none;
+	}
 }
