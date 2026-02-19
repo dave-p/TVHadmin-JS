@@ -48,12 +48,12 @@
      <div id='banner'>
       <table>
         <tr>
-	  <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Recordings</h1></td>
+	  <td><div id='mobmenu'>&#9776;</div><h1>Recordings</h1></td>
 	  <td>
 	    <div class='media'>
-	      <label for='B0'>Date Fwd:</label><input type='radio' name='SORT' id='B0' value='0' onChange='change_order(this)'></div>
+	      <label for='B0'><span class='wideonly'>Date </span>Fwd:</label><input type='radio' name='SORT' id='B0' value='0' onChange='change_order(this)'></div>
 	    <div class='media'>
-	      <label for='B1'>Date Rev:</label><input type='radio' name='SORT' id='B1' value='1' onChange='change_order(this)'></div>
+	      <label for='B1'><span class='wideonly'>Date </span>Rev:</label><input type='radio' name='SORT' id='B1' value='1' onChange='change_order(this)'></div>
 	    <div class='media'>
 	      <label for='B2'>Title:</label><input type='radio' name='SORT' id='B2' value='2' onChange='change_order(this)'></div>
 	  </td>
@@ -90,7 +90,7 @@
     buttons[sort].checked = true;
 
     const [ tags, channels, recordings ] = await Promise.all([get_channeltags(), get_channels(0), get_recordings(sort)]);
-    var s = "<span class='wideonly'>";
+    var s = "<span>";
     var media = [];
     for (var key in cookies) {
       if (key.startsWith("Tag_")) {
