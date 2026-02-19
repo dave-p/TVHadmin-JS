@@ -29,13 +29,13 @@
         <form name='whatandwhen' method='GET' action='channels.html' id='whatandwhen' hidden>
           <table>
             <tr>
-              <td class='col_title'><div id='mobmenu'>&#9776;</div> <h1>Channels</h1></td>
-	      <td>Channel: <select name='which' size='1' id='select_channel' onchange='formSubmit()'></select></td>
+              <td><div id='mobmenu'>&#9776;<br /></div><h1>Channels</h1></td>
+	      <td><span class='wideonly'>Channel: </span><select name='which' size='1' id='select_channel' onchange='formSubmit()'></select></td>
 	      <td>
-                <label>All Dates <input type='checkbox' name='all' id='all' onchange='formSubmit()'></label>&nbsp;
-                <a href='channels.html' id='left' hidden><img src='images/left.png'></a>
-                <select name='when' size='1' id='select_date' onchange='formSubmit()'></select>&nbsp;
-                <a href='channels.html' id='right' hidden><img src='images/right.png'></a>
+                <span class='wideonly'><label>All Dates <input type='checkbox' name='all' id='all' onchange='formSubmit()'></label>&nbsp;</span>
+                <a href='channels.html' id='left' style='visibility: hidden;'><img src='images/left.png'></a>
+                <select name='when' size='1' id='select_date' onchange='formSubmit()'></select>
+                <a href='channels.html' id='right' style='visibility: hidden;'><img src='images/right.png'></a>
 	      </td>
 	    </tr>
           </table>
@@ -93,7 +93,7 @@
       let prev = when - 86400;
       if (prev >= today) {
         left.href += `?which=${which}&when=${prev}`;
-        left.hidden = false;
+        left.style.visibility = "visible";
       }
       var day = today;
       for(i=0; i<8; i++) {
@@ -108,7 +108,7 @@
       next = when + 86400;
       if (next < day) {
         right.href += `?which=${which}&when=${next}`;
-        right.hidden = false;
+        right.style.visibility = "visible";
       }
       date_dropdown.style.visibility = "visible";
     }
