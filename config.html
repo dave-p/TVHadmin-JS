@@ -262,7 +262,7 @@ async function main() {
   let form = document.getElementById("myForm");
   form.addEventListener("submit", event => {
     let formdata = JSON.stringify(saveForm(form));
-    document.cookie = "TVHadmin="+encodeURIComponent(formdata)+"; Max-Age=315360000; SameSite=Lax";
+    localStorage.setItem("TVHadmin", encodeURIComponent(formdata));
   });
   
   let profiles = await get_profiles();

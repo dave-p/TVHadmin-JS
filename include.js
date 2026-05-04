@@ -1,8 +1,13 @@
 function get_cookies() {
   const n = "TVHadmin";
+  let ret;
+  if (ret = localStorage.getItem(n)) {
+    return JSON.parse(decodeURIComponent(ret));
+  }
   try {
     var b = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)');
     var c = b ? b.pop() : '';
+    localStorage.setItem(n, c);
     return JSON.parse(decodeURIComponent(c));
   }
   catch {
