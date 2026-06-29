@@ -152,7 +152,7 @@
     var free = poll.messages[0].freediskspace / 1073741824;
     var total = poll.messages[0].totaldiskspace / 1073741824;
     var pc = free*100/total;
-    var text = free.toFixed(1) + " GB (" + pc.toFixed(1) + "%)";
+    var text = free.toFixed(1) + " GiB (" + pc.toFixed(1) + "%)";
     systable.rows[3].cells[1].innerHTML = text;
     var x = xmlDoc.getElementsByTagName("next")[0];
     if (x) {
