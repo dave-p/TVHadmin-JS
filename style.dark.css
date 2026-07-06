@@ -311,6 +311,7 @@ a:hover {
 	padding-right: 5px !important;
 	white-space: nowrap;
 	vertical-align: middle;
+	width: 0px;
 }
 .col_name {
 	padding-left: 3px;
