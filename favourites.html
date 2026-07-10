@@ -119,27 +119,27 @@
             `<div class='epg_subtitle'>${desc}</div></td>`;
           if (e.dvrState == 'recording') {
             if (slinks[e.serieslinkUri]) {
-              s += "<td></td><td><img src='images/rec.png' title='Series recording scheduled'></td>";
+              s += "<td class='col_min'></td><td class='col_min'><img src='images/rec.png' title='Series recording scheduled'></td>";
             }
             else {
-              s += "<td><img src='images/rec.png' title='Recording scheduled'></td>";
+              s += "<td class='col_min'><img src='images/rec.png' title='Recording scheduled'></td>";
             }
           }
           else if (e.dvrState == 'scheduled') {
             if (slinks[e.serieslinkUri]) {
-              s += `<td></td><td><a href='channels.html' onclick='delete_by_series(event, "${e.title}", "${e.dvrUuid}", this)'><img src='images/rec.png' title='Remove series recording'></a></td>`;
+              s += `<td class='col_min'></td><td class='col_min'><a href='channels.html' onclick='delete_by_series(event, "${e.title}", "${e.dvrUuid}", this)'><img src='images/rec.png' title='Remove series recording'></a></td>`;
             }
             else {
-              s += `<td><a href='channels.html' onclick='delete_by_event(event, "${e.title}", "${e.dvrUuid}", this)'><img src='images/rec.png' title='Remove scheduled recording'></a></td>`;
+              s += `<td class='col_min'><a href='channels.html' onclick='delete_by_event(event, "${e.title}", "${e.dvrUuid}", this)'><img src='images/rec.png' title='Remove scheduled recording'></a></td>`;
             }
           }
           else {
-            s += `<td><a href='channels.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' title='record'></a></td>`;
+            s += `<td class='col_min'><a href='channels.html' onclick='create_by_event(event, "${e.eventId}", this)'><img src='images/rec_button1.png' title='record'></a></td>`;
             if (e.serieslinkUri) {
-            s += `<td><a href='channels.html' onclick='create_by_series(event, "${e.eventId}", this)'><img src='images/rec_buttonS.png' title='record series'></a></td>`;
+            s += `<td class='col_min'><a href='channels.html' onclick='create_by_series(event, "${e.eventId}", this)'><img src='images/rec_buttonS.png' title='record series'></a></td>`;
             }
             else {
-              s += "<td></td>";
+              s += "<td class='col_min'></td>";
             }
           }
           row.innerHTML = s;

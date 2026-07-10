@@ -196,6 +196,9 @@ a:hover {
 	padding: 10px;
 	width: 45%;
 }
+.col_min {
+        width: 0px;
+}
 .list,
 .group {
 	border-spacing: 2px;
@@ -311,6 +314,7 @@ a:hover {
 	padding-right: 5px !important;
 	white-space: nowrap;
 	vertical-align: middle;
+	width: 0px;
 }
 .col_name {
 	padding-left: 3px;
